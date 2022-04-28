@@ -6,6 +6,7 @@ import EmotionalArcField from "../../helper/EmotionalArcField";
 
 const CurveComponent = props => {
     CurveComponent.inputField = undefined;
+    const { django } = window;
     var isLoadedScript = false;
     var player = undefined;
     const { curve, onChangeCurve, videoId } = props;

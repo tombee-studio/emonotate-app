@@ -10,7 +10,6 @@ const SearchResultList = props => {
     const [pageToken, setPageToken] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
-    console.log(YOUTUBE_API_KEY);
     const api = new YouTubeDataAPI();
     useEffect(() => {
         setLoading(true);

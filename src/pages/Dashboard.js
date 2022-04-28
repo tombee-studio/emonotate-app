@@ -16,13 +16,6 @@ const styles = (theme) => ({
 
 const Dashboard = (props) => {
   const { classes, keyword } = props;
-  const api = new EmonotateAPI();
-  useEffect(() => {
-    api.get()
-      .then(json => {
-        console.log(json);
-      });
-  }, []);
   return (
     <Box m={2}>
       <SearchResultList keyword={keyword} />

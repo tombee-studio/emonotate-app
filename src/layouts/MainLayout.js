@@ -185,7 +185,7 @@ export default function MainLayout(props) {
         'role': 'participant',
       })
       .then(data => {
-          setNumRequest(data.models.length);
+        setNumRequest(data.models.length || 0);
       })
   }, []);
 

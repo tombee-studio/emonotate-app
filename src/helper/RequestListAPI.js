@@ -3,6 +3,7 @@ export default class RequestListAPI {
         var query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
         return fetch(`/api/requests/?${query}`)
             .then(res => {
+                if(res.status == 404) throw "ERROR: malform response";
                 return res.json();
             });
     }

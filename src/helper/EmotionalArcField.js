@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 function EmotionalArcField(chartId, player, axis, option) {
     this.name = chartId;
     this.isValid = false;
@@ -264,7 +266,7 @@ EmotionalArcField.prototype.submit = function(user, content, valueType, roomName
     });
 }
 
-EmotionalArcField.prototype.updateOf = function(curveId, content, valueType, version) {
+EmotionalArcField.prototype.updateOf = function(user, curveId, content, valueType, version) {
     var data = {
         'user': user.id,
         'content': content.id,

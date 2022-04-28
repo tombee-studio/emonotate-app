@@ -15,6 +15,7 @@ import CurveComponent from "../components/curve-page/CurveComponent";
 
 const CurvePage = props => {
     const { search } = useLocation();
+    const { django } = window;
     const params = new URLSearchParams(search);
     const videoId = params.get('videoId');
     const title = params.get('title');
