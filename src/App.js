@@ -19,7 +19,13 @@ import LoginPage from './pages/LoginPage';
 const App = () => {
   const [cookies, setCookies, removeCookies] = useCookies(undefined);
   if(!cookies.username) {
-    return <Redirect to={"http://127.0.0.1:8000/"} />
+    if(process.env.STAGING == "local") {
+      return <Redirect to={"http://127.0.0.1:8000/"} />
+    } else if(process.env.STAGING == "alpha") {
+      return <Redirect to={"https://enigmatic-thicket-08912.herokuapp.com/"} />
+    } else if(process.env.STAGING == "prod") {
+      return <Redirect to={"https://www.emonotate.com/"} />
+    }
   } else {
     window.django = {
       user: cookies,
