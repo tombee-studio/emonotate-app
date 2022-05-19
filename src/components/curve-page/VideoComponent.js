@@ -1,40 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { 
     Box,
     Grid,
 } from "@mui/material";
-import { useState } from "react";
-import YouTube from 'react-youtube';
+import videojs from 'video.js'
+import "video.js/dist/video-js.css"
 
 import VideoController from './VideoController';
 
-const VideoComponent = props => {
-    const { value_type } = props;
-    const [config, setConfig] = useState({
-        autoplay: false,
-        controls: true,
-        disablekb: true,
-        loop: false,
-    });
-    const { onReady, videoId } = props;
-    return <Box m={2}>
-        <Grid container>
-            <Grid item xs="auto">
-                <YouTube 
-                    videoId={videoId}
-                    onReady={onReady}
-                    opts={{
-                        width: 426,
-                        height: 240,
-                        playerVars: config
-                    }} />
+class VideoComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        const { url } = this.props;
+        this.options = {
+            controls: true,
+            sources: [{
+                src: url,
+                type: 'video/mp4'
+            }]
+        };
+    }
+
+    componentDidMount() {
+        const { onReady } = this.props;
+        this.player = videojs(this.videoNode, this.options);
+        this.videoNode.onloadedmetadata = function() { onReady(this); };
+    }
+
+    render() {
+        return <Box>
+            <Grid container>
+                <Grid item xs="auto">
+                    <video 
+                        width={426}
+                        height={240}
+                        ref={ node => this.videoNode = node } 
+                        className="video-js" />
+                </Grid>
+                <Grid item xs>
+                </Grid>
             </Grid>
-            <Grid item xs>
-                <VideoController config={config} value_type={value_type}
-                    onControllerChanged={config => setConfig(config) }/>
-            </Grid>
-        </Grid>
-    </Box>;
+        </Box>;
+    }
 };
 
 export default VideoComponent;

@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import SearchResultList from '../components/common/SearchResultList';
 import { withStyles } from '@mui/styles';
-import EmonotateAPI from '../helper/EmonotateAPI';
 
 const styles = (theme) => ({
   root: {

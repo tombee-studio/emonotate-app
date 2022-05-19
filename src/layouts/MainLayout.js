@@ -29,7 +29,7 @@ function Copyright() {
       <Link color="inherit" href="https://www.emonotate.com/">
         emonotate.com
       </Link>{' '}
-      {new Date().getFullYear()}
+      2021 - {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
@@ -168,7 +168,7 @@ const useStyles = makeStyles((theme) => ({
 export default function MainLayout(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [numRequest, setNumRequest] = React.useState(3);
+  const [numRequest, setNumRequest] = React.useState(undefined);
   const [keyword, setKeyword] = React.useState("");
   const handleDrawerOpen = () => {
       setOpen(true);
@@ -185,7 +185,7 @@ export default function MainLayout(props) {
         'role': 'participant',
       })
       .then(data => {
-        setNumRequest(data.models.length || 0);
+          setNumRequest(data.models.length);
       })
   }, []);
 

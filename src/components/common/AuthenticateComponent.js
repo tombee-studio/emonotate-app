@@ -7,10 +7,8 @@ import { Login, Logout } from '@mui/icons-material';
 import AuthenticateAPI from '../../helper/AuthenticateAPI';
 
 const AuthenticateComponent = props => {
-  const user = {
-    group: "Guest",
-  }
-  if(window.django.user.groups.split(',').includes("Guest"))
+  const { django } = window;
+  if(django.user.group == "Guest")
     return (
       <IconButton
         edge="end"
