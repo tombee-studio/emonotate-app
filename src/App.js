@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { 
   BrowserRouter as Router, 
   Route, 
@@ -16,21 +16,10 @@ import ProfilePage from './pages/ProfilePage';
 import CurvePage from './pages/CurvePage';
 import LoginPage from './pages/LoginPage';
 
-import EmonotateAPI from './helper/EmonotateAPI';
-
 const App = () => {
   const [cookies, setCookies, removeCookies] = useCookies(undefined);
-  const [flag, setFlag] = useState(false);
-  useEffect(() => {
-    const api = new EmonotateAPI();
-    api.get()
-    .then(res => {
-      setFlag(true);
-    });
-  }, []);
-
-  if(!flag) {
-    return <h1>Just a minutes</h1>
+  if(!cookies.username) {
+    return <Redirect to={"http://127.0.0.1:8000/"} />
   } else {
     window.django = {
       user: cookies,
