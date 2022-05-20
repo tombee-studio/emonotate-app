@@ -13,15 +13,14 @@ const App = () => {
   const [cookies] = useCookies(undefined);
   if(!cookies.username) {
     if(process.env.REACT_APP_STAGING === "local") {
-      return <Redirect to={"http://127.0.0.1:8000/"} />;
+      window.location.href = "http://127.0.0.1:8000/";
     } else if(process.env.REACT_APP_STAGING === "alpha") {
-      return <Redirect to={"https://enigmatic-thicket-08912.herokuapp.com/"} />;
+      window.location.href = "https://enigmatic-thicket-08912.herokuapp.com/";
     } else if(process.env.REACT_APP_STAGING === "prod") {
-      return <Redirect to={"https://www.emonotate.com/"} />;
-    } else {
-      console.log(process.env);
-      return <h1>少々お待ちください</h1>;
-    }
+      window.location.href = "https://www.emonotate.com/";
+    }  
+    console.log(process.env);
+    return <h1>少々お待ちください</h1>;
   } else {
     window.django = {
       user: cookies,
