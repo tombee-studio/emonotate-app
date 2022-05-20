@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { 
     Box,
     Grid,
 } from "@mui/material";
-import videojs from 'video.js'
-import "video.js/dist/video-js.css"
-
-import VideoController from './VideoController';
+import videojs from 'video.js';
+import "video.js/dist/video-js.css";
 
 class VideoComponent extends React.Component {
     constructor(props) {

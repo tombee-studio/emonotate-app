@@ -1,6 +1,5 @@
 import React from 'react';
-import { Badge } from '@mui/material';
-import { ListSubheader } from '@mui/material';
+import { Badge, ListSubheader } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';

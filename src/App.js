@@ -10,13 +10,14 @@ import MainLayout from './layouts/MainLayout';
 import loadable from "@loadable/component";
 
 const App = () => {
-  const [cookies, setCookies, removeCookies] = useCookies(undefined);
+  const [cookies] = useCookies(undefined);
   if(!cookies.username) {
-    if(process.env.STAGING == "local") {
+    return <h1>少々お待ちください</h1>;
+    if(process.env.STAGING === "local") {
       return <Redirect to={"http://127.0.0.1:8000/"} />
-    } else if(process.env.STAGING == "alpha") {
+    } else if(process.env.STAGING === "alpha") {
       return <Redirect to={"https://enigmatic-thicket-08912.herokuapp.com/"} />
-    } else if(process.env.STAGING == "prod") {
+    } else if(process.env.STAGING === "prod") {
       return <Redirect to={"https://www.emonotate.com/"} />
     }
   } else {

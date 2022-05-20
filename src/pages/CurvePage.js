@@ -121,14 +121,14 @@ const CurvePage = props => {
                     resolve("video");
                 }
             })).then(flag => {
-                if(flag == "youtube") {
+                if(flag === "youtube") {
                     const youtubeAPI = new YouTubeDataAPI()
                     return youtubeAPI.videos({
                         key: YOUTUBE_API_KEY,
                         id: videoId,
                         part: 'snippet'
                     }).then(res => {
-                        if(res.status == 200) return res.items[0].snippet.title;
+                        if(res.status === 200) return res.items[0].snippet.title;
                     }).then(title => {
                         setCurveData({
                             "values": null,
@@ -150,7 +150,7 @@ const CurvePage = props => {
                         });
                         setLoadedFlag(true);
                     });
-                } else if(flag == "video") {
+                } else if(flag === "video") {
                     const contentAPI = new ContentListAPI();
                     return contentAPI.getItem(contentId)
                         .then(contentData => {

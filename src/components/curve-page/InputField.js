@@ -132,7 +132,7 @@ class InputField extends Component {
             .attr("r", this.option.r)
             .call(this.onDraggablePoint())
             .on('dblclick', (d, i) => {
-                if(d.type == 'custom') {
+                if(d.type === 'custom') {
                     this.data.splice(i, 1);
                     this.updateChart();
                 }
@@ -155,7 +155,7 @@ class InputField extends Component {
             .attr("r", this.option.r)
             .call(this.onDraggablePoint())
             .on('dblclick', (d, i) => {
-                if(d.type == 'custom') {
+                if(d.type === 'custom') {
                     this.data.splice(i, 1);
                     this.updateChart();
                 }

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pagination } from '@mui/material';
-import { Avatar, Card, Chip, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Typography } from '@mui/material';
+import { Pagination, Box, Avatar, Card, Chip, Grid, IconButton, 
+  List, ListItem, ListItemAvatar, ListItemSecondaryAction, 
+  ListItemText, Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import { Box } from '@mui/material';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import CurvesListAPI from '../../helper/CurvesListAPI';
 import DeleteIcon from '@mui/icons-material/Delete';
