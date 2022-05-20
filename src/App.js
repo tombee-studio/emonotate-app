@@ -19,7 +19,8 @@ const App = () => {
     } else if(process.env.STAGING === "prod") {
       return <Redirect to={"https://www.emonotate.com/"} />;
     } else {
-      return <h1>{process.env}</h1>;
+      console.log(process.env);
+      return <h1>少々お待ちください</h1>;
     }
   } else {
     window.django = {
