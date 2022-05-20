@@ -1,7 +1,6 @@
 const {createProxyMiddleware} = require("http-proxy-middleware");
 
 module.exports = app => {
-    console.log(process.env);
     if(process.env.STAGING == "local") {
         app.use("/api/", createProxyMiddleware({
             target: "http://127.0.0.1:8000/",
