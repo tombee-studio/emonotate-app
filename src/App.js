@@ -17,6 +17,7 @@ const App = () => {
     fetch('/api/me/').then(res => {
       return res.json();
     }).then(user => {
+      console.log(user);
       setUserData(user);
       setUserLoadedFlag(true);
     });

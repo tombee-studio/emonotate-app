@@ -57,20 +57,10 @@ const CurvePage = props => {
     const [curve, setCurveData] = useState({});
     const [isLoadedFlag, setLoadedFlag] = useState(false);
     const create = ev => {
-        const api = new CurveWithYouTubeAPI();
-        const curvesListAPI = new CurvesListAPI();
-        curve["youtube"] = curve["content"]
-        api.create(curve)
-            .then(json => {
-                handleClick();
-            })
-            .catch(err => {
-                const curveClone = curve;
-                curveClone["user"] = curve.user.id;
-                curveClone["content"] = curve.content.id;
-                curveClone["value_type"] = curve.value_type.id;
-                return curvesListAPI.create(curveClone);
-            })
+        if(videoId) {
+            const api = new CurveWithYouTubeAPI();
+            curve["youtube"] = curve["content"];
+            api.create(curve)
             .then(json => {
                 handleClick();
             }).catch(err => {
@@ -100,6 +90,43 @@ const CurvePage = props => {
                     }
                 });
             });
+        } else {
+            const curvesListAPI = new CurvesListAPI();
+            const curveClone = curve;
+            curveClone["user"] = curve.user.id;
+            curveClone["content"] = curve.content.id;
+            curveClone["value_type"] = curve.value_type.id;
+            curvesListAPI.create(curveClone)
+            .then(json => {
+                handleClick();
+            }).catch(err => {
+                return err.body;
+            }).then(body => {
+                const reader = body.getReader();
+                const stream = new ReadableStream({
+                    start(controller) {
+                      // 次の関数は各データチャンクを処理します
+                      function push() {
+                        // done は Boolean で、value は Uint8Array です
+                        reader.read().then(({ done, value }) => {
+                          // 読み取るデータはもうありませんか？
+                          if (done) {
+                            // データの送信が完了したことをブラウザーに伝えます
+                            controller.close();
+                            return;
+                          }
+                
+                          // データを取得し、コントローラー経由でブラウザーに送信します
+                          console.log(new TextDecoder().decode(value));
+                          push();
+                        });
+                      };
+                
+                      push();
+                    }
+                });
+            });
+        }
     };
     const update = ev => {
         const api = new CurveWithYouTubeAPI();
