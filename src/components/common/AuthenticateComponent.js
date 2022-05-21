@@ -8,7 +8,7 @@ import AuthenticateAPI from '../../helper/AuthenticateAPI';
 
 const AuthenticateComponent = props => {
   const { django } = window;
-  if(django.user.groups.includes(1) && django.user.groups.length == 1)
+  if(django.user.groups.includes("Guest") && django.user.groups.length == 1)
     return (
       <IconButton
         edge="end"

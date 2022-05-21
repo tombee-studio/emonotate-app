@@ -32,7 +32,7 @@ export const mainListItems = (numRequest) => {
         </ListItemIcon>
         <ListItemText primary="履歴" />
       </ListItem>
-      { window.django.user.groups.includes(3) &&
+      { window.django.user.groups.includes("Researchers") &&
         <div>
           <ListItem button component="a" href="/app/content/">
             <ListItemIcon>
