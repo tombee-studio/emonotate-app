@@ -7,7 +7,15 @@ import {
 import MainLayout from './layouts/MainLayout';
 import { useCookies } from "react-cookie";
 
-import loadable from "@loadable/component";
+import Dashboard from './pages/Dashboard';
+import HistoryPage from './pages/HistoryPage';
+import RequestPage from './pages/RequestPage';
+import ContentListPage from './pages/ContentListPage';
+import ValueTypeListPage from './pages/ValueTypeListPage';
+import RoomPage from './pages/RoomPage';
+import ProfilePage from './pages/ProfilePage';
+import CurvePage from './pages/CurvePage';
+import LoginPage from './pages/LoginPage';
 
 const App = () => {
   const [userData, setUserData] = useState({});
@@ -37,51 +45,39 @@ const App = () => {
               { <Redirect to="/app/dashboard/" /> }
             </Route>
             <Route exact path='/app/dashboard/' component={_ => {
-              const Dashboard = loadable(() => import('./pages/Dashboard'));
               return <Dashboard keyword={keyword} />
             }} />
             <Route exact path='/app/history/' component={_ => {
-              const HistoryPage = loadable(() => import('./pages/HistoryPage'));
               return <HistoryPage />
             }} />
             <Route exact path='/app/requests/' component={_ => {
-              const RequestPage = loadable(() => import('./pages/RequestPage'));
               return <RequestPage />;
             }} />
             <Route exact path='/app/content/' component={_ => {
-              const ContentListPage = loadable(() => import('./pages/ContentListPage'));
               return <ContentListPage />
             }} />
             <Route exact path='/app/word/' component={_ => {
-              const ValueTypeListPage = loadable(() => import('./pages/ValueTypeListPage'));
               return <ValueTypeListPage />;
             }} />
             <Route exact path='/app/curves/' component={ props => {
-              const CurvePage = loadable(() => import('./pages/CurvePage'));
               return <CurvePage />;
             }} />
             <Route exact path='/app/rooms/' component={ _ => {
-              const RoomPage = loadable(() => import('./pages/RoomPage'));
               return <RoomPage keyword={keyword} />;
             }} />
             <Route path='/app/curves/:id(\d+)' component={ props => {
-              const CurvePage = loadable(() => import('./pages/CurvePage'));
               return <CurvePage id={props.match.params.id} />;
             }} />
             <Route exact path='/app/profile/' component={_ => {
-              const ProfilePage = loadable(() => import('./pages/ProfilePage'));
               return <ProfilePage />
             }} />
             <Route exact path='/app/login/' component={_ => {
-              const LoginPage = loadable(() => import('./pages/LoginPage'));
               return <LoginPage />
             }} />
             <Route exact path='/app/requests/' component={_ => {
-              const RequestPage = loadable(() => import('./pages/RequestPage'));
               return <RequestPage />;
             }} />
             <Route exact path='/app/rooms/:id(\d+)' component={ props => {
-              const RoomPage = loadable(() => import('./pages/RoomPage'));
               return <RoomPage id={props.match.params.id} keyword={keyword} />;
             }} />
           </Switch>);
