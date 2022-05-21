@@ -73,6 +73,32 @@ const CurvePage = props => {
             })
             .then(json => {
                 handleClick();
+            }).catch(err => {
+                return err.body;
+            }).then(body => {
+                const reader = body.getReader();
+                const stream = new ReadableStream({
+                    start(controller) {
+                      // 次の関数は各データチャンクを処理します
+                      function push() {
+                        // done は Boolean で、value は Uint8Array です
+                        reader.read().then(({ done, value }) => {
+                          // 読み取るデータはもうありませんか？
+                          if (done) {
+                            // データの送信が完了したことをブラウザーに伝えます
+                            controller.close();
+                            return;
+                          }
+                
+                          // データを取得し、コントローラー経由でブラウザーに送信します
+                          console.log(new TextDecoder().decode(value));
+                          push();
+                        });
+                      };
+                
+                      push();
+                    }
+                });
             });
     };
     const update = ev => {

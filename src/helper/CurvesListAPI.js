@@ -53,6 +53,7 @@ export default class CurvesListAPI {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': window.django.csrf,
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify(data)
       })

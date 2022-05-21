@@ -1,29 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   BrowserRouter as Router, 
   Route, 
   Redirect, 
   Switch } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
 import MainLayout from './layouts/MainLayout';
+import { useCookies } from "react-cookie";
 
 import loadable from "@loadable/component";
 
 const App = () => {
-  const [cookies] = useCookies(undefined);
-  if(!cookies.username) {
-    if(process.env.REACT_APP_STAGING === "local") {
-      window.location.href = "http://127.0.0.1:8000/";
-    } else if(process.env.REACT_APP_STAGING === "alpha") {
-      window.location.href = "https://enigmatic-thicket-08912.herokuapp.com/";
-    } else if(process.env.REACT_APP_STAGING === "prod") {
-      window.location.href = "https://www.emonotate.com/";
-    }  
-    console.log(process.env);
+  const [userData, setUserData] = useState({});
+  const [userLoadedFlag, setUserLoadedFlag] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies();
+  useEffect(() => {
+    fetch('/api/me/').then(res => {
+      return res.json();
+    }).then(user => {
+      setUserData(user);
+      setUserLoadedFlag(true);
+    });
+  }, []);
+  if(!userLoadedFlag) {
     return <h1>少々お待ちください</h1>;
   } else {
     window.django = {
-      user: cookies,
+      user: userData,
+      csrf: cookies.csrftoken,
       YOUTUBE_API_KEY: process.env.REACT_APP_YOUTUBE_API_KEY
     };
     return (
