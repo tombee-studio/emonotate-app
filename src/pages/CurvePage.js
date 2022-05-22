@@ -64,8 +64,7 @@ const CurvePage = props => {
             .then(json => {
                 handleClick();
             }).catch(err => {
-                return err.body;
-            }).then(body => {
+                const { body } = err;
                 const reader = body.getReader();
                 const stream = new ReadableStream({
                     start(controller) {
@@ -100,8 +99,7 @@ const CurvePage = props => {
             .then(json => {
                 handleClick();
             }).catch(err => {
-                return err.body;
-            }).then(body => {
+                const { body } = err;
                 const reader = body.getReader();
                 const stream = new ReadableStream({
                     start(controller) {
