@@ -44,9 +44,6 @@ const AddContent = (props) => {
 
   return (
     <Box m={1}>
-      <Helmet>
-        <script src="/file-direct-upload.js" />
-      </Helmet>
       <form className={classes.root} onSubmit={handleSubmit}>
         <TextField
           style={{ margin: 8 }}
