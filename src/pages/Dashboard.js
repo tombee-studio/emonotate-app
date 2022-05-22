@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import SearchResultList from '../components/common/SearchResultList';
 import { withStyles } from '@mui/styles';
-import EmonotateAPI from '../helper/EmonotateAPI';
 
 const styles = (theme) => ({
   root: {
@@ -16,13 +15,6 @@ const styles = (theme) => ({
 
 const Dashboard = (props) => {
   const { classes, keyword } = props;
-  const api = new EmonotateAPI();
-  useEffect(() => {
-    api.get()
-      .then(json => {
-        console.log(json);
-      });
-  }, []);
   return (
     <Box m={2}>
       <SearchResultList keyword={keyword} />

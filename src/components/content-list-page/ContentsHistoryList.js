@@ -1,8 +1,6 @@
 import React from 'react';
-import { Pagination } from '@mui/material';
-import { Card, Divider, Grid, ImageListItem } from '@mui/material';
+import { Pagination, Card, Divider, Grid, ImageListItem, Box, ImageList, ImageListItemBar } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import { Box, ImageList, ImageListItemBar } from '@mui/material';
 import ContentsListAPI from '../../helper/ContentsListAPI';
 
 const styles = (theme) => ({

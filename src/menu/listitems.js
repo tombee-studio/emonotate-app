@@ -1,6 +1,5 @@
 import React from 'react';
-import { Badge } from '@mui/material';
-import { ListSubheader } from '@mui/material';
+import { Badge, ListSubheader } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -33,7 +32,7 @@ export const mainListItems = (numRequest) => {
         </ListItemIcon>
         <ListItemText primary="履歴" />
       </ListItem>
-      { window.django.user.groups.split(',').includes("Researchers") &&
+      { window.django.user.groups.includes("Researchers") &&
         <div>
           <ListItem button component="a" href="/app/content/">
             <ListItemIcon>

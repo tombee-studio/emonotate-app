@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchItem from './SearchItem';
 import { ImageList, ImageListItem } from '@mui/material';
 import YouTubeDataAPI from '../../helper/YouTubeDataAPI';
@@ -10,7 +9,6 @@ const SearchResultList = props => {
     const [pageToken, setPageToken] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
-    console.log(YOUTUBE_API_KEY);
     const api = new YouTubeDataAPI();
     useEffect(() => {
         setLoading(true);

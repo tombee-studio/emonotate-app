@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import MakeCurveComponent from '../components/create-curve-page/MakeCurveComponent';
 import { Box, Select, MenuItem, CircularProgress } from '@mui/material';

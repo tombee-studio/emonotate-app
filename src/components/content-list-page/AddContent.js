@@ -1,7 +1,6 @@
 import { Button, TextField, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 
 const useStyles = makeStyles((theme) => ({

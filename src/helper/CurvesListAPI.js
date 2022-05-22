@@ -53,6 +53,26 @@ export default class CurvesListAPI {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': window.django.csrf,
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => {
+        if(res.status != 200 && res.status != 201) throw res;
+        return res.json();
+      });
+  }
+
+  update(data, queries={
+    'format': 'json'
+  }) {
+    const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+    return fetch(`/api/curves/${data.id}/?${query}`, {
+        method: 'put',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': window.django.csrf,
         },
         body: JSON.stringify(data)
       })

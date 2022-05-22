@@ -1,8 +1,6 @@
 import React from 'react';
-import { Pagination } from '@mui/material';
-import { Avatar, Card, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText } from '@mui/material';
+import { Box, Pagination, Avatar, Card, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import { Box } from '@mui/material';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
