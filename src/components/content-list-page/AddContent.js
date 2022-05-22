@@ -1,7 +1,9 @@
 import { Button, TextField, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+
+import { initMovieLoader } from '../../helper/file-direct-upload';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,10 +38,14 @@ const AddContent = (props) => {
     })
   };
 
+  useEffect(() => {
+    initMovieLoader();
+  }, []);
+
   return (
     <Box m={1}>
       <Helmet>
-        <script src="/static/users/js/file-direct-upload.js" />
+        <script src="/file-direct-upload.js" />
       </Helmet>
       <form className={classes.root} onSubmit={handleSubmit}>
         <TextField
