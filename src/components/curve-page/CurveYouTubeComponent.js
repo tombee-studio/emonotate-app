@@ -20,6 +20,8 @@ class CurveYouTubeComponent extends Component {
         const player = event.target;
         const videoData = player.getVideoData();
         const curveClone = curve;
+        this.getCurrent = () => player.getCurrentTime();
+        this.setCurrent = (value) => player.seekTo(value);
         curveClone.content = {
             'title': videoData.title,
             'video_id': videoData.video_id,
@@ -68,7 +70,11 @@ class CurveYouTubeComponent extends Component {
                 { this.createVideoComponent(videoId, curve) }
                  <Grid item xs={12}>
                     {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
-                        (<InputField duration={duration} data={curve.values} />)}
+                        (<InputField 
+                            duration={duration} 
+                            data={curve.values}
+                            setCurrent={this.setCurrent}
+                            getCurrent={this.getCurrent} />)}
                  </Grid>
              </Grid>
         </Box>);

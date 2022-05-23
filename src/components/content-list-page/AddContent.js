@@ -1,7 +1,8 @@
-import { Button, TextField, Box } from '@mui/material';
+import { Stack, Button, TextField, Box, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import React, { useEffect, useState } from 'react';
+
+import { initMovieLoader } from '../../helper/file-direct-upload';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,25 +23,28 @@ const useStyles = makeStyles((theme) => ({
 
 const AddContent = (props) => {
   const classes = useStyles();
-  const { postAPI } = props;
   const [title, setTitle] = useState('');
   const [url, setURL] = useState('');
+  const [progress, setProgress] = useState(0);
+  const { postAPI } = props;
   const { user } = window.django;
   const handleSubmit = event => {
     event.preventDefault();
-    postAPI({
+    const data = {
       'user': user.id,
       'title': title,
       'url': url,
       'data_type': 'video/mp4',
-    })
+    };
+    postAPI(data);
   };
+
+  useEffect(() => {
+    initMovieLoader(setURL, setProgress);
+  }, []);
 
   return (
     <Box m={1}>
-      <Helmet>
-        <script src="/static/users/js/file-direct-upload.js" />
-      </Helmet>
       <form className={classes.root} onSubmit={handleSubmit}>
         <TextField
           style={{ margin: 8 }}
@@ -50,16 +54,19 @@ const AddContent = (props) => {
           required={true}
           value={title}
           onInput={ e=>setTitle(e.target.value)} />
-        <Button
-          component="label"
-        >
-          ファイルを選択
-          <input
-            type="file"
-            id="id_file"
-            className={classes.inputFileBtnHide}
-          />
-        </Button>
+        <Stack direction="row" spacing={2}>
+          <Button
+            component="label"
+          >
+            ファイルを選択
+            <input
+              type="file"
+              id="id_file"
+              className={classes.inputFileBtnHide}
+            />
+          </Button>
+          <CircularProgress variant="determinate" value={progress} />
+        </Stack>
         <TextField
           style={{ margin: 8 }}
           placeholder="URL"
@@ -69,9 +76,7 @@ const AddContent = (props) => {
           id="id_movie"
           required={true}
           value={url}
-          onChange={value => {
-            setURL(value);
-          }}
+          onChange={value => setURL(value)}
           />
         <Button
           id="button"

@@ -6,9 +6,11 @@ class InputField extends Component {
         super(props)
         this.createLineChart = this.createLineChart.bind(this);
         this.node = createRef();
-        const { duration, data } = props;
+        const { duration, data, getCurrent, setCurrent } = props;
         this.data = data;
         this.duration = duration;
+        this.getCurrent = getCurrent;
+        this.setCurrent = setCurrent;
         this.option = {
             'r': 10,
             'color': "#000"
@@ -98,6 +100,12 @@ class InputField extends Component {
             .attr('y2', this.size.height - margin.bottom)
             .attr("stroke-width",4)
             .attr("stroke","#0e9aa7");
+        setInterval(() => {
+            this.current = this.getCurrent();
+            this.headLine
+                .attr("x1", this.xScale(this.current))
+                .attr("x2", this.xScale(this.current));
+        }, 500);
         this.updateChart();
     }
 
@@ -171,6 +179,7 @@ class InputField extends Component {
         return d3.drag()
             .on('start', d => {
                 this.selected = d;
+                this.setCurrent(d.x);
             })
             .on('drag', d => {
                 const coords = d3.mouse(vis.node());

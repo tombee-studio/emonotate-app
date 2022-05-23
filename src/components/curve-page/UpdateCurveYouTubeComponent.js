@@ -16,7 +16,8 @@ class UpdateCurveYouTubeComponent extends Component {
 
     initCurveComponent(event) {
         const player = event.target;
-        
+        this.getCurrent = () => player.getCurrentTime();
+        this.setCurrent = (value) => player.seekTo(value);
         this.setState({
             isLoadedVideoFlag: true,
             duration: player.getDuration()
@@ -38,7 +39,11 @@ class UpdateCurveYouTubeComponent extends Component {
                     { this.createVideoComponent(videoId, curve) }
                      <Grid item xs={12}>
                         {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
-                            (<InputField duration={duration} data={curve.values} />)}
+                            (<InputField 
+                                duration={duration} 
+                                data={curve.values}
+                                setCurrent={this.setCurrent}
+                                getCurrent={this.getCurrent} />)}
                      </Grid>
                  </Grid>
             </Box>);
