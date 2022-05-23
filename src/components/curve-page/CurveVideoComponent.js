@@ -81,4 +81,4 @@ class CurveVideoComponent extends Component {
     }
 }
 
-export default memo(CurveVideoComponent);
+export default CurveVideoComponent;

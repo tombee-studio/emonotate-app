@@ -78,4 +78,4 @@ class CurveYouTubeComponent extends Component {
     }
 }
 
-export default memo(CurveYouTubeComponent);
+export default CurveYouTubeComponent;

@@ -30,7 +30,7 @@ const ObserverComponent = (props) => {
     const { onChange } = props;
     const [request, setRequest] = useState(props.request);
     const [curve, setCurve] = useState({
-        "values": null,
+        "values": request.values,
         "version": "0.1.1",
         "room_name": "",
         "locked": false,
@@ -85,6 +85,7 @@ const ObserverComponent = (props) => {
         }).then(curves => {
             setCurvesList(curves);
         });
+        loadContentAndValueType(request);
     }, []);
 
     const handlePaginate = (e, page) => {
