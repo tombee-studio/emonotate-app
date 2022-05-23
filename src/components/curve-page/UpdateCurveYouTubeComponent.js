@@ -53,4 +53,4 @@ class UpdateCurveYouTubeComponent extends Component {
     }
 }
 
-export default memo(UpdateCurveYouTubeComponent);
+export default UpdateCurveYouTubeComponent;

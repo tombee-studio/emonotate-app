@@ -18,26 +18,30 @@ class CurveVideoComponent extends Component {
     initCurveComponent(player, curve) {
         const { onChangeCurve } = this.props;
         const curveClone = curve;
-        curveClone.values = [{
-            id: 0,
-            x: 0,
-            y: 0,
-            axis: 'v',
-            type: 'fixed',
-            text:   "",
-            reason: "",
-        }, {
-            id: 1,
-            x: player.duration,
-            y: 0,
-            axis: 'v',
-            type: 'fixed',
-            text:   "",
-            reason: "",
-        }];
+        if(!curveClone.values) {
+            curveClone.values = [{
+                id: 0,
+                x: 0,
+                y: 0,
+                axis: 'v',
+                type: 'fixed',
+                text:   "",
+                reason: "",
+            }, {
+                id: 1,
+                x: player.duration,
+                y: 0,
+                axis: 'v',
+                type: 'fixed',
+                text:   "",
+                reason: "",
+            }];
+        }
+        if(!curveClone.room_name) {
+            curveClone.room_name = `${curve.content.title}-${1}`;
+        }
         this.getCurrent = () => player.currentTime;
         this.setCurrent = (value) => player.currentTime = value;
-        curveClone.room_name = `${curve.content.title}-${1}`;
         onChangeCurve(curveClone);
 
         this.setState({
@@ -77,4 +81,4 @@ class CurveVideoComponent extends Component {
     }
 }
 
-export default memo(CurveVideoComponent);
+export default CurveVideoComponent;
