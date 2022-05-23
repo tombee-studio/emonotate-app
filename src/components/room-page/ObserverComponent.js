@@ -123,6 +123,7 @@ const ObserverComponent = (props) => {
                     const req = { ...request };
                     req.value_type = Number(ev.target.value);
                     setRequest(req);
+                    onChange(req);
                 }} />
             <hr />
             { (curve.content && curve.value_type) && createNewCurveComponent(
