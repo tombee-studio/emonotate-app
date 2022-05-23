@@ -35,6 +35,8 @@ class CurveVideoComponent extends Component {
             text:   "",
             reason: "",
         }];
+        this.getCurrent = () => player.currentTime;
+        this.setCurrent = (value) => player.currentTime = value;
         curveClone.room_name = `${curve.content.title}-${1}`;
         onChangeCurve(curveClone);
 
@@ -50,7 +52,9 @@ class CurveVideoComponent extends Component {
     }
 
     createVideoComponent(curve) {
-        return  <VideoComponent url={curve.content.url} onReady={this.onReady} />;
+        return  <VideoComponent 
+            url={curve.content.url} 
+            onReady={this.onReady} />;
     };
 
     render() {
@@ -62,7 +66,11 @@ class CurveVideoComponent extends Component {
                 { this.createVideoComponent(curve) }
                  <Grid item xs={12}>
                     {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
-                        (<InputField duration={duration} data={curve.values} />)}
+                        (<InputField 
+                            duration={duration} 
+                            data={curve.values} 
+                            setCurrent={this.setCurrent}
+                            getCurrent={this.getCurrent} />)}
                  </Grid>
              </Grid>
         </Box>);

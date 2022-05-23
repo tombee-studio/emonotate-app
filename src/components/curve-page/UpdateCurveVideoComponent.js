@@ -16,6 +16,8 @@ class UpdateCurveVideoComponent extends Component {
     }
 
     initCurveComponent(player) {
+        this.getCurrent = () => player.currentTime;
+        this.setCurrent = (value) => player.currentTime = value;
         this.setState({
             isLoadedVideoFlag: true,
             duration: player.duration
@@ -40,7 +42,11 @@ class UpdateCurveVideoComponent extends Component {
                 { this.createVideoComponent(curve) }
                  <Grid item xs={12}>
                     {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
-                        (<InputField duration={duration} data={curve.values} />)}
+                        (<InputField 
+                            duration={duration} 
+                            data={curve.values}
+                            setCurrent={this.setCurrent}
+                            getCurrent={this.getCurrent} />)}
                  </Grid>
              </Grid>
         </Box>);
