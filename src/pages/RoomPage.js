@@ -32,10 +32,16 @@ const RoomPage = props => {
     };
     const update = ev => {
         const api = new RequestListAPI();
-        console.log(request);
         request.content = request.content.id;
         request.owner = request.owner.id;
         request.value_type = request.value_type.id;
+        request.values = request.values.map(point => {
+            const p = {...point};
+            p.y = 0;
+            p.axis = "v";
+            p.type = "fixed";
+            return p;
+        });
         api.update(request.id, request)
             .then(json => {
                 handleClick();
@@ -114,10 +120,7 @@ const RoomPage = props => {
                     return (<Box m={2}>
                         <ObserverComponent 
                             request={ request } 
-                            onChange={ req => {
-                                console.log(req);
-                                setRequest(req);
-                            } } />
+                            onChange={ req => setRequest(req)} />
                         <Grid container spacing={2}>
                             <Grid item>
                                 <ButtonGroup>
@@ -142,9 +145,7 @@ const RoomPage = props => {
                     return (<Box m={2}>
                         <ObserverComponent 
                             request={ request } 
-                            onChange={ request => {
-                                setRequest(request);
-                            } } />
+                            onChange={ (request) => setRequest(request)} />
                         <ButtonGroup>
                             <Button variant="outlined" onClick={create}>作成</Button>
                         </ButtonGroup>
