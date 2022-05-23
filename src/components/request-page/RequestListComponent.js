@@ -34,14 +34,7 @@ export default class RequestListComponent extends React.Component {
                                 <ListItem
                                     button
                                     component="a"
-                                    href={
-                                        `/app/curves?${
-                                            request.intervals != 1 ? `counts=${request.intervals}&` : ""
-                                        }${
-                                            request.content.video_id ? `videoId=${request.content.video_id}`
-                                            :`content=${request.content.id}`
-                                        }&value_type=${request.value_type.id}&room=${request.room_name}&title=${request.content.title}`
-                                    }
+                                    href={ `/app/curves?request=${request.id}` }
                                     key={request.room_name}
                                     alignItems="flex-start">
                                     <ListItemAvatar>

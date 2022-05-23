@@ -13,6 +13,7 @@ import { Route, useLocation } from 'react-router-dom';
 import CurvesListAPI from "../helper/CurvesListAPI";
 import CurveWithYouTubeAPI from "../helper/CurveWithYouTubeAPI";
 import ContentListAPI from "../helper/ContentsListAPI";
+import RequestListAPI from "../helper/RequestListAPI";
 import CurveYouTubeComponent from "../components/curve-page/CurveYouTubeComponent";
 import CurveVideoComponent from "../components/curve-page/CurveVideoComponent";
 import UpdateCurveYouTubeComponent from '../components/curve-page/UpdateCurveYouTubeComponent';
@@ -21,7 +22,6 @@ import UpdateCurveVideoComponent from '../components/curve-page/UpdateCurveVideo
 
 const createNewCurveComponent = (curve, setCurveData, videoId) => {
     if(curve.content.video_id) {
-        console.log(curve);
         return <CurveYouTubeComponent 
             curve={curve} 
             videoId={videoId}
@@ -52,6 +52,7 @@ const CurvePage = props => {
     const params = new URLSearchParams(search);
     const videoId = params.get('videoId');
     const contentId = params.get('content');
+    const requestId = params.get('request');
     const { id }  = props;
     const [useSnackbar, setSnackbar] = useState(false);
     const [curve, setCurveData] = useState({});
@@ -163,6 +164,21 @@ const CurvePage = props => {
             }).catch(message => {
                 alert(message);
             });
+        } else if(requestId) {
+            const api = new RequestListAPI();
+            api.getItem(requestId, { 'format': 'json' })
+                .then(req => {
+                    setCurveData({
+                        "values": req.values,
+                        "version": "0.1.1",
+                        "room_name": req.room_name,
+                        "locked": true,
+                        "user": django.user.id,
+                        "content": req.content,
+                        "value_type": req.value_type
+                    });
+                    setLoadedFlag(true);
+                });
         } else {
             const { YOUTUBE_API_KEY } = window.django;
             (new Promise((resolve) => {

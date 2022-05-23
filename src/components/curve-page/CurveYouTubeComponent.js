@@ -15,37 +15,34 @@ class CurveYouTubeComponent extends Component {
     }
 
     initCurveComponent(event, curve) {
-        const { django } = window;
         const { onChangeCurve } = this.props;
         const player = event.target;
         const videoData = player.getVideoData();
         const curveClone = curve;
         this.getCurrent = () => player.getCurrentTime();
         this.setCurrent = (value) => player.seekTo(value);
-        curveClone.content = {
-            'title': videoData.title,
-            'video_id': videoData.video_id,
-            'url': player.getVideoUrl(),
-            'user': django.user.id
-        };
-        curveClone.values = [{
-            id: 0,
-            x: 0,
-            y: 0,
-            axis: 'v',
-            type: 'fixed',
-            text:   "",
-            reason: "",
-        }, {
-            id: 1,
-            x: player.getDuration(),
-            y: 0,
-            axis: 'v',
-            type: 'fixed',
-            text:   "",
-            reason: "",
-        }];
-        curveClone.room_name = `${videoData.video_id}-${1}`;
+        if(!curveClone.values.length) {
+            curveClone.values = [{
+                id: 0,
+                x: 0,
+                y: 0,
+                axis: 'v',
+                type: 'fixed',
+                text:   "",
+                reason: "",
+            }, {
+                id: 1,
+                x: player.getDuration(),
+                y: 0,
+                axis: 'v',
+                type: 'fixed',
+                text:   "",
+                reason: "",
+            }];
+        }
+        if(!curveClone.room_name) {
+            curveClone.room_name = `${videoData.video_id}-${1}`;
+        }
         onChangeCurve(curveClone);
 
         this.setState({
