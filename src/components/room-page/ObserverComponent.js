@@ -9,6 +9,8 @@ import CurveVideoComponent from "../../components/curve-page/CurveVideoComponent
 import EmailAddressList from "./EmailAddressList";
 import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
+import CurvesListAPI from "../../helper/CurvesListAPI";
+import CurvesListComponent from "../common/CurvesListComponent";
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
@@ -36,6 +38,7 @@ const ObserverComponent = (props) => {
         "content": null,
         "value_type": null 
     });
+    const [curvesList, setCurvesList] = useState(false);
     
     const onChangeEmailList = (participants) => {
         const req = {...request};
@@ -73,6 +76,35 @@ const ObserverComponent = (props) => {
         contentRef.current = request.content;
         valueTypeRef.current = request.value_type;
     });
+    
+    useEffect(() => {
+        const api = new CurvesListAPI();
+        api.list({
+            'format': 'json',
+            'search': request.room_name
+        }).then(curves => {
+            setCurvesList(curves);
+        });
+    }, []);
+
+    const handlePaginate = (e, page) => {
+        this.api.list({
+            'format': 'json',
+            'search': request.room_name,
+            'page': page
+        })
+          .then(res => {
+            return res.json()
+          })
+          .then(curves => {
+            this.setState({
+              curves: curves
+            })
+          })
+          .catch(err => {
+            console.log(err)
+          });
+      };
 
     if((contentRef.current != request.content) || (valueTypeRef.current != request.value_type)) {
         loadContentAndValueType(request);
@@ -138,6 +170,7 @@ const ObserverComponent = (props) => {
             <EmailAddressList 
                 participants={request.participants} 
                 onChangeEmailList={onChangeEmailList} />
+            { curvesList && <CurvesListComponent curves={curvesList} handlePaginate={handlePaginate} /> }
         </FormControl>
     );
 };
