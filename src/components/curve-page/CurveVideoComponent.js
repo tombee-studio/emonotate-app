@@ -1,4 +1,4 @@
-import React, { Component, memo } from "react";
+import React, { Component } from "react";
 
 import { Box, CircularProgress, Grid } from "@mui/material";
 import InputField from "./InputField";
@@ -17,8 +17,8 @@ class CurveVideoComponent extends Component {
 
     initCurveComponent(player, curve) {
         const { onChangeCurve } = this.props;
-        const curveClone = curve;
-        if(!curveClone.values) {
+        const curveClone = { ...curve };
+        if(!curveClone.values || curveClone.values.length < 2) {
             curveClone.values = [{
                 id: 0,
                 x: 0,

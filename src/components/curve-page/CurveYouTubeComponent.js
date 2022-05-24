@@ -1,4 +1,4 @@
-import React, { Component, memo } from "react";
+import React, { Component } from "react";
 
 import { Box, CircularProgress, Grid } from "@mui/material";
 import YouTubeVideoComponent from "./YouTubeVideoComponent";
@@ -18,10 +18,10 @@ class CurveYouTubeComponent extends Component {
         const { onChangeCurve } = this.props;
         const player = event.target;
         const videoData = player.getVideoData();
-        const curveClone = curve;
+        const curveClone = { ...curve };
         this.getCurrent = () => player.getCurrentTime();
         this.setCurrent = (value) => player.seekTo(value);
-        if(!curveClone.values.length) {
+        if(!curveClone.values || curveClone.values.length < 2) {
             curveClone.values = [{
                 id: 0,
                 x: 0,

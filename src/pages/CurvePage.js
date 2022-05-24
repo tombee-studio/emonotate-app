@@ -92,8 +92,8 @@ const CurvePage = props => {
             });
         } else {
             const curvesListAPI = new CurvesListAPI();
-            const curveClone = curve;
-            curveClone["user"] = curve.user.id;
+            const curveClone = { ...curve };
+            curveClone["user"] = django.user.id;
             curveClone["content"] = curve.content.id;
             curveClone["value_type"] = curve.value_type.id;
             curvesListAPI.create(curveClone)
