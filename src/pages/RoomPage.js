@@ -31,18 +31,21 @@ const RoomPage = props => {
             });
     };
     const update = ev => {
+        const req = { ...request };
+        const { questionaire, content, owner, value_type } = request;
         const api = new RequestListAPI();
-        request.content = request.content.id;
-        request.owner = request.owner.id;
-        request.value_type = request.value_type.id;
-        request.values = request.values.map(point => {
+        req.content = content.id;
+        req.owner = owner.id;
+        req.value_type = value_type.id;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = request.values.map(point => {
             const p = {...point};
             p.y = 0;
             p.axis = "v";
             p.type = "fixed";
             return p;
         });
-        api.update(request.id, request)
+        api.update(req.id, req)
             .then(json => {
                 handleClick();
             })
