@@ -57,7 +57,7 @@ const RoomPage = props => {
         const api = new CurvesListAPI();
         api.list({
             'format': 'json',
-            'search': this.request.room_name,
+            'search': request.room_name,
             'page_size': 200,
         })
         .then(json => {
