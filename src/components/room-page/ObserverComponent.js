@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { 
     FormControl,
     FormLabel,
+    Box,
     TextField } from "@mui/material";
 import "video.js/dist/video-js.css";
 import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
@@ -11,23 +12,30 @@ import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
 import CurvesListComponent from "../common/CurvesListComponent";
+import Autocomplete from '@mui/material/Autocomplete';
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
-        return <CurveYouTubeComponent 
-            curve={curve} 
-            videoId={curve.content.video_id}
-            onChangeCurve={curve => setCurveData(curve)} />;
+        return <Box m={2}>
+            <CurveYouTubeComponent 
+                curve={curve} 
+                videoId={curve.content.video_id}
+                onChangeCurve={curve => setCurveData(curve)} />
+        </Box>;
     } else {
-        return <CurveVideoComponent 
-            curve={curve} 
-            onChangeCurve={curve => setCurveData(curve)} />
+        return <Box m={2}>
+            <CurveVideoComponent 
+                curve={curve} 
+                onChangeCurve={curve => setCurveData(curve)} />
+        </Box>;
     }
 };
 
 const ObserverComponent = (props) => {
     const { django } = window;
     const { onChange } = props;
+    const [contents, setContents] = useState([]);
+    const [valueTypes, setValueTypes] = useState([]);
     const [request, setRequest] = useState(props.request);
     const [curve, setCurve] = useState({
         "values": request.values,
@@ -138,26 +146,51 @@ const ObserverComponent = (props) => {
                 }} />
             <hr />
             <FormLabel>コンテンツ</FormLabel>
-            <TextField 
-                id="content" 
-                value={request.content}
-                onChange={ev => {
+            { curve.content && <Autocomplete 
+                options={contents}
+                defaultValue={curve.content}
+                getOptionLabel={content => content.title}
+                renderInput={params => <TextField {...params}/>}
+                onInputChange={(event, value) => {
+                    const api = new ContentsListAPI();
+                    api.history(data => {
+                        setContents(data.models);
+                    }, err => {
+                        console.log(err);
+                    })
+                }}
+                onChange={(_, content) => {
                     const req = { ...request };
-                    req.content = Number(ev.target.value);
+                    req.content = content.id;
+                    curve.values = [];
                     setRequest(req);
                     onChange(req);
-                }} />
+                }}
+            /> }
             <hr />
             <FormLabel>種類</FormLabel>
-            <TextField 
-                id="value_type" 
-                value={request.value_type} 
-                onChange={ev => {
+            { curve.value_type && <Autocomplete 
+                options={valueTypes}
+                defaultValue={curve.value_type}
+                getOptionLabel={value_type => value_type.title}
+                renderInput={params => <TextField {...params}/>}
+                onInputChange={(event, value) => {
+                    console.log(value);
+                    const api = new ValueTypeListAPI();
+                    api.history(data => {
+                        setValueTypes(data.models);
+                    }, err => {
+                        console.log(err);
+                    })
+                }}
+                onChange={(_, valueType) => {
                     const req = { ...request };
-                    req.value_type = Number(ev.target.value);
+                    req.value_type = valueType.id;
+                    curve.values = [];
                     setRequest(req);
                     onChange(req);
-                }} />
+                }}
+            /> }
             <hr />
             { (curve.content && curve.value_type) && createNewCurveComponent(
                 curve, (_curve) => {

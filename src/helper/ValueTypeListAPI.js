@@ -16,6 +16,17 @@ export default class ValueTypeListAPI {
     }
   }
 
+  list(queries={
+    'format': 'json'
+  }) {
+    const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+    return fetch(`/api/valuetypes/?${query}`)
+      .then(res => {
+          if(res.status != 200 && res.status != 201) throw res.message;
+          return res.json();
+      });
+  }
+
   getItem(id, queries={
     'format': 'json'
   }) {
