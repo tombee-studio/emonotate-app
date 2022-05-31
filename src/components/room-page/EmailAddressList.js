@@ -22,6 +22,7 @@ class EmailAddressList extends React.Component {
     }
 
     handleKeyDown = evt => {
+        const { request } = this.props;
         if (["Enter", "Tab", ","].includes(evt.key)) {
             evt.preventDefault();
 
@@ -33,7 +34,7 @@ class EmailAddressList extends React.Component {
                     items: items,
                     value: ""
                 });
-                this.onChangeEmailList(items);
+                this.onChangeEmailList(request, items);
             }
         }
     };

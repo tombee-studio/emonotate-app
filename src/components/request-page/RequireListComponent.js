@@ -13,6 +13,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import RequestListAPI from '../../helper/RequestListAPI';
 
 export default class RequireListComponent extends React.Component {
@@ -26,12 +27,19 @@ export default class RequireListComponent extends React.Component {
         return (
             <Box m={2}>
                 <Typography
-                    component="span"
+                    component="div"
                     variant="h6"
-                    color="textPrimary"
-                >
+                    color="textPrimary">
                     あなたが設定した実験
-                </Typography>
+                    <IconButton
+                        component="a"
+                        edge="end"
+                        aria-label="delete"
+                        href={`/app/rooms/`}
+                        size="large">
+                        <AddIcon />
+                    </IconButton>
+                    </Typography>
                 <Divider />
                 <List>
                     {

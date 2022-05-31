@@ -22,6 +22,7 @@ const RoomPage = props => {
     const [useSnackbar, setSnackbar] = useState(false);
     const create = ev => {
         const api = new RequestListAPI();
+        console.log(request);
         api.create(request)
             .then(json => {
                 handleClick();
@@ -149,7 +150,10 @@ const RoomPage = props => {
                     return (<Box m={2}>
                         <ObserverComponent 
                             request={ request } 
-                            onChange={ (request) => setRequest(request)} />
+                            onChange={ (request) => {
+                                console.log(request);
+                                setRequest(request);
+                            }} />
                         <ButtonGroup>
                             <Button variant="outlined" onClick={create}>作成</Button>
                         </ButtonGroup>

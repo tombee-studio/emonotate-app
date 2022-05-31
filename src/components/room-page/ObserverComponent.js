@@ -47,13 +47,6 @@ const ObserverComponent = (props) => {
         "value_type": null 
     });
     const [curvesList, setCurvesList] = useState(false);
-    
-    const onChangeEmailList = (participants) => {
-        const req = {...request};
-        req.participants = participants;
-        setRequest(req);
-        onChange(req);
-    };
 
     const loadContentAndValueType = (request) => {
         const contentAPI = new ContentsListAPI();
@@ -147,7 +140,7 @@ const ObserverComponent = (props) => {
                 }} />
             <hr />
             <FormLabel>コンテンツ</FormLabel>
-            { curve.content && <Autocomplete 
+            <Autocomplete 
                 options={contents}
                 defaultValue={curve.content}
                 getOptionLabel={content => content.title}
@@ -172,10 +165,10 @@ const ObserverComponent = (props) => {
                     setRequest(req);
                     onChange(req);
                 }}
-            /> }
+            />
             <hr />
             <FormLabel>種類</FormLabel>
-            { curve.value_type && <Autocomplete 
+            <Autocomplete 
                 options={valueTypes}
                 defaultValue={curve.value_type}
                 getOptionLabel={value_type => value_type.title}
@@ -197,7 +190,7 @@ const ObserverComponent = (props) => {
                     setRequest(req);
                     onChange(req);
                 }}
-            /> }
+            />
             <hr />
             { (curve.content && curve.value_type) && createNewCurveComponent(
                 curve, (_curve) => {
@@ -209,8 +202,15 @@ const ObserverComponent = (props) => {
                 })}
             <hr />
             <EmailAddressList 
+                request={request}
                 participants={request.participants} 
-                onChangeEmailList={onChangeEmailList} />
+                onChangeEmailList={(request, participants) => {
+                    const req = { ...request };
+                    console.log(req);
+                    req.participants = participants;
+                    setRequest(req);
+                    onChange(req);
+                }}/>
             { curvesList && <CurvesListComponent curves={curvesList} handlePaginate={handlePaginate} /> }
         </FormControl>
     );
