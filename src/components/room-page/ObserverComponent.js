@@ -72,9 +72,10 @@ const ObserverComponent = (props) => {
         ]).then(result => {
             const [content, valueType] = result;
             if(!content || !valueType) return;
-            curve.content = content;
-            curve.value_type = valueType;
-            setCurve(curve);
+            const _curve = {...curve};
+            _curve.content = content;
+            _curve.value_type = valueType;
+            setCurve(_curve);
         });
     };
 
@@ -153,13 +154,18 @@ const ObserverComponent = (props) => {
                 renderInput={params => <TextField {...params}/>}
                 onInputChange={(event, value) => {
                     const api = new ContentsListAPI();
-                    api.history(data => {
+                    api.list({
+                        'format': 'json',
+                        'search': value
+                    })
+                    .then(data => {
                         setContents(data.models);
                     }, err => {
                         console.log(err);
                     })
                 }}
                 onChange={(_, content) => {
+                    if(!content) return;
                     const req = { ...request };
                     req.content = content.id;
                     curve.values = [];
@@ -175,15 +181,16 @@ const ObserverComponent = (props) => {
                 getOptionLabel={value_type => value_type.title}
                 renderInput={params => <TextField {...params}/>}
                 onInputChange={(event, value) => {
-                    console.log(value);
                     const api = new ValueTypeListAPI();
-                    api.history(data => {
+                    api.list({
+                        'format': 'json',
+                        'search': value
+                    }).then(data => {
                         setValueTypes(data.models);
-                    }, err => {
-                        console.log(err);
-                    })
+                    });
                 }}
                 onChange={(_, valueType) => {
+                    if(!valueType) return;
                     const req = { ...request };
                     req.value_type = valueType.id;
                     curve.values = [];
