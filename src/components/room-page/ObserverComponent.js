@@ -43,8 +43,8 @@ const ObserverComponent = (props) => {
         "room_name": "",
         "locked": false,
         "user": django.user.id,
-        "content": null,
-        "value_type": null 
+        "content": props.request.content,
+        "value_type": props.request.value_type 
     });
     const [curvesList, setCurvesList] = useState(false);
 

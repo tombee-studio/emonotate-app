@@ -99,9 +99,6 @@ const RoomPage = props => {
                 if(request.owner.id != window.django.user.id) 
                     throw 'access denied';
                 const req = {...request};
-                req.content = req.content.id;
-                req.owner = req.owner.id;
-                req.value_type = req.value_type.id;
                 setRequest(req);
                 setLoading(true);
             }).catch(message => {
