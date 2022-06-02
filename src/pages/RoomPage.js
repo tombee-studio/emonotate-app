@@ -22,8 +22,21 @@ const RoomPage = props => {
     const [useSnackbar, setSnackbar] = useState(false);
     const create = ev => {
         const api = new RequestListAPI();
-        console.log(request);
-        api.create(request)
+        const req = { ...request };
+        const { questionaire, content, owner, value_type, values } = request;
+        req.content = content;
+        req.owner = owner;
+        req.value_type = value_type;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = values.map(point => {
+            const p = {...point};
+            p.y = 0;
+            p.axis = "v";
+            p.type = "fixed";
+            return p;
+        });
+        console.log(req);
+        api.create(req)
             .then(json => {
                 handleClick();
             })
@@ -33,13 +46,13 @@ const RoomPage = props => {
     };
     const update = ev => {
         const req = { ...request };
-        const { questionaire, content, owner, value_type } = request;
+        const { questionaire, content, owner, value_type, values } = request;
         const api = new RequestListAPI();
         req.content = content.id;
         req.owner = owner.id;
         req.value_type = value_type.id;
         req.questionaire = questionaire ? questionaire.id : null;
-        req.values = request.values.map(point => {
+        req.values = values.map(point => {
             const p = {...point};
             p.y = 0;
             p.axis = "v";
