@@ -35,7 +35,6 @@ const RoomPage = props => {
             p.type = "fixed";
             return p;
         });
-        console.log(req);
         api.create(req)
             .then(json => {
                 handleClick();
@@ -160,10 +159,7 @@ const RoomPage = props => {
                     return (<Box m={2}>
                         <ObserverComponent 
                             request={ request } 
-                            onChange={ (request) => {
-                                console.log(request);
-                                setRequest(request);
-                            }} />
+                            onChange={ (request) => setRequest(request)} />
                         <ButtonGroup>
                             <Button variant="outlined" onClick={create}>作成</Button>
                         </ButtonGroup>
