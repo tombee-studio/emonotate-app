@@ -101,6 +101,7 @@ const RoomPage = props => {
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
         setSnackbar(false);
+        setTimeout(() => window.location.href = "/app/requests/", 1000);
     };
     useEffect(() => {
         if(id) {
