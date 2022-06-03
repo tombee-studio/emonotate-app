@@ -62,6 +62,7 @@ const CurvePage = props => {
     const create = ev => {
         if(videoId) {
             const api = new CurveWithYouTubeAPI();
+            console.log(curve);
             curve["youtube"] = curve["content"];
             api.create(curve)
             .then(json => {
@@ -188,6 +189,8 @@ const CurvePage = props => {
                     resolve("youtube");
                 } else if(contentId) {
                     resolve("video");
+                } else {
+                    console.log("ERROR");
                 }
             })).then(flag => {
                 if(flag === "youtube") {
@@ -197,7 +200,7 @@ const CurvePage = props => {
                         id: videoId,
                         part: 'snippet'
                     }).then(res => {
-                        if(res.status === 200) return res.items[0].snippet.title;
+                        return res.items[0].snippet.title;
                     }).then(title => {
                         setCurveData({
                             "values": null,
