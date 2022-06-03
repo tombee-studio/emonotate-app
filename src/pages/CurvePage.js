@@ -20,11 +20,12 @@ import UpdateCurveYouTubeComponent from '../components/curve-page/UpdateCurveYou
 import YouTubeDataAPI from '../helper/YouTubeDataAPI';
 import UpdateCurveVideoComponent from '../components/curve-page/UpdateCurveVideoComponent';
 
-const createNewCurveComponent = (curve, setCurveData, videoId) => {
+const createNewCurveComponent = (curve, setCurveData) => {
+    const { video_id } = curve.content;
     if(curve.content.video_id) {
         return <CurveYouTubeComponent 
             curve={curve} 
-            videoId={videoId}
+            videoId={video_id}
             onChangeCurve={curve => setCurveData(curve)} />;
     } else {
         return <CurveVideoComponent curve={curve} 
@@ -33,10 +34,11 @@ const createNewCurveComponent = (curve, setCurveData, videoId) => {
 };
 
 const createUpdateCurveComponent = (curve, setCurveData) => {
+    const { video_id } = curve.content;
     if(curve.content.is_youtube) {
         return <UpdateCurveYouTubeComponent 
             curve={curve} 
-            videoId={curve.content.video_id}
+            videoId={video_id}
             onChangeCurve={curve => setCurveData(curve)} />;
     } else {
         return <UpdateCurveVideoComponent 
@@ -254,7 +256,10 @@ const CurvePage = props => {
                             <Grid container spacing={2}>
                                 <Grid item>
                                     <ButtonGroup>
-                                        <Button variant="outlined" onClick={update}>更新</Button>
+                                        <Button 
+                                            variant="outlined" 
+                                            onClick={update}
+                                            disabled={curve.locked} >更新</Button>
                                     </ButtonGroup>
                                 </Grid>
                             </Grid>
@@ -269,7 +274,7 @@ const CurvePage = props => {
                 } else {
                     return (<Box p={2}>
                         <Stack>
-                            { createNewCurveComponent(curve, setCurveData, videoId) }
+                            { createNewCurveComponent(curve, setCurveData) }
                             <ButtonGroup>
                                 <Button variant="outlined" onClick={create}>作成</Button>
                             </ButtonGroup>

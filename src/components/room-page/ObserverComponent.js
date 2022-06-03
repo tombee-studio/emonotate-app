@@ -91,22 +91,14 @@ const ObserverComponent = (props) => {
     }, []);
 
     const handlePaginate = (e, page) => {
-        this.api.list({
+        const api = new CurvesListAPI();
+        api.list({
             'format': 'json',
             'search': request.room_name,
             'page': page
         })
-          .then(res => {
-            return res.json()
-          })
-          .then(curves => {
-            this.setState({
-              curves: curves
-            })
-          })
-          .catch(err => {
-            console.log(err)
-          });
+        .then(curves => setCurvesList(curves))
+        .catch(err => console.log(err));
       };
 
     if((contentRef.current != request.content) || (valueTypeRef.current != request.value_type)) {
