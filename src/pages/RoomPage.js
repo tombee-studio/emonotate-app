@@ -22,7 +22,20 @@ const RoomPage = props => {
     const [useSnackbar, setSnackbar] = useState(false);
     const create = ev => {
         const api = new RequestListAPI();
-        api.create(request)
+        const req = { ...request };
+        const { questionaire, content, owner, value_type, values } = request;
+        req.content = content;
+        req.owner = owner;
+        req.value_type = value_type;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = values.map(point => {
+            const p = {...point};
+            p.y = 0;
+            p.axis = "v";
+            p.type = "fixed";
+            return p;
+        });
+        api.create(req)
             .then(json => {
                 handleClick();
             })
@@ -31,18 +44,21 @@ const RoomPage = props => {
             });
     };
     const update = ev => {
+        const req = { ...request };
+        const { questionaire, content, owner, value_type, values } = request;
         const api = new RequestListAPI();
-        request.content = request.content.id;
-        request.owner = request.owner.id;
-        request.value_type = request.value_type.id;
-        request.values = request.values.map(point => {
+        req.content = content.id;
+        req.owner = owner.id;
+        req.value_type = value_type.id;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = values.map(point => {
             const p = {...point};
             p.y = 0;
             p.axis = "v";
             p.type = "fixed";
             return p;
         });
-        api.update(request.id, request)
+        api.update(req.id, req)
             .then(json => {
                 handleClick();
             })
@@ -85,6 +101,7 @@ const RoomPage = props => {
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
         setSnackbar(false);
+        setTimeout(() => window.location.href = "/app/requests/", 1000);
     };
     useEffect(() => {
         if(id) {
@@ -94,10 +111,8 @@ const RoomPage = props => {
             }).then(request => {
                 if(request.owner.id != window.django.user.id) 
                     throw 'access denied';
-                request.content = request.content.id;
-                request.owner = request.owner.id;
-                request.value_type = request.value_type.id;
-                setRequest(request);
+                const req = {...request};
+                setRequest(req);
                 setLoading(true);
             }).catch(message => {
                 setRequest({

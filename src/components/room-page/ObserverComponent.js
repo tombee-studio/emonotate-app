@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { 
     FormControl,
     FormLabel,
+    Box,
     TextField } from "@mui/material";
 import "video.js/dist/video-js.css";
 import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
@@ -11,23 +12,30 @@ import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
 import CurvesListComponent from "../common/CurvesListComponent";
+import Autocomplete from '@mui/material/Autocomplete';
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
-        return <CurveYouTubeComponent 
-            curve={curve} 
-            videoId={curve.content.video_id}
-            onChangeCurve={curve => setCurveData(curve)} />;
+        return <Box m={2}>
+            <CurveYouTubeComponent 
+                curve={curve} 
+                videoId={curve.content.video_id}
+                onChangeCurve={curve => setCurveData(curve)} />
+        </Box>;
     } else {
-        return <CurveVideoComponent 
-            curve={curve} 
-            onChangeCurve={curve => setCurveData(curve)} />
+        return <Box m={2}>
+            <CurveVideoComponent 
+                curve={curve} 
+                onChangeCurve={curve => setCurveData(curve)} />
+        </Box>;
     }
 };
 
 const ObserverComponent = (props) => {
     const { django } = window;
     const { onChange } = props;
+    const [contents, setContents] = useState([]);
+    const [valueTypes, setValueTypes] = useState([]);
     const [request, setRequest] = useState(props.request);
     const [curve, setCurve] = useState({
         "values": request.values,
@@ -35,17 +43,10 @@ const ObserverComponent = (props) => {
         "room_name": "",
         "locked": false,
         "user": django.user.id,
-        "content": null,
-        "value_type": null 
+        "content": props.request.content,
+        "value_type": props.request.value_type 
     });
     const [curvesList, setCurvesList] = useState(false);
-    
-    const onChangeEmailList = (participants) => {
-        const req = {...request};
-        req.participants = participants;
-        setRequest(req);
-        onChange(req);
-    };
 
     const loadContentAndValueType = (request) => {
         const contentAPI = new ContentsListAPI();
@@ -64,9 +65,10 @@ const ObserverComponent = (props) => {
         ]).then(result => {
             const [content, valueType] = result;
             if(!content || !valueType) return;
-            curve.content = content;
-            curve.value_type = valueType;
-            setCurve(curve);
+            const _curve = {...curve};
+            _curve.content = content;
+            _curve.value_type = valueType;
+            setCurve(_curve);
         });
     };
 
@@ -89,22 +91,14 @@ const ObserverComponent = (props) => {
     }, []);
 
     const handlePaginate = (e, page) => {
-        this.api.list({
+        const api = new CurvesListAPI();
+        api.list({
             'format': 'json',
             'search': request.room_name,
             'page': page
         })
-          .then(res => {
-            return res.json()
-          })
-          .then(curves => {
-            this.setState({
-              curves: curves
-            })
-          })
-          .catch(err => {
-            console.log(err)
-          });
+        .then(curves => setCurvesList(curves))
+        .catch(err => console.log(err));
       };
 
     if((contentRef.current != request.content) || (valueTypeRef.current != request.value_type)) {
@@ -138,26 +132,57 @@ const ObserverComponent = (props) => {
                 }} />
             <hr />
             <FormLabel>コンテンツ</FormLabel>
-            <TextField 
-                id="content" 
-                value={request.content}
-                onChange={ev => {
+            <Autocomplete 
+                options={contents}
+                defaultValue={curve.content}
+                getOptionLabel={content => content.title}
+                renderInput={params => <TextField {...params}/>}
+                onInputChange={(event, value) => {
+                    const api = new ContentsListAPI();
+                    api.list({
+                        'format': 'json',
+                        'search': value
+                    })
+                    .then(data => {
+                        setContents(data.models);
+                    }, err => {
+                        console.log(err);
+                    })
+                }}
+                onChange={(_, content) => {
+                    if(!content) return;
                     const req = { ...request };
-                    req.content = Number(ev.target.value);
+                    req.content = content.id;
+                    curve.values = [];
                     setRequest(req);
                     onChange(req);
-                }} />
+                }}
+            />
             <hr />
             <FormLabel>種類</FormLabel>
-            <TextField 
-                id="value_type" 
-                value={request.value_type} 
-                onChange={ev => {
+            <Autocomplete 
+                options={valueTypes}
+                defaultValue={curve.value_type}
+                getOptionLabel={value_type => value_type.title}
+                renderInput={params => <TextField {...params}/>}
+                onInputChange={(event, value) => {
+                    const api = new ValueTypeListAPI();
+                    api.list({
+                        'format': 'json',
+                        'search': value
+                    }).then(data => {
+                        setValueTypes(data.models);
+                    });
+                }}
+                onChange={(_, valueType) => {
+                    if(!valueType) return;
                     const req = { ...request };
-                    req.value_type = Number(ev.target.value);
+                    req.value_type = valueType.id;
+                    curve.values = [];
                     setRequest(req);
                     onChange(req);
-                }} />
+                }}
+            />
             <hr />
             { (curve.content && curve.value_type) && createNewCurveComponent(
                 curve, (_curve) => {
@@ -169,8 +194,15 @@ const ObserverComponent = (props) => {
                 })}
             <hr />
             <EmailAddressList 
+                request={request}
                 participants={request.participants} 
-                onChangeEmailList={onChangeEmailList} />
+                onChangeEmailList={(request, participants) => {
+                    const req = { ...request };
+                    console.log(req);
+                    req.participants = participants;
+                    setRequest(req);
+                    onChange(req);
+                }}/>
             { curvesList && <CurvesListComponent curves={curvesList} handlePaginate={handlePaginate} /> }
         </FormControl>
     );

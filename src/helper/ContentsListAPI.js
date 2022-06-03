@@ -16,6 +16,17 @@ export default class ContentsListAPI {
     }
   }
 
+  list(queries={
+    'format': 'json'
+  }) {
+    const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+    return fetch(`/api/contents/?${query}`)
+      .then(res => {
+          if(res.status != 200 && res.status != 201) throw res.message;
+          return res.json();
+      });
+  }
+
   history(success, failed, page) {
     if(page) {
       fetch(`/history/contents/?format=json&page=${page}`)
