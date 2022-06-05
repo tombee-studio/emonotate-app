@@ -11,7 +11,7 @@ export default class RequestListAPI {
         var query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
         return fetch(`/api/requests/${id}?${query}`)
             .then(res => {
-                if(res.status != 200) throw res.message;
+                if(res.status !== 200) throw res.message;
                 return res.json();
             });
     }
@@ -27,7 +27,7 @@ export default class RequestListAPI {
                 },
                 body: JSON.stringify(data) })
             .then(res => {
-                if(res.status != 200 && res.status != 201) throw res.message;
+                if(res.status !== 200 && res.status !== 201) throw res.message;
                 return res.json();
             });
     }
@@ -43,7 +43,7 @@ export default class RequestListAPI {
                 },
                 body: JSON.stringify(data) })
             .then(res => {
-                if(res.status != 200) throw res.message;
+                if(res.status !== 200) throw res.message;
                 return res.json();
             });
     }

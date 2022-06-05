@@ -101,7 +101,7 @@ const ObserverComponent = (props) => {
         .catch(err => console.log(err));
       };
 
-    if((contentRef.current != request.content) || (valueTypeRef.current != request.value_type)) {
+    if((contentRef.current !== request.content) || (valueTypeRef.current !== request.value_type)) {
         loadContentAndValueType(request);
     }
 

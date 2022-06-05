@@ -109,7 +109,7 @@ const RoomPage = props => {
             api.getItem(id, {
                 'format': 'json'
             }).then(request => {
-                if(request.owner.id != window.django.user.id) 
+                if(request.owner.id !== window.django.user.id) 
                     throw 'access denied';
                 const req = {...request};
                 setRequest(req);

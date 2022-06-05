@@ -6,7 +6,7 @@ export default class YouTubeContentListAPI {
         const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
         return fetch(`/api/youtube/?${query}`)
             .then(res => {
-                if(res.status != 200 && res.status != 201) throw res.message;
+                if(res.status !== 200 && res.status !== 201) throw res.message;
                 return res.json();
             });
     }
@@ -17,7 +17,7 @@ export default class YouTubeContentListAPI {
         const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
         return fetch(`/api/youtube/${id}?${query}`)
             .then(res => {
-                if(res.status != 200 && res.status != 201) throw res.message;
+                if(res.status !== 200 && res.status !== 201) throw res.message;
                 return res.json();
             });
     }
@@ -33,7 +33,7 @@ export default class YouTubeContentListAPI {
             },
             body: JSON.stringify(data)
         }).then(res => {
-            if(res.status == 201) return res.json();
+            if(res.status === 201) return res.json();
             else return res;
         });
     }
