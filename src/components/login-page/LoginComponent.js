@@ -26,7 +26,7 @@ const LoginComponent = props => {
             password: password
         };
         api.login(data)
-            .then(_ => {
+            .then(res => {
                 window.location = '/';
             })
             .catch(feedback => {

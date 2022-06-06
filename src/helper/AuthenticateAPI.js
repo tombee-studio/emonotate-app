@@ -1,6 +1,5 @@
 export default class AuthenticateAPI {
     login(data) {
-      console.log(data);
       return fetch('/api/login/?format=json', {
         method: 'post',
         mode: 'cors',
