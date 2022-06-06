@@ -120,6 +120,19 @@ const RoomPage = props => {
                 if(request.owner.id !== window.django.user.id) 
                     throw 'access denied';
                 const req = {...request};
+                const length = request.values.length;
+                const values = request.values
+                    .map((point, index) => {
+                        const newPoint = { ...point };
+                        if(index != 0 && index != length - 1) {
+                            newPoint.axis = "vh";
+                            newPoint.type = "custom";
+                            return newPoint;
+                        } else {
+                            return newPoint;
+                        }
+                    });
+                req.values = values;
                 setRequest(req);
                 setLoading(true);
             }).catch(message => {
