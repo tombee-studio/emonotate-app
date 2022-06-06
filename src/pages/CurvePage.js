@@ -19,6 +19,7 @@ import CurveVideoComponent from "../components/curve-page/CurveVideoComponent";
 import UpdateCurveYouTubeComponent from '../components/curve-page/UpdateCurveYouTubeComponent';
 import YouTubeDataAPI from '../helper/YouTubeDataAPI';
 import UpdateCurveVideoComponent from '../components/curve-page/UpdateCurveVideoComponent';
+import YouTubeContentListAPI from '../helper/YouTubeContentListAPI';
 
 const createNewCurveComponent = (curve, setCurveData) => {
     const { video_id } = curve.content;
@@ -61,38 +62,32 @@ const CurvePage = props => {
     const [isLoadedFlag, setLoadedFlag] = useState(false);
     const create = ev => {
         if(videoId) {
-            const api = new CurveWithYouTubeAPI();
-            console.log(curve);
-            curve["youtube"] = curve["content"];
-            api.create(curve)
-            .then(json => {
-                handleClick();
-            }).catch(err => {
-                const { body } = err;
-                const reader = body.getReader();
-                const stream = new ReadableStream({
-                    start(controller) {
-                      // 次の関数は各データチャンクを処理します
-                      function push() {
-                        // done は Boolean で、value は Uint8Array です
-                        reader.read().then(({ done, value }) => {
-                          // 読み取るデータはもうありませんか？
-                          if (done) {
-                            // データの送信が完了したことをブラウザーに伝えます
-                            controller.close();
-                            return;
-                          }
-                
-                          // データを取得し、コントローラー経由でブラウザーに送信します
-                          console.log(new TextDecoder().decode(value));
-                          push();
-                        });
-                      };
-                
-                      push();
+            Promise.all([
+                (new Promise(resolve => {
+                    const api = new YouTubeContentListAPI();
+                    api.list({
+                        'format': 'json',
+                        'search': videoId
+                    })
+                    .then(json => resolve(json));
+                })).then(res => {
+                    if(res.models.length == 1) {
+                        return res.models[0];
+                    } else if(res.models.length == 0) {
+                        const api = new YouTubeContentListAPI();
+                        return api.create(curve.content)
+                            .then(res => res.json());
                     }
-                });
-            });
+                }).then(res => res.id),
+                curve.value_type.id
+            ]).then(result => {
+                const api = new CurvesListAPI();
+                const [content, value_type] = result;
+                const _curve = {...curve};
+                _curve.content = content;
+                _curve.value_type = value_type;
+                return api.create(_curve);
+            }).then(handleClick);
         } else {
             const curvesListAPI = new CurvesListAPI();
             const curveClone = { ...curve };

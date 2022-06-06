@@ -1,4 +1,4 @@
-import React, { Component, memo } from "react";
+import React, { Component } from "react";
 
 import { Box, CircularProgress, Grid } from "@mui/material";
 import YouTubeVideoComponent from "./YouTubeVideoComponent";

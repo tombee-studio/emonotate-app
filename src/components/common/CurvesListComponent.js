@@ -7,6 +7,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CurvesListAPI from '../../helper/CurvesListAPI';
 
 const styles = (theme) => ({
     root: {
@@ -67,12 +68,13 @@ class CurvesListComponent extends React.Component {
                                 edge="end"
                                 aria-label="delete"
                                 onClick={_ => {
-                                  this.api.delete(curve.id, {
+                                  const api = new CurvesListAPI();
+                                  api.delete(curve.id, {
                                     'format': 'json'
                                   })
                                   .then(res => {
                                       if(res.status == 200) {
-                                        window.location.href = '/app/dashboard/';
+                                        window.location.href = '/app/history/';
                                       }
                                   });
                                 }}

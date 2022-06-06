@@ -19,7 +19,10 @@ const RoomPage = props => {
     const [request, setRequest] = useState({
         owner: window.django.user.id
     });
-    const [useSnackbar, setSnackbar] = useState(false);
+    const [useSnackbar, setSnackbar] = useState({
+        isOpened: false,
+        data: {}
+    });
     const create = ev => {
         const api = new RequestListAPI();
         const req = { ...request };
@@ -37,7 +40,7 @@ const RoomPage = props => {
         });
         api.create(req)
             .then(json => {
-                handleClick();
+                handleClick(json);
             })
             .catch(err => {
                 alert(err);
@@ -60,7 +63,7 @@ const RoomPage = props => {
         });
         api.update(req.id, req)
             .then(json => {
-                handleClick();
+                handleClick(json);
             })
             .catch(err => {
                 alert(err);
@@ -95,13 +98,18 @@ const RoomPage = props => {
             alert(err);
         });
     };
-    const handleClick = () => {
-        setSnackbar(true);
+    const handleClick = (json) => {
+        const _useSnackbar = { ...useSnackbar }
+        _useSnackbar.isOpened = true;
+        _useSnackbar.data = json;
+        setSnackbar(_useSnackbar);
     };
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
-        setSnackbar(false);
-        setTimeout(() => window.location.href = "/app/requests/", 1000);
+        const _useSnackbar = { ...useSnackbar }
+        _useSnackbar.isOpened = false;
+        setSnackbar(_useSnackbar);
+        setTimeout(() => window.location.href = `/app/rooms/${_useSnackbar.data.id}`, 1000);
     };
     useEffect(() => {
         if(id) {
@@ -109,9 +117,22 @@ const RoomPage = props => {
             api.getItem(id, {
                 'format': 'json'
             }).then(request => {
-                if(request.owner.id != window.django.user.id) 
+                if(request.owner.id !== window.django.user.id) 
                     throw 'access denied';
                 const req = {...request};
+                const length = request.values.length;
+                const values = request.values
+                    .map((point, index) => {
+                        const newPoint = { ...point };
+                        if(index != 0 && index != length - 1) {
+                            newPoint.axis = "vh";
+                            newPoint.type = "custom";
+                            return newPoint;
+                        } else {
+                            return newPoint;
+                        }
+                    });
+                req.values = values;
                 setRequest(req);
                 setLoading(true);
             }).catch(message => {
@@ -150,7 +171,7 @@ const RoomPage = props => {
                             </Grid>
                         </Grid>
                         <Snackbar
-                            open={useSnackbar}
+                            open={useSnackbar.isOpened}
                             autoHideDuration={3000}
                             onClose={handleClose}
                             message="更新しました"
@@ -165,7 +186,7 @@ const RoomPage = props => {
                             <Button variant="outlined" onClick={create}>作成</Button>
                         </ButtonGroup>
                         <Snackbar
-                            open={useSnackbar}
+                            open={useSnackbar.isOpened}
                             autoHideDuration={3000}
                             onClose={handleClose}
                             message="作成しました"

@@ -15,7 +15,7 @@ export default class CurveWithYouTubeAPI {
         body: JSON.stringify(data)
       })
       .then(res => {
-        if(res.status != 200 && res.status != 201) throw res;
+        if(res.status !== 200 && res.status !== 201) throw res;
         return res.json();
       });
   }
@@ -33,7 +33,7 @@ export default class CurveWithYouTubeAPI {
         body: JSON.stringify(data)
       })
       .then(res => {
-        if(res.status != 200 && res.status != 201) throw res;
+        if(res.status !== 200 && res.status !== 201) throw res;
         return res.json();
       });
   }

@@ -3,7 +3,8 @@ import {
     FormControl,
     FormLabel,
     Box,
-    TextField } from "@mui/material";
+    TextField,
+    Autocomplete } from "@mui/material";
 import "video.js/dist/video-js.css";
 import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
 import CurveVideoComponent from "../../components/curve-page/CurveVideoComponent";
@@ -12,7 +13,7 @@ import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
 import CurvesListComponent from "../common/CurvesListComponent";
-import Autocomplete from '@mui/material/Autocomplete';
+import ValueTypeComponent from "../common/ValueTypeComponent";
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
@@ -35,7 +36,6 @@ const ObserverComponent = (props) => {
     const { django } = window;
     const { onChange } = props;
     const [contents, setContents] = useState([]);
-    const [valueTypes, setValueTypes] = useState([]);
     const [request, setRequest] = useState(props.request);
     const [curve, setCurve] = useState({
         "values": request.values,
@@ -101,7 +101,7 @@ const ObserverComponent = (props) => {
         .catch(err => console.log(err));
       };
 
-    if((contentRef.current != request.content) || (valueTypeRef.current != request.value_type)) {
+    if((contentRef.current !== request.content) || (valueTypeRef.current !== request.value_type)) {
         loadContentAndValueType(request);
     }
 
@@ -159,21 +159,8 @@ const ObserverComponent = (props) => {
                 }}
             />
             <hr />
-            <FormLabel>種類</FormLabel>
-            <Autocomplete 
-                options={valueTypes}
+            <ValueTypeComponent 
                 defaultValue={curve.value_type}
-                getOptionLabel={value_type => value_type.title}
-                renderInput={params => <TextField {...params}/>}
-                onInputChange={(event, value) => {
-                    const api = new ValueTypeListAPI();
-                    api.list({
-                        'format': 'json',
-                        'search': value
-                    }).then(data => {
-                        setValueTypes(data.models);
-                    });
-                }}
                 onChange={(_, valueType) => {
                     if(!valueType) return;
                     const req = { ...request };
