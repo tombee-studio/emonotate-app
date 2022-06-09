@@ -38,6 +38,7 @@ const RoomPage = props => {
             p.type = "fixed";
             return p;
         });
+        req.participants = req.participants.map(participant => participant.email);
         api.create(req)
             .then(json => {
                 handleClick(json);
@@ -61,6 +62,7 @@ const RoomPage = props => {
             p.type = "fixed";
             return p;
         });
+        req.participants = req.participants.map(participant => participant.email);
         api.update(req.id, req)
             .then(json => {
                 handleClick(json);
