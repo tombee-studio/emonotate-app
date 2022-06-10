@@ -1,135 +1,137 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from "react";
 
-import { Box, FormLabel } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { 
+    DataGrid,
+    GridToolbarContainer
+} from '@mui/x-data-grid';
+import AddIcon from '@mui/icons-material/Add';
+import ReplayIcon from '@mui/icons-material/Replay';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import "./styles.css";
 
-class EmailAddressList extends React.Component {
-    state = {
-        items: [],
-        value: "",
-        error: null
-    };
+const COLUMNS = [
+    { 
+        field: 'id', 
+        headerName: 'ID', 
+        width: 90
+    },
+    {
+        field: 'username',
+        headerName: 'User Name',
+        width: 150,
+        editable: false,
+    },
+    {
+        field: 'email',
+        headerName: 'Email',
+        width: 300,
+        editable: true,
+    },
+    {
+        field: 'is_input_ended',
+        headerName: 'Is Input Ended?',
+        width: 150,
+        editable: false
+    }
+];
 
-    constructor(props) {
-        super(props);
-        const { participants, onChangeEmailList } = this.props;
-        this.state = {
-            items: participants || []
+const EmailAddressList = props => {
+    const { request, curves, onChangeEmailList } = props;
+    const [participants, setParticipants] = useState(request.participants || []);
+    const selectedRows = React.useRef([]);
+    const addParticipant = () => {
+        const id = (participants.length == 0)? 1 : Math.max(...participants.map(v => v.id)) + 1;
+        const newParticipant = { 
+            id: id, 
+            username: "", 
+            email: ""
         };
-        this.onChangeEmailList = onChangeEmailList;
-    }
+        setParticipants([...participants, newParticipant]);
+    };
+    const replayAction = () => {};
+    const CustomToolBar = () => (
+        <GridToolbarContainer>
+            <Button color="primary" 
+                startIcon={<AddIcon />} 
+                onClick={addParticipant}>
+                    参加者を追加
+            </Button>
+            <Button color="primary" 
+                disabled={selectedRows.current.length == 0}
+                startIcon={<DeleteIcon />} 
+                onClick={handleOnDelete}>
+                    選択された参加者を削除
+            </Button>
+            <Button color="primary" 
+                startIcon={<ReplayIcon />} 
+                onClick={replayAction}>
+                    リロード
+            </Button>
+        </GridToolbarContainer>
+    );
+    const checkDuplicateEmail = (array, email) => 
+        array.map(participant => participant.email).includes(email);
 
-    handleKeyDown = evt => {
-        const { request } = this.props;
-        if (["Enter", "Tab", ","].includes(evt.key)) {
-            evt.preventDefault();
-
-            var value = this.state.value.trim();
-
-            if (value && this.isValid(value)) {
-                const items = [...this.state.items, this.state.value];
-                this.setState({
-                    items: items,
-                    value: ""
-                });
-                this.onChangeEmailList(request, items);
-            }
+    const handleOnCellEditCommit = (params, event) => {
+        const _participants = [...participants];
+        const index = _participants.findIndex(participant => participant.id == params.id);
+        if(!checkDuplicateEmail(_participants, params.value)) {
+            _participants[index][params.field] = params.value;
+        } else {
+            _participants[index][params.field] = "";
         }
+        setParticipants(_participants);
+        onChangeEmailList(request, _participants);
     };
-
-    handleChange = evt => {
-        this.setState({
-            value: evt.target.value,
-            error: null
-        });
+    const handleOnDelete = (v) => {
+        const _participants = [...participants.filter(participant => 
+            !selectedRows.current.includes(participant.id))];
+        setParticipants(_participants);
+        onChangeEmailList(request, _participants);
     };
-
-    handleDelete = item => {
-        const items = this.state.items.filter(i => i !== item);
-        this.setState({
-            items: items
-        });
-        this.onChangeEmailList(items);
-    };
-
-    handlePaste = evt => {
-        evt.preventDefault();
-
-        var paste = evt.clipboardData.getData("text");
-        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
-
-        if (emails) {
-            var toBeAdded = emails.filter(email => !this.isInList(email));
-            const items = [...this.state.items, ...toBeAdded];
-            this.setState({
-                items: items
-            });
-            this.onChangeEmailList(items);
+    const handleOnPaste = (ev) => {
+        const pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+        const data = ev.clipboardData.getData("text");
+        const table = [...participants];
+        for(const line of data.split(/[\n\r]+/)) {
+            if(!pattern.test(line)) continue;
+            const email = line;
+            if(checkDuplicateEmail(table, email)) continue;
+            const id = (table.length == 0)? 1 : Math.max(...table.map(v => v.id)) + 1;
+            const newParticipant = { 
+                id: id, 
+                username: "", 
+                email: email
+            };
+            table.push(newParticipant);
         }
+        setParticipants(table);
+        onChangeEmailList(request, table);
     };
-
-    isValid(email) {
-    let error = null;
-
-    if (this.isInList(email)) {
-        error = `${email} has already been added.`;
-    }
-
-    if (!this.isEmail(email)) {
-        error = `${email} is not a valid email address.`;
-    }
-
-    if (error) {
-        this.setState({ error });
-
-        return false;
-    }
-
-    return true;
-    }
-
-    isInList(email) {
-        return this.state.items.includes(email);
-    }
-
-    isEmail(email) {
-        return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
-    }
-
-    render() {
-        return (
-            <Box>
-                <FormLabel>参加者メールリスト</FormLabel>
-                <Box m={2}>
-                    {this.state.items.map(item => (
-                        <div className="tag-item" key={item}>
-                        {item}
-                        <button
-                            type="button"
-                            className="button"
-                            onClick={() => this.handleDelete(item)}
-                        >
-                            &times;
-                        </button>
-                        </div>
-                    ))}
-
-                    <input
-                        className={"input " + (this.state.error && " has-error")}
-                        value={this.state.value}
-                        placeholder="Type or paste email addresses and press `Enter`..."
-                        onKeyDown={this.handleKeyDown}
-                        onChange={this.handleChange}
-                        onPaste={this.handlePaste}
-                    />
-
-                    {this.state.error && <p className="error">{this.state.error}</p>}
-                </Box>
-            </Box>
-        );
-    }
-}
+    return (<Box style={{ width: '100%' }} onPaste={handleOnPaste} >
+        <DataGrid
+            columns={COLUMNS}
+            rows={participants.map(participant => {
+                const curve = curves.find(curve => curve.user.id == participant.id);
+                const is_input_ended = curve != undefined;
+                return {
+                    ...participant,
+                    is_input_ended: is_input_ended
+                };
+            })}
+            components={{
+                Toolbar: CustomToolBar
+            }}
+            onCellEditCommit={handleOnCellEditCommit}
+            checkboxSelection
+            disableSelectionOnClick
+            onSelectionModelChange={(v) => selectedRows.current = v}
+            density='compact' 
+            autoHeight
+        />
+    </Box>);
+};
 
 export default EmailAddressList;
