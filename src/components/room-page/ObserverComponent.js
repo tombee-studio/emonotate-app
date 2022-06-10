@@ -12,7 +12,6 @@ import EmailAddressList from "./EmailAddressList";
 import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
-import CurvesListComponent from "../common/CurvesListComponent";
 import ValueTypeComponent from "../common/ValueTypeComponent";
 
 const createNewCurveComponent = (curve, setCurveData) => {
@@ -46,7 +45,7 @@ const ObserverComponent = (props) => {
         "content": props.request.content,
         "value_type": props.request.value_type 
     });
-    const [curvesList, setCurvesList] = useState(false);
+    const [curvesList, setCurvesList] = useState([]);
 
     const loadContentAndValueType = (request) => {
         const contentAPI = new ContentsListAPI();
@@ -85,7 +84,7 @@ const ObserverComponent = (props) => {
             'format': 'json',
             'search': request.room_name
         }).then(curves => {
-            setCurvesList(curves);
+            setCurvesList(curves.models);
         });
         loadContentAndValueType(request);
     }, []);
@@ -182,15 +181,14 @@ const ObserverComponent = (props) => {
             <hr />
             <EmailAddressList 
                 request={request}
+                curves={curvesList}
                 participants={request.participants} 
                 onChangeEmailList={(request, participants) => {
                     const req = { ...request };
-                    console.log(req);
                     req.participants = participants;
                     setRequest(req);
                     onChange(req);
                 }}/>
-            { curvesList && <CurvesListComponent curves={curvesList} handlePaginate={handlePaginate} /> }
         </FormControl>
     );
 };

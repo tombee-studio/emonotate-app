@@ -38,6 +38,7 @@ const RoomPage = props => {
             p.type = "fixed";
             return p;
         });
+        req.participants = req.participants.map(participant => participant.email);
         api.create(req)
             .then(json => {
                 handleClick(json);
@@ -61,6 +62,7 @@ const RoomPage = props => {
             p.type = "fixed";
             return p;
         });
+        req.participants = req.participants.map(participant => participant.email);
         api.update(req.id, req)
             .then(json => {
                 handleClick(json);
@@ -70,7 +72,31 @@ const RoomPage = props => {
             });
     };
     const sendMails = ev => {
-
+        const req = { ...request };
+        const { questionaire, content, owner, value_type, values } = request;
+        const api = new RequestListAPI();
+        req.content = content.id;
+        req.owner = owner.id;
+        req.value_type = value_type.id;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = values.map(point => {
+            const p = {...point};
+            p.y = 0;
+            p.axis = "v";
+            p.type = "fixed";
+            return p;
+        });
+        req.participants = req.participants.map(participant => participant.email);
+        api.update(req.id, req)
+            .then(json => {
+                return fetch(`/api/send/${json.id}`);
+            })
+            .then(res => {
+                if(res.status == 200) window.location.href = `/app/rooms/${req.id}`;
+            })
+            .catch(err => {
+                alert(err);
+            });
     };
     const download = (ev) => {
         const api = new CurvesListAPI();
