@@ -186,13 +186,26 @@ const RoomPage = props => {
                         <Grid container spacing={2}>
                             <Grid item>
                                 <ButtonGroup>
-                                    <Button variant="outlined" onClick={update}>更新</Button>
+                                    <Button 
+                                        variant="outlined" 
+                                        onClick={update}>
+                                        更新
+                                    </Button>
                                 </ButtonGroup>
                             </Grid>
                             <Grid item>
                                 <ButtonGroup>
-                                    <Button variant="outlined" onClick={download}>ダウンロード</Button>
-                                    <Button variant="outlined" onClick={sendMails}>メール送信</Button>
+                                    <Button 
+                                        variant="outlined" 
+                                        onClick={download}>
+                                        ダウンロード
+                                    </Button>
+                                    <Button 
+                                        disabled={!request.is_able_to_send}
+                                        variant="outlined" 
+                                        onClick={sendMails}>
+                                        メール送信
+                                    </Button>
                                 </ButtonGroup>
                             </Grid>
                         </Grid>
