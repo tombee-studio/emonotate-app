@@ -7,9 +7,30 @@ export default class UserAPI {
       .catch(failed);
   }
 
-  put(userId, data) {
-    return fetch(`/api/users/${userId}`, {
-      method: 'delete',
+  getItem(userId, queries={'format': 'json'}) {
+    const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+    return fetch(`/api/users/${userId}/?${query}`)
+      .then(res => {
+        if(res.status == 200) return res.json();
+        else throw `Error`;
+      });
+  }
+
+  convert(data) {
+    return fetch(`/api/convert/`, {
+      method: 'post',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': window.django.csrf,
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
+  update(userId, data) {
+    return fetch(`/api/users/${userId}/?format=json`, {
+      method: 'put',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
