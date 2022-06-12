@@ -15,13 +15,15 @@ const ProfilePage = (props) => {
         const _user = { ...user };
         api.update(_user.id, _user).then(res => {
             if(res.status == 200) { 
-                setUserData(res.json()); 
-                setSnackbarData({
-                    is_open: true,
-                    message: '更新しました'
-                });
+                return res.json();
             }
             else throw res.detail;
+        }).then(data => {
+            setUserData(data);
+            setSnackbarData({
+                is_open: true,
+                message: '更新しました'
+            });
         });
     };
     const generateButton = _user => {
