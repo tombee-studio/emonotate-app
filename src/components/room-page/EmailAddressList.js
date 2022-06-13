@@ -8,6 +8,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import ReplayIcon from '@mui/icons-material/Replay';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 
 import "./styles.css";
 
@@ -19,27 +20,30 @@ const COLUMNS = [
     },
     {
         field: 'username',
-        headerName: 'User Name',
+        headerName: 'ユーザ名',
         width: 150,
         editable: false,
     },
     {
         field: 'email',
-        headerName: 'Email',
+        headerName: 'メールアドレス',
         width: 300,
         editable: true,
     },
     {
         field: 'is_input_ended',
-        headerName: 'Is Input Ended?',
+        headerName: '入力済み',
         width: 150,
-        editable: false
+        editable: false,
+        renderCell: params => {
+            if(params.row.is_input_ended) return <CheckIcon />
+            return "";
+        }
     }
 ];
 
 const EmailAddressList = props => {
-    const { request, curves, onChangeEmailList } = props;
-    const [participants, setParticipants] = useState(request.participants || []);
+    const { participants, curves, onChangeEmailList } = props;
     const selectedRows = React.useRef([]);
     const addParticipant = () => {
         const id = (participants.length == 0)? 1 : Math.max(...participants.map(v => v.id)) + 1;
@@ -48,7 +52,7 @@ const EmailAddressList = props => {
             username: "", 
             email: ""
         };
-        setParticipants([...participants, newParticipant]);
+        onChangeEmailList([...participants, newParticipant]);
     };
     const replayAction = () => {};
     const CustomToolBar = () => (
@@ -82,14 +86,12 @@ const EmailAddressList = props => {
         } else {
             _participants[index][params.field] = "";
         }
-        setParticipants(_participants);
-        onChangeEmailList(request, _participants);
+        onChangeEmailList(_participants);
     };
     const handleOnDelete = (v) => {
         const _participants = [...participants.filter(participant => 
             !selectedRows.current.includes(participant.id))];
-        setParticipants(_participants);
-        onChangeEmailList(request, _participants);
+        onChangeEmailList(_participants);
     };
     const handleOnPaste = (ev) => {
         const pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
@@ -107,8 +109,7 @@ const EmailAddressList = props => {
             };
             table.push(newParticipant);
         }
-        setParticipants(table);
-        onChangeEmailList(request, table);
+        onChangeEmailList(table);
     };
     return (<Box style={{ width: '100%' }} onPaste={handleOnPaste} >
         <DataGrid

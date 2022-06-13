@@ -128,6 +128,7 @@ const RoomPage = props => {
         const _useSnackbar = { ...useSnackbar }
         _useSnackbar.isOpened = true;
         _useSnackbar.data = json;
+        setRequest(json);
         setSnackbar(_useSnackbar);
     };
     const handleClose = (event, reason) => {
@@ -135,7 +136,6 @@ const RoomPage = props => {
         const _useSnackbar = { ...useSnackbar }
         _useSnackbar.isOpened = false;
         setSnackbar(_useSnackbar);
-        setTimeout(() => window.location.href = `/app/rooms/${_useSnackbar.data.id}`, 1000);
     };
     useEffect(() => {
         if(id) {
