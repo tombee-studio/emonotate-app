@@ -33,17 +33,24 @@ const createNewCurveComponent = (curve, setCurveData) => {
 
 const ObserverComponent = (props) => {
     const { django } = window;
-    const { onChange } = props;
+    const { request, onChange } = props;
     const [contents, setContents] = useState([]);
-    const [request, setRequest] = useState(props.request);
+
+    const [title, setTitle] = useState(request.title);
+    const [description, setDescription] = useState(request.description);
+    const [content, setContent] = useState(request.content);
+    const [valueType, setValueType] = useState(request.value_type);
+    const [participants, setParticipants] = useState(request.participants);
+    const [values, setValues] = useState([]);
+
     const [curve, setCurve] = useState({
         "values": request.values,
         "version": "0.1.1",
         "room_name": "",
         "locked": false,
         "user": django.user.id,
-        "content": props.request.content,
-        "value_type": props.request.value_type 
+        "content": content,
+        "value_type": valueType 
     });
     const [curvesList, setCurvesList] = useState([]);
 
@@ -89,6 +96,18 @@ const ObserverComponent = (props) => {
         loadContentAndValueType(request);
     }, []);
 
+    useEffect(() => {
+        const {
+            title, description, content, value_type, values, participants
+        } = request;
+        setTitle(title);
+        setDescription(description);
+        setContent(content);
+        setValueType(value_type);
+        setValues(values);
+        setParticipants(participants);
+    });
+
     const handlePaginate = (e, page) => {
         const api = new CurvesListAPI();
         api.list({
@@ -98,7 +117,7 @@ const ObserverComponent = (props) => {
         })
         .then(curves => setCurvesList(curves))
         .catch(err => console.log(err));
-      };
+    };
 
     if((contentRef.current !== request.content) || (valueTypeRef.current !== request.value_type)) {
         loadContentAndValueType(request);
@@ -109,11 +128,11 @@ const ObserverComponent = (props) => {
             <FormLabel>タイトル</FormLabel>
             <TextField 
                 id="title" 
-                value={request.title}
+                value={title}
                 onChange={ev => {
                     const req = { ...request };
                     req.title = ev.target.value;
-                    setRequest(req);
+                    setTitle(ev.target.value);
                     onChange(req);
                 }} />
             <hr />
@@ -122,11 +141,11 @@ const ObserverComponent = (props) => {
                 id="description" 
                 multiline
                 rows={4}
-                value={request.description}
+                value={description}
                 onChange={ev => {
                     const req = { ...request };
                     req.description = ev.target.value;
-                    setRequest(req);
+                    setDescription(ev.target.value);
                     onChange(req);
                 }} />
             <hr />
@@ -151,21 +170,21 @@ const ObserverComponent = (props) => {
                 onChange={(_, content) => {
                     if(!content) return;
                     const req = { ...request };
-                    req.content = content.id;
+                    req.content = content;
                     curve.values = [];
-                    setRequest(req);
+                    setContent(content);
                     onChange(req);
                 }}
             />
             <hr />
             <ValueTypeComponent 
                 defaultValue={curve.value_type}
-                onChange={(_, valueType) => {
+                onChange={(_, value) => {
                     if(!valueType) return;
                     const req = { ...request };
-                    req.value_type = valueType.id;
+                    req.value_type = value;
                     curve.values = [];
-                    setRequest(req);
+                    setValueType(value);
                     onChange(req);
                 }}
             />
@@ -174,19 +193,18 @@ const ObserverComponent = (props) => {
                 curve, (_curve) => {
                     const req = {...request};
                     req.values = _curve.values;
-                    setRequest(req);
+                    setValues(_curve.values);
                     onChange(req);
                     setCurve(_curve);
                 })}
             <hr />
             <EmailAddressList 
-                request={request}
                 curves={curvesList}
-                participants={request.participants} 
-                onChangeEmailList={(request, participants) => {
+                participants={participants} 
+                onChangeEmailList={(participants) => {
                     const req = { ...request };
                     req.participants = participants;
-                    setRequest(req);
+                    setParticipants(participants);
                     onChange(req);
                 }}/>
         </FormControl>

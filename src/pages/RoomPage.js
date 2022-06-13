@@ -65,7 +65,7 @@ const RoomPage = props => {
         req.participants = req.participants.map(participant => participant.email);
         api.update(req.id, req)
             .then(json => {
-                handleClick(json);
+                handleClick(json, "更新しました");
             })
             .catch(err => {
                 alert(err);
@@ -89,10 +89,14 @@ const RoomPage = props => {
         req.participants = req.participants.map(participant => participant.email);
         api.update(req.id, req)
             .then(json => {
+                setRequest(json);
                 return fetch(`/api/send/${json.id}`);
             })
             .then(res => {
-                if(res.status == 200) window.location.href = `/app/rooms/${req.id}`;
+                if(res.status == 200) return res;
+            })
+            .then(data => {
+                handleClick(data, "メール送信成功しました");
             })
             .catch(err => {
                 alert(err);
@@ -124,10 +128,10 @@ const RoomPage = props => {
             alert(err);
         });
     };
-    const handleClick = (json) => {
+    const handleClick = (json, message) => {
         const _useSnackbar = { ...useSnackbar }
         _useSnackbar.isOpened = true;
-        _useSnackbar.data = json;
+        _useSnackbar.message = message;
         setSnackbar(_useSnackbar);
     };
     const handleClose = (event, reason) => {
@@ -135,7 +139,6 @@ const RoomPage = props => {
         const _useSnackbar = { ...useSnackbar }
         _useSnackbar.isOpened = false;
         setSnackbar(_useSnackbar);
-        setTimeout(() => window.location.href = `/app/rooms/${_useSnackbar.data.id}`, 1000);
     };
     useEffect(() => {
         if(id) {
@@ -213,7 +216,7 @@ const RoomPage = props => {
                             open={useSnackbar.isOpened}
                             autoHideDuration={3000}
                             onClose={handleClose}
-                            message="更新しました"
+                            message={useSnackbar.message}
                         />
                     </Box>);
                 } else {
@@ -228,7 +231,7 @@ const RoomPage = props => {
                             open={useSnackbar.isOpened}
                             autoHideDuration={3000}
                             onClose={handleClose}
-                            message="作成しました"
+                            message={useSnackbar.message}
                         />
                     </Box>);
                 }
