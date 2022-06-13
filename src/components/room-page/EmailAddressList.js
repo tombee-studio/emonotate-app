@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import { 
     DataGrid,
     GridToolbarContainer
@@ -35,8 +35,13 @@ const COLUMNS = [
         headerName: '入力済み',
         width: 150,
         editable: false,
+        headerAlign: 'center',
+        align: 'center',
         renderCell: params => {
-            if(params.row.is_input_ended) return <CheckIcon />
+            if(params.row.is_input_ended) 
+                return <IconButton href={`/app/curves/${params.row.curve_id}`}>
+                    <CheckIcon />
+                </IconButton>;
             return "";
         }
     }
@@ -117,9 +122,11 @@ const EmailAddressList = props => {
             rows={participants.map(participant => {
                 const curve = curves.find(curve => curve.user.id == participant.id);
                 const is_input_ended = curve != undefined;
+                const curve_id = curve ? curve.id: undefined;
                 return {
                     ...participant,
-                    is_input_ended: is_input_ended
+                    is_input_ended,
+                    curve_id
                 };
             })}
             components={{
