@@ -65,6 +65,7 @@ const RoomPage = props => {
         req.participants = req.participants.map(participant => participant.email);
         api.update(req.id, req)
             .then(json => {
+                setRequest(json);
                 handleClick(json, "更新しました");
             })
             .catch(err => {
