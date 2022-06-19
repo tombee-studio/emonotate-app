@@ -21,7 +21,7 @@ const EditRequestComponent = props => {
     const update = ev => {
         const req = { ...request };
         const { questionaire, content, owner, value_type, values } = request;
-        console.log(value_type);
+
         const api = new RequestListAPI();
         req.content = content.id;
         req.owner = owner.id;
@@ -108,6 +108,7 @@ const EditRequestComponent = props => {
         const _useSnackbar = { ...usingSnackbar }
         _useSnackbar.isOpened = true;
         _useSnackbar.message = message;
+        _useSnackbar.data = json;
         setSnackbar(_useSnackbar);
     };
 

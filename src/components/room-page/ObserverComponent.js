@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     FormControl,
     FormLabel,
     Box,
     TextField,
+    Button,
     Autocomplete } from "@mui/material";
 import "video.js/dist/video-js.css";
 import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
@@ -58,12 +59,12 @@ const ObserverComponent = (props) => {
         const contentAPI = new ContentsListAPI();
         const valueTypeListAPI = new ValueTypeListAPI();
         Promise.all([
-            contentAPI.getItem(request.content, {
+            contentAPI.getItem(content.id, {
                 "format": "json"
             }).catch(message => {
                 console.log(message);
             }),
-            valueTypeListAPI.getItem(request.value_type, {
+            valueTypeListAPI.getItem(valueType.id, {
                 "format": "json"
             }).catch(message => {
                 console.log(message);
@@ -77,13 +78,6 @@ const ObserverComponent = (props) => {
             setCurve(_curve);
         });
     };
-
-    const contentRef = useRef(request.content);
-    const valueTypeRef = useRef(request.value_type);
-    useEffect(() => {
-        contentRef.current = request.content;
-        valueTypeRef.current = request.value_type;
-    });
     
     useEffect(() => {
         const api = new CurvesListAPI();
@@ -93,7 +87,6 @@ const ObserverComponent = (props) => {
         }).then(curves => {
             setCurvesList(curves.models);
         });
-        loadContentAndValueType(request);
     }, []);
 
     useEffect(() => {
@@ -118,10 +111,6 @@ const ObserverComponent = (props) => {
         .then(curves => setCurvesList(curves))
         .catch(err => console.log(err));
     };
-
-    if((contentRef.current !== request.content) || (valueTypeRef.current !== request.value_type)) {
-        loadContentAndValueType(request);
-    }
 
     return (
         <FormControl fullWidth sx={{ m: 1 }}>
@@ -180,14 +169,17 @@ const ObserverComponent = (props) => {
             <ValueTypeComponent 
                 defaultValue={curve.value_type}
                 onChange={(_, value) => {
-                    if(!valueType) return;
+                    if(!value) return;
                     const req = { ...request };
                     req.value_type = value;
                     curve.values = [];
+                    console.log(value);
                     setValueType(value);
                     onChange(req);
                 }}
             />
+            <hr />
+            <Button onClick={() => loadContentAndValueType(request)}>ロード</Button>
             <hr />
             { (curve.content && curve.value_type) && createNewCurveComponent(
                 curve, (_curve) => {
