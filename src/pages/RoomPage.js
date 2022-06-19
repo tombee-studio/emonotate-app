@@ -2,7 +2,7 @@ import {
     CircularProgress,
     Box,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import CreateRequestComponent from '../components/room-page/CreateRequestComponent';
 import EditRequestComponent from '../components/room-page/EditRequestComponent';
@@ -16,7 +16,9 @@ const RoomPage = props => {
         participants: []
     });
     useEffect(() => {
-        if(id) {
+        if(!id) {
+            setLoading(true);
+        } else {
             const api = new RequestListAPI();
             api.getItem(id, {
                 'format': 'json'
@@ -45,10 +47,9 @@ const RoomPage = props => {
                     message: message
                 });
             });
-        } else {
-            setLoading(true);
         }
     }, []);
+    
     return (
         <Route render={
             props => {

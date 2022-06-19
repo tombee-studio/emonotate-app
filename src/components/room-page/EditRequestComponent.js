@@ -21,6 +21,7 @@ const EditRequestComponent = props => {
     const update = ev => {
         const req = { ...request };
         const { questionaire, content, owner, value_type, values } = request;
+
         const api = new RequestListAPI();
         req.content = content.id;
         req.owner = owner.id;

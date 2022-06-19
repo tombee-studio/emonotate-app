@@ -18,6 +18,7 @@ const CreateRequestComponent = props => {
     const create = ev => {
         const api = new RequestListAPI();
         const req = { ...request };
+
         const { 
             questionaire, content, owner, value_type, values 
         } = request;
