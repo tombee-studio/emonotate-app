@@ -79,26 +79,21 @@ const EditRequestComponent = props => {
     };
 
     const download = (ev) => {
-        const api = new CurvesListAPI();
-        api.list({
-            'format': 'json',
-            'search': request.room_name,
-            'page_size': 200,
-        })
+        const api = new EmonotateAPI();
+        api.getRequestItemAPI("get_download_curve_data", request.id)
         .then(json => {
-            const transport = (exportJson) => {
-                const fileName = 'finename.json';
-                const data = new Blob([JSON.stringify(exportJson)], { type: 'text/json' });
-                const jsonURL = window.URL.createObjectURL(data);
+            const transport = (json) => {
+                const req = { ...request };
                 const link = document.createElement('a');
                 document.body.appendChild(link);
-                link.href = jsonURL;
-                link.setAttribute('download', fileName);
+                link.href = json["url"];
+                link.setAttribute('download', json["file_name"]);
                 link.click();
                 document.body.removeChild(link);
+
+                handleClick(req, "ダウンロードが成功しました");
             }
             transport(json);
-            alert("ダウンロードを終了しました");
         })
         .catch(err => {
             alert(err);
