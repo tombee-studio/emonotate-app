@@ -112,6 +112,7 @@ const EditRequestComponent = props => {
             api.getRequestItemAPI("reset_email_addresses", request.id)
             .then(req => {
                 setRequest(req);
+                handleClick(req, "すべてのメールアドレスを消去しました");
             });
         }
     };
