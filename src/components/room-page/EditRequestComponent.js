@@ -10,6 +10,7 @@ import ObserverComponent from './ObserverComponent';
 
 import CurvesListAPI from "../../helper/CurvesListAPI";
 import RequestListAPI from "../../helper/RequestListAPI";
+import EmonotateAPI from '../../helper/EmonotateAPI';
 
 const EditRequestComponent = props => {
     const { request, setRequest } = props;
@@ -104,6 +105,17 @@ const EditRequestComponent = props => {
         });
     };
 
+    const resetEmailAddresses = (event, reason) => {
+        const message = "すべての参加者のメールアドレスをリセットしますか？（この操作は取り消しできません）";
+        if(window.confirm(message)) {
+            const api = new EmonotateAPI();
+            api.getRequestItemAPI("reset_email_addresses", request.id)
+            .then(req => {
+                setRequest(req);
+            });
+        }
+    };
+
     const handleClick = (json, message) => {
         const _useSnackbar = { ...usingSnackbar }
         _useSnackbar.isOpened = true;
@@ -145,6 +157,16 @@ const EditRequestComponent = props => {
                         variant="outlined" 
                         onClick={sendMails}>
                         メール送信
+                    </Button>
+                </ButtonGroup>
+            </Grid>
+            <Grid item>
+                <ButtonGroup>
+                    <Button 
+                        variant="outlined" 
+                        color="error"
+                        onClick={resetEmailAddresses}>
+                        メールアドレスを消去
                     </Button>
                 </ButtonGroup>
             </Grid>
