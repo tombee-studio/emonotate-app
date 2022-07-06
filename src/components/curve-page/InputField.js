@@ -6,7 +6,7 @@ class InputField extends Component {
         super(props)
         this.createLineChart = this.createLineChart.bind(this);
         this.node = createRef();
-        const { duration, data, getCurrent, setCurrent } = props;
+        const { duration, data, getCurrent, setCurrent, changeValuesInCurve } = props;
         this.data = data;
         this.duration = duration;
         this.getCurrent = getCurrent;
@@ -15,6 +15,7 @@ class InputField extends Component {
             'r': 10,
             'color': "#000"
         };
+        this.changeValuesInCurve = changeValuesInCurve;
     }
 
     componentDidMount() {
@@ -191,9 +192,7 @@ class InputField extends Component {
             })
             .on('end', d => {
                 this.selected = undefined;
-                /**
-                 * ジャンプ機能を追加
-                 */
+                this.changeValuesInCurve(this.data);
             });
     }
 
