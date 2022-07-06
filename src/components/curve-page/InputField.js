@@ -123,7 +123,11 @@ class InputField extends Component {
             .data(this.data, d => { return d; });
         this.svg.select(".line").attr("d", this.line(this.data));
         circle.enter().append("circle")
-            .attr("fill", "white")
+            .attr("fill", d => {
+                if(d.state == "start") return "green";
+                else if(d.state == "end") return "red";
+                else return "white";
+            })
             .attr("stroke", "rgb(0, 0, 0)")
             .attr("class", "graph-point")
             .attr("cx", (d) => { 
@@ -148,7 +152,11 @@ class InputField extends Component {
             });
         circle
             .attr("stroke", "rgb(0, 0, 0)")
-            .attr("fill", "white")
+            .attr("fill", d => {
+                if(d.state == "start") return "green";
+                else if(d.state == "end") return "red";
+                else return "white";
+            })
             .attr("cx", (d) => { 
                 return xScale(d.x); 
             })

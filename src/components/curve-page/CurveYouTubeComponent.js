@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { Box, CircularProgress, Grid, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import YouTubeVideoComponent from "./YouTubeVideoComponent";
 import InputField from "./InputField";
@@ -75,10 +75,52 @@ class CurveYouTubeComponent extends Component {
             onChangeCurve(_curve);
         };
 
+        const selectState = (index, value) => {
+            const _curve = { ...curve };
+            const _values = [...values];
+            _values[index].state = value;
+            _curve.values = _values;
+            onChangeCurve(_curve);
+        };
+
         const columns = [
-            { field: 'id' }, 
-            { field: 'x' }, 
-            { field: 'y' }
+            { 
+                field: 'id' 
+            }, { 
+                field: 'x' 
+            }, { 
+                field: 'y'
+            }, { 
+                field: 'state',
+                width: 300,
+                renderCell: (params) => {
+                    const { id, row } = params;
+                    return <RadioGroup 
+                        row defaultValue={row.state || "middle"}>
+                        <FormControlLabel
+                            value="start"
+                            control={<Radio onClick={() => selectState(id, "start")} />}
+                            label="Start"
+                            labelPlacement="top" />
+                        <FormControlLabel
+                            value="middle"
+                            control={<Radio onClick={() => selectState(id, "middle")} />}
+                            label="Middle"
+                            labelPlacement="top" />
+                        <FormControlLabel
+                            value="end"
+                            control={<Radio onClick={() => selectState(id, "end")} />}
+                            label="End"
+                            labelPlacement="top" />
+                    </RadioGroup>;
+                }
+            }, { 
+                field: 'message',
+                width: 300
+            }, { 
+                field: 'reason',
+                width: 300 
+            }
         ];
 
         return (<Box>
