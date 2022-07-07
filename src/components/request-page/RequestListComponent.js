@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     List, 
     ListItem, 
@@ -9,27 +9,64 @@ import {
     ListItemAvatar,
     Avatar, 
     ListItemSecondaryAction,
-    IconButton
+    IconButton,
+    CircularProgress,
+    Pagination,
+    Stack
 } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import NoteIcon from '@mui/icons-material/Note';
+import RequestListAPI from '../../helper/RequestListAPI';
 
-export default class RequestListComponent extends React.Component {
-    render() {
-        const { requests } = this.props;
-        return (
-            <Box m={2}>
-                <Typography
-                    component="span"
-                    variant="h6"
-                    color="textPrimary"
-                >
-                    あなたへの依頼
-                </Typography>
-                <Divider />
+const RequestListComponent = () => {
+    const [result, setResult] = useState({});
+    const [loading, setLoading] = useState(true);
+    const handlePaginate = (e, page) => {
+        setLoading(true);
+        const api = new RequestListAPI();
+        api.get({
+            format: 'json',
+            role: 'owner',
+            page: page
+        })
+        .then(json => {
+            setResult(json);
+            setLoading(false);
+        })
+    };
+
+    useEffect(() => {
+        const api = new RequestListAPI();
+        api.get({
+            'format': 'json',
+            'role': 'owner',
+        })
+        .then(json => {
+            setResult(json);
+            setLoading(false);
+        });
+    }, []);
+
+    return (<Box m={2}>
+        <Typography
+            component="span"
+            variant="h6"
+            color="textPrimary"
+        >
+            あなたへの依頼
+        </Typography>
+        <Divider />
+        {loading ? 
+            <Box m={2}><CircularProgress /></Box> :
+            <Stack m={2}>
+                <Pagination 
+                    count={result.pagination.total_pages}
+                    variant="outlined" 
+                    shape="rounded"
+                    onChange={handlePaginate} />
                 <List>
                     {
-                        requests.map(request => {
+                        result.models.map(request => {
                             return (
                                 <ListItem
                                     button
@@ -98,7 +135,8 @@ export default class RequestListComponent extends React.Component {
                         })
                     }
                 </List>
-            </Box>
-        );
-    }
+        </Stack>}
+    </Box>);
 };
+
+export default RequestListComponent;
