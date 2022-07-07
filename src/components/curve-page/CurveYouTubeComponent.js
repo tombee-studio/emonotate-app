@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Box, CircularProgress, Grid, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { Box, CircularProgress, Grid, RadioGroup, FormControlLabel, Radio, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import YouTubeVideoComponent from "./YouTubeVideoComponent";
 import InputField from "./InputField";
@@ -83,13 +83,34 @@ class CurveYouTubeComponent extends Component {
             onChangeCurve(_curve);
         };
 
+        const selectExtreme = (index, value) => {
+            const _curve = { ...curve };
+            const _values = [...values];
+            _values[index].extreme = value;
+            _curve.values = _values;
+            onChangeCurve(_curve);
+        };
+
+        const inputRanking = (index, value) => {
+            if(!Number.isInteger(value)) return;
+
+            const _curve = { ...curve };
+            const _values = [...values];
+            _values[index].ranking = Number.parseInt(value);
+            _curve.values = _values;
+            onChangeCurve(_curve);
+        };
+
         const columns = [
             { 
-                field: 'id' 
+                field: 'id',
+                width: 100
             }, { 
-                field: 'x' 
+                field: 'x',
+                width: 100
             }, { 
-                field: 'y'
+                field: 'y',
+                width: 100
             }, { 
                 field: 'state',
                 width: 300,
@@ -115,11 +136,40 @@ class CurveYouTubeComponent extends Component {
                     </RadioGroup>;
                 }
             }, { 
-                field: 'message',
-                width: 300
+                field: 'extreme_label',
+                headerName: '極値かどうか',
+                width: 300,
+                renderCell: (params) => {
+                    const { id, row } = params;
+                    return <RadioGroup 
+                        row defaultValue={row.extreme || "none"}>
+                        <FormControlLabel
+                            value="max"
+                            control={<Radio onClick={() => selectExtreme(id, "max")} />}
+                            label="最大値"
+                            labelPlacement="top" />
+                        <FormControlLabel
+                            value="none"
+                            control={<Radio onClick={() => selectExtreme(id, "none")} />}
+                            label=""
+                            labelPlacement="top" />
+                        <FormControlLabel
+                            value="min"
+                            control={<Radio onClick={() => selectExtreme(id, "min")} />}
+                            label="最小値"
+                            labelPlacement="top" />
+                    </RadioGroup>;
+                }
             }, { 
-                field: 'reason',
-                width: 300 
+                field: '最大値における順位',
+                width: 300,
+                renderCell: (params) => {
+                    const { id, row } = params;
+                    return <TextField 
+                        defaultValue={row.ranking}
+                        onChange={ev => inputRanking(id, ev.target.value)}
+                    />;
+                }
             }
         ];
 
