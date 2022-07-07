@@ -11,7 +11,8 @@ import {
     Typography, 
     Divider, 
     Pagination,
-    CircularProgress } from '@mui/material';
+    CircularProgress, 
+    Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -47,10 +48,7 @@ const RequireListComponent = props => {
         });
     }, []);
 
-    return (loading ? <Box m={2}>
-            <CircularProgress />
-        </Box> :
-        <Box m={2}>
+    return (<Box m={2}>
             <Typography
                 component="div"
                 variant="h6"
@@ -65,66 +63,70 @@ const RequireListComponent = props => {
                     <AddIcon />
                 </IconButton>
             </Typography>
-            <Pagination 
-                count={result.pagination.total_pages}
-                variant="outlined" 
-                shape="rounded"
-                onChange={handlePaginate} />
             <Divider />
-            <List>
-                {
-                    result.models.map(request => {
-                        return (
-                            <ListItem
-                                button
-                                component="a"
-                                href={`/app/rooms/${request.id}`}
-                                key={request.room_name}>
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <MeetingRoomIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={request.title}
-                                    secondary={
-                                        request.description.length > 30?
-                                        request.description.substr(0, 30) + "...":
-                                        request.description
-                                    }
-                                />
-                                <ListItemSecondaryAction>
-                                    <IconButton
+            {loading ? 
+                <Box m={2}><CircularProgress /></Box> : 
+                <Stack m={2}>
+                    <Pagination 
+                        count={result.pagination.total_pages}
+                        variant="outlined" 
+                        shape="rounded"
+                        onChange={handlePaginate} />
+                    <List>
+                        {
+                            result.models.map(request => {
+                                return (
+                                    <ListItem
+                                        button
                                         component="a"
-                                        href={`/app/requests/${request.id}`}
-                                        edge="end"
-                                        aria-label="enter"
-                                        size="large">
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton
-                                        component="a"
-                                        edge="end"
-                                        aria-label="delete"
-                                        onClick={_ => {
-                                            this.api.delete(request.id, {
-                                                'format': 'json'
-                                            })
-                                            .then(res => {
-                                                if(res.status == 200 || res.status == 204) {
-                                                    window.location.href = '/app/requests/';
-                                                }
-                                            });
-                                        }}
-                                        size="large">
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                        );
-                    })
-                }
-            </List>
+                                        href={`/app/rooms/${request.id}`}
+                                        key={request.room_name}>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <MeetingRoomIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={request.title}
+                                            secondary={
+                                                request.description.length > 30?
+                                                request.description.substr(0, 30) + "...":
+                                                request.description
+                                            }
+                                        />
+                                        <ListItemSecondaryAction>
+                                            <IconButton
+                                                component="a"
+                                                href={`/app/requests/${request.id}`}
+                                                edge="end"
+                                                aria-label="enter"
+                                                size="large">
+                                                <EditIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                component="a"
+                                                edge="end"
+                                                aria-label="delete"
+                                                onClick={_ => {
+                                                    this.api.delete(request.id, {
+                                                        'format': 'json'
+                                                    })
+                                                    .then(res => {
+                                                        if(res.status == 200 || res.status == 204) {
+                                                            window.location.href = '/app/requests/';
+                                                        }
+                                                    });
+                                                }}
+                                                size="large">
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                );
+                            })
+                        }
+                    </List>
+                </Stack>}
         </Box>
     );
 };
