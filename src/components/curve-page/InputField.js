@@ -6,7 +6,7 @@ class InputField extends Component {
         super(props)
         this.createLineChart = this.createLineChart.bind(this);
         this.node = createRef();
-        const { duration, data, getCurrent, setCurrent } = props;
+        const { duration, data, getCurrent, setCurrent, changeValuesInCurve } = props;
         this.data = data;
         this.duration = duration;
         this.getCurrent = getCurrent;
@@ -15,6 +15,7 @@ class InputField extends Component {
             'r': 10,
             'color': "#000"
         };
+        this.changeValuesInCurve = changeValuesInCurve;
     }
 
     componentDidMount() {
@@ -69,6 +70,7 @@ class InputField extends Component {
                 y: Math.round(yScale.invert(coords[1]) * 100) / 100,
                 axis: 'hv',
                 type: 'custom',
+                state: 'middle'
             };
 
             if(0 <= newData.x && newData.x <= self.duration && 
@@ -122,7 +124,11 @@ class InputField extends Component {
             .data(this.data, d => { return d; });
         this.svg.select(".line").attr("d", this.line(this.data));
         circle.enter().append("circle")
-            .attr("fill", "white")
+            .attr("fill", d => {
+                if(d.state == "start") return "green";
+                else if(d.state == "end") return "red";
+                else return "white";
+            })
             .attr("stroke", "rgb(0, 0, 0)")
             .attr("class", "graph-point")
             .attr("cx", (d) => { 
@@ -147,7 +153,11 @@ class InputField extends Component {
             });
         circle
             .attr("stroke", "rgb(0, 0, 0)")
-            .attr("fill", "white")
+            .attr("fill", d => {
+                if(d.state == "start") return "green";
+                else if(d.state == "end") return "red";
+                else return "white";
+            })
             .attr("cx", (d) => { 
                 return xScale(d.x); 
             })
@@ -191,9 +201,7 @@ class InputField extends Component {
             })
             .on('end', d => {
                 this.selected = undefined;
-                /**
-                 * ジャンプ機能を追加
-                 */
+                this.changeValuesInCurve(this.data);
             });
     }
 

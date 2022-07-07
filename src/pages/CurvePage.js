@@ -61,6 +61,7 @@ const CurvePage = props => {
     const [curve, setCurveData] = useState({});
     const [isLoadedFlag, setLoadedFlag] = useState(false);
     const create = ev => {
+        const _curve = {...curve};
         if(videoId) {
             Promise.all([
                 (new Promise(resolve => {
@@ -83,7 +84,6 @@ const CurvePage = props => {
             ]).then(result => {
                 const api = new CurvesListAPI();
                 const [content, value_type] = result;
-                const _curve = {...curve};
                 _curve.content = content;
                 _curve.value_type = value_type;
                 return api.create(_curve);
