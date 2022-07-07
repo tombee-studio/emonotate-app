@@ -11,7 +11,7 @@ class CurveYouTubeComponent extends Component {
         const { curve } = this.props;
         this.state = {
             isLoadedVideoFlag: false,
-            values: curve.values
+            values: curve.values || []
         };
         this.initCurveComponent = this.initCurveComponent.bind(this);
         this.createVideoComponent = this.createVideoComponent.bind(this);

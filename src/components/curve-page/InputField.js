@@ -70,6 +70,7 @@ class InputField extends Component {
                 y: Math.round(yScale.invert(coords[1]) * 100) / 100,
                 axis: 'hv',
                 type: 'custom',
+                state: 'middle'
             };
 
             if(0 <= newData.x && newData.x <= self.duration && 
