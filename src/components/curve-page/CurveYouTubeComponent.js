@@ -83,17 +83,7 @@ class CurveYouTubeComponent extends Component {
             onChangeCurve(_curve);
         };
 
-        const selectExtreme = (index, value) => {
-            const _curve = { ...curve };
-            const _values = [...values];
-            _values[index].extreme = value;
-            _curve.values = _values;
-            onChangeCurve(_curve);
-        };
-
         const inputRanking = (index, value) => {
-            if(!Number.isInteger(value)) return;
-
             const _curve = { ...curve };
             const _values = [...values];
             _values[index].ranking = Number.parseInt(value);
@@ -141,32 +131,16 @@ class CurveYouTubeComponent extends Component {
                 width: 300,
                 renderCell: (params) => {
                     const { id, row } = params;
-                    return <RadioGroup 
-                        row defaultValue={row.extreme || "none"}>
-                        <FormControlLabel
-                            value="max"
-                            control={<Radio onClick={() => selectExtreme(id, "max")} />}
-                            label="最大値"
-                            labelPlacement="top" />
-                        <FormControlLabel
-                            value="none"
-                            control={<Radio onClick={() => selectExtreme(id, "none")} />}
-                            label=""
-                            labelPlacement="top" />
-                        <FormControlLabel
-                            value="min"
-                            control={<Radio onClick={() => selectExtreme(id, "min")} />}
-                            label="最小値"
-                            labelPlacement="top" />
-                    </RadioGroup>;
+                    return row.y == 1 ? "最大値" : (row.y == -1 ? "最小値" : "");
                 }
             }, { 
-                field: '最大値における順位',
+                field: '極値における順位',
                 width: 300,
                 renderCell: (params) => {
                     const { id, row } = params;
                     return <TextField 
                         defaultValue={row.ranking}
+                        disabled={!(row.y == -1 || row.y == 1)}
                         onChange={ev => inputRanking(id, ev.target.value)}
                     />;
                 }
