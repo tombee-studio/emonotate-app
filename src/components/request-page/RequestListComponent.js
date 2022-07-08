@@ -26,7 +26,7 @@ const RequestListComponent = () => {
         const api = new RequestListAPI();
         api.get({
             format: 'json',
-            role: 'owner',
+            role: 'participant',
             page: page
         })
         .then(json => {
@@ -39,7 +39,7 @@ const RequestListComponent = () => {
         const api = new RequestListAPI();
         api.get({
             'format': 'json',
-            'role': 'owner',
+            'role': 'participant',
         })
         .then(json => {
             setResult(json);
