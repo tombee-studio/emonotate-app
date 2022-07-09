@@ -99,7 +99,7 @@ const EmailAddressList = props => {
         onChangeEmailList(_participants);
     };
     const handleOnPaste = (ev) => {
-        const pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+        const pattern = /^.+@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
         const data = ev.clipboardData.getData("text");
         const table = [...participants];
         for(const line of data.split(/[\n\r]+/)) {

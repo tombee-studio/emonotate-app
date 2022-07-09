@@ -101,17 +101,6 @@ const ObserverComponent = (props) => {
         setParticipants(participants);
     });
 
-    const handlePaginate = (e, page) => {
-        const api = new CurvesListAPI();
-        api.list({
-            'format': 'json',
-            'search': request.room_name,
-            'page': page
-        })
-        .then(curves => setCurvesList(curves))
-        .catch(err => console.log(err));
-    };
-
     return (
         <FormControl fullWidth sx={{ m: 1 }}>
             <FormLabel>タイトル</FormLabel>

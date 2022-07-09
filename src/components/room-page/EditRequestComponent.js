@@ -69,12 +69,10 @@ const EditRequestComponent = props => {
             })
             .then(res => {
                 if(res.status == 200) return res;
+                else throw res;
             })
             .then(data => {
                 handleClick(data, "メール送信成功しました");
-            })
-            .catch(err => {
-                alert(err);
             });
     };
 
