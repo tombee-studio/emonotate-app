@@ -68,10 +68,11 @@ const EditRequestComponent = props => {
                 return fetch(`/api/send/${json.id}`);
             })
             .then(res => {
-                if(res.status == 200) return res;
+                if(res.status == 200) return res.json();
                 else throw res;
             })
             .then(data => {
+                setRequest(data);
                 handleClick(data, "メール送信成功しました");
             });
     };
