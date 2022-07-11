@@ -108,7 +108,8 @@ const RequireListComponent = props => {
                                                 edge="end"
                                                 aria-label="delete"
                                                 onClick={_ => {
-                                                    this.api.delete(request.id, {
+                                                    const api = new RequestListAPI();
+                                                    api.delete(request.id, {
                                                         'format': 'json'
                                                     })
                                                     .then(res => {
