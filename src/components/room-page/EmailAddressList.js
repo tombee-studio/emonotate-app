@@ -31,6 +31,32 @@ const COLUMNS = [
         editable: true,
     },
     {
+        field: 'sended_mail',
+        headerName: 'メール送信済み',
+        width: 150,
+        editable: false,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: params => {
+            if(params.row.sended_mail) 
+                return <CheckIcon />;
+            return "";
+        }
+    },
+    {
+        field: 'sended_mail_message',
+        headerName: '送信状態',
+        width: 150,
+        editable: false,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: params => {
+            if(params.row.sended_mail) 
+                return "OK";
+            return params.row.sended_mail_message;
+        }
+    },
+    {
         field: 'is_input_ended',
         headerName: '入力済み',
         width: 150,
