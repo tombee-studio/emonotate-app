@@ -64,7 +64,6 @@ const EditRequestComponent = props => {
         req.participants = req.participants.map(participant => participant.email);
         api.update(req.id, req)
             .then(json => {
-                setRequest(json);
                 return fetch(`/api/send/${json.id}`);
             })
             .then(res => {
@@ -74,6 +73,36 @@ const EditRequestComponent = props => {
             .then(data => {
                 setRequest(data);
                 handleClick(data, "メール送信成功しました");
+            });
+    };
+
+    const resendMails = ev => {
+        const req = { ...request };
+        const { questionaire, content, owner, value_type, values } = request;
+        const api = new RequestListAPI();
+        req.content = content.id;
+        req.owner = owner.id;
+        req.value_type = value_type.id;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = values.map(point => {
+            const p = {...point};
+            p.y = 0;
+            p.axis = "v";
+            p.type = "fixed";
+            return p;
+        });
+        req.participants = req.participants.map(participant => participant.email);
+        api.update(req.id, req)
+            .then(json => {
+                return fetch(`/api/send/${json.id}`);
+            })
+            .then(res => {
+                if(res.status == 200) return res.json();
+                else throw res;
+            })
+            .then(data => {
+                setRequest(data);
+                handleClick(data, "再送信成功しました");
             });
     };
 
@@ -126,6 +155,32 @@ const EditRequestComponent = props => {
         setSnackbar(_useSnackbar);
     };
 
+    const createSendButtons = participants => {
+        if(participants.every(participant => participant.sended_mail)) {
+            return <ButtonGroup>
+                <Button 
+                    variant="outlined" 
+                    onClick={sendMails}>
+                    メール送信
+                </Button>
+            </ButtonGroup>
+        } else {
+            return <ButtonGroup>
+                <Button 
+                    variant="outlined" 
+                    onClick={sendMails}>
+                    メール送信
+                </Button>
+                <Button 
+                    variant="outlined" 
+                    color="error"
+                    onClick={resendMails}>
+                    再送信
+                </Button>
+            </ButtonGroup>
+        }
+    };
+
     return <Box m={2}>
         <ObserverComponent 
             request={ request } 
@@ -147,18 +202,15 @@ const EditRequestComponent = props => {
                         onClick={download}>
                         ダウンロード
                     </Button>
-                    <Button 
-                        disabled={!request.is_able_to_send}
-                        variant="outlined" 
-                        onClick={sendMails}>
-                        メール送信
-                    </Button>
                 </ButtonGroup>
+            </Grid>
+            <Grid item>
+                {createSendButtons(request.participants)}
             </Grid>
             <Grid item>
                 <ButtonGroup>
                     <Button 
-                        variant="outlined" 
+                        variant="contained" 
                         color="error"
                         onClick={resetEmailAddresses}>
                         メールアドレスを消去
