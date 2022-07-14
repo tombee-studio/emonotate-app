@@ -11,6 +11,7 @@ import RequestListAPI from "../../helper/RequestListAPI"
 
 const CreateRequestComponent = props => {
     const { request, setRequest } = props;
+    const [_selectedRows, selectedRows] = useState([]);
     const [usingSnackbar, setSnackbar] = useState({
         isOpened: false,
         data: {}
@@ -60,7 +61,9 @@ const CreateRequestComponent = props => {
     return <Box m={2}>
         <ObserverComponent 
             request={ request } 
-            onChange={ setRequest } />
+            onChange={ setRequest }
+            selectedRows={selectedRows}
+            _selectedRows={_selectedRows} />
         <ButtonGroup>
             <Button variant="outlined" onClick={create}>作成</Button>
         </ButtonGroup>

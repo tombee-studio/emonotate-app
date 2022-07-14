@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Box, Button, IconButton } from "@mui/material";
 import { 
@@ -74,8 +74,7 @@ const COLUMNS = [
 ];
 
 const EmailAddressList = props => {
-    const { participants, curves, onChangeEmailList } = props;
-    const selectedRows = React.useRef([]);
+    const { participants, curves, onChangeEmailList, selectedRows, _selectedRows } = props;
     const addParticipant = () => {
         const id = (participants.length == 0)? 1 : Math.max(...participants.map(v => v.id)) + 1;
         const newParticipant = { 
@@ -94,7 +93,7 @@ const EmailAddressList = props => {
                     参加者を追加
             </Button>
             <Button color="primary" 
-                disabled={selectedRows.current.length == 0}
+                disabled={_selectedRows.length == 0}
                 startIcon={<DeleteIcon />} 
                 onClick={handleOnDelete}>
                     選択された参加者を削除
@@ -121,7 +120,7 @@ const EmailAddressList = props => {
     };
     const handleOnDelete = (v) => {
         const _participants = [...participants.filter(participant => 
-            !selectedRows.current.includes(participant.id))];
+            !_selectedRows.includes(participant.id))];
         onChangeEmailList(_participants);
     };
     const handleOnPaste = (ev) => {
@@ -161,7 +160,7 @@ const EmailAddressList = props => {
             onCellEditCommit={handleOnCellEditCommit}
             checkboxSelection
             disableSelectionOnClick
-            onSelectionModelChange={(v) => selectedRows.current = v}
+            onSelectionModelChange={(v) => selectedRows(v)}
             density='compact' 
             autoHeight
         />

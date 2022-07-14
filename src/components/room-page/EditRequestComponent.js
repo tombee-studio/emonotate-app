@@ -8,7 +8,6 @@ import {
 import React, { useState } from 'react';
 import ObserverComponent from './ObserverComponent';
 
-import CurvesListAPI from "../../helper/CurvesListAPI";
 import RequestListAPI from "../../helper/RequestListAPI";
 import EmonotateAPI from '../../helper/EmonotateAPI';
 
@@ -18,6 +17,8 @@ const EditRequestComponent = props => {
         isOpened: false,
         data: {}
     });
+
+    const [_selectedRows, selectedRows] = useState([]);
 
     const update = ev => {
         const req = { ...request };
@@ -106,6 +107,37 @@ const EditRequestComponent = props => {
             });
     };
 
+    const sendMailsToSelectedUsers = () => {
+        const req = { ...request };
+        const { questionaire, content, owner, value_type, values } = request;
+        const api = new RequestListAPI();
+        req.content = content.id;
+        req.owner = owner.id;
+        req.value_type = value_type.id;
+        req.questionaire = questionaire ? questionaire.id : null;
+        req.values = values.map(point => {
+            const p = {...point};
+            p.y = 0;
+            p.axis = "v";
+            p.type = "fixed";
+            return p;
+        });
+        req.participants = req.participants.map(participant => participant.email);
+        api.update(req.id, req)
+            .then(json => {
+                const url = `/api/send/${json.id}?targets=${_selectedRows.join(";")}`;
+                return fetch(url);
+            })
+            .then(res => {
+                if(res.status == 200) return res.json();
+                else throw res;
+            })
+            .then(data => {
+                setRequest(data);
+                handleClick(data, "選択されたユーザに送信成功しました");
+            });
+    };
+
     const download = (ev) => {
         const api = new EmonotateAPI();
         api.getRequestItemAPI("get_download_curve_data", request.id)
@@ -156,35 +188,37 @@ const EditRequestComponent = props => {
     };
 
     const createSendButtons = participants => {
-        if(participants.every(participant => participant.sended_mail)) {
-            return <ButtonGroup>
-                <Button 
-                    variant="outlined" 
-                    onClick={sendMails}>
-                    メール送信
-                </Button>
-            </ButtonGroup>
-        } else {
-            return <ButtonGroup>
-                <Button 
-                    variant="outlined" 
-                    onClick={sendMails}>
-                    メール送信
-                </Button>
-                <Button 
-                    variant="outlined" 
-                    color="error"
-                    onClick={resendMails}>
-                    再送信
-                </Button>
-            </ButtonGroup>
+        const buttons = [
+            <Button 
+                variant="outlined" 
+                onClick={sendMails}>
+                すべての参加者にメール送信
+            </Button>
+        ];
+        if(_selectedRows.length != 0) {
+            buttons.push(<Button 
+                variant="outlined"
+                onClick={sendMailsToSelectedUsers}>
+                選択された人にメール送信
+            </Button>);
         }
+        if(!participants.every(participant => participant.sended_mail)) {
+            buttons.push(<Button 
+                variant="outlined" 
+                color="error"
+                onClick={resendMails}>
+                再送信
+            </Button>);
+        }
+        return <ButtonGroup>{ buttons }</ButtonGroup>;
     };
 
     return <Box m={2}>
         <ObserverComponent 
             request={ request } 
-            onChange={ req => setRequest(req)} />
+            onChange={ req => setRequest(req)}
+            selectedRows={selectedRows}
+            _selectedRows={_selectedRows} />
         <Grid container spacing={2}>
             <Grid item>
                 <ButtonGroup>
@@ -210,7 +244,7 @@ const EditRequestComponent = props => {
             <Grid item>
                 <ButtonGroup>
                     <Button 
-                        variant="contained" 
+                        variant="outlined" 
                         color="error"
                         onClick={resetEmailAddresses}>
                         メールアドレスを消去
