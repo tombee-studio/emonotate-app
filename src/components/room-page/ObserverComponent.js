@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { 
     FormControl,
     FormLabel,
@@ -34,7 +34,7 @@ const createNewCurveComponent = (curve, setCurveData) => {
 
 const ObserverComponent = (props) => {
     const { django } = window;
-    const { request, onChange } = props;
+    const { request, onChange, selectedRows, _selectedRows } = props;
     const [contents, setContents] = useState([]);
 
     const [title, setTitle] = useState(request.title);
@@ -100,17 +100,6 @@ const ObserverComponent = (props) => {
         setValues(values);
         setParticipants(participants);
     });
-
-    const handlePaginate = (e, page) => {
-        const api = new CurvesListAPI();
-        api.list({
-            'format': 'json',
-            'search': request.room_name,
-            'page': page
-        })
-        .then(curves => setCurvesList(curves))
-        .catch(err => console.log(err));
-    };
 
     return (
         <FormControl fullWidth sx={{ m: 1 }}>
@@ -198,7 +187,9 @@ const ObserverComponent = (props) => {
                     req.participants = participants;
                     setParticipants(participants);
                     onChange(req);
-                }}/>
+                }}
+                selectedRows={selectedRows}
+                _selectedRows={_selectedRows} />
         </FormControl>
     );
 };

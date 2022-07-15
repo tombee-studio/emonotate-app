@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Box, Button, IconButton } from "@mui/material";
 import { 
@@ -31,6 +31,32 @@ const COLUMNS = [
         editable: true,
     },
     {
+        field: 'sended_mail',
+        headerName: 'メール送信済み',
+        width: 150,
+        editable: false,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: params => {
+            if(params.row.sended_mail) 
+                return <CheckIcon />;
+            return "";
+        }
+    },
+    {
+        field: 'sended_mail_message',
+        headerName: '送信状態',
+        width: 150,
+        editable: false,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: params => {
+            if(params.row.sended_mail) 
+                return "OK";
+            return params.row.sended_mail_message;
+        }
+    },
+    {
         field: 'is_input_ended',
         headerName: '入力済み',
         width: 150,
@@ -48,8 +74,7 @@ const COLUMNS = [
 ];
 
 const EmailAddressList = props => {
-    const { participants, curves, onChangeEmailList } = props;
-    const selectedRows = React.useRef([]);
+    const { participants, curves, onChangeEmailList, selectedRows, _selectedRows } = props;
     const addParticipant = () => {
         const id = (participants.length == 0)? 1 : Math.max(...participants.map(v => v.id)) + 1;
         const newParticipant = { 
@@ -68,7 +93,7 @@ const EmailAddressList = props => {
                     参加者を追加
             </Button>
             <Button color="primary" 
-                disabled={selectedRows.current.length == 0}
+                disabled={_selectedRows.length == 0}
                 startIcon={<DeleteIcon />} 
                 onClick={handleOnDelete}>
                     選択された参加者を削除
@@ -95,11 +120,11 @@ const EmailAddressList = props => {
     };
     const handleOnDelete = (v) => {
         const _participants = [...participants.filter(participant => 
-            !selectedRows.current.includes(participant.id))];
+            !_selectedRows.includes(participant.id))];
         onChangeEmailList(_participants);
     };
     const handleOnPaste = (ev) => {
-        const pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+        const pattern = /^.+@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
         const data = ev.clipboardData.getData("text");
         const table = [...participants];
         for(const line of data.split(/[\n\r]+/)) {
@@ -135,7 +160,7 @@ const EmailAddressList = props => {
             onCellEditCommit={handleOnCellEditCommit}
             checkboxSelection
             disableSelectionOnClick
-            onSelectionModelChange={(v) => selectedRows.current = v}
+            onSelectionModelChange={(v) => selectedRows(v)}
             density='compact' 
             autoHeight
         />
