@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { 
     FormGroup,
+    ButtonGroup,
     TextField,
     FormHelperText,
     Button,
@@ -11,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
+import { useLocation } from 'react-router-dom';
 
 import AuthenticateAPI from "../../helper/AuthenticateAPI";
 
@@ -18,14 +20,26 @@ const LoginComponent = props => {
     const [open, setOpen] = React.useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const { search } = useLocation();
+
+    const convertQuery = params => {
+        const queries = {};
+        for(const [key, value] of params) {
+            queries[key] = value;
+        }
+        return queries;
+    };
 
     const loginAction = ev => {
+        const params = new URLSearchParams(search);
         const api = new AuthenticateAPI()
         const data = {
             username: username,
             password: password
         };
-        api.login(data)
+        const queries = convertQuery(params);
+        queries['format'] = 'json';
+        api.login(data, queries)
             .then(res => {
                 window.location = '/';
             })
@@ -34,6 +48,37 @@ const LoginComponent = props => {
                 setUsername("");
                 setPassword("");
             });
+    };
+
+    const loginGuestAction = ev => {
+        const params = new URLSearchParams(search);
+        const api = new AuthenticateAPI();
+        const data = {};
+        const queries = convertQuery(params);
+        queries['format'] = 'json';
+        queries['guest'] = 'true';
+        api.login(data, queries).then(res => {
+                window.location = '/';
+            })
+            .catch(feedback => {
+                setOpen(true);
+                setUsername("");
+                setPassword("");
+            });
+    };
+
+    const createButtons = () => {
+        if(username == "" && password == "") {
+            return <Button variant="outlined" color="secondary" endIcon={<SendIcon />} onClick={loginGuestAction}>
+                ゲストユーザとしてログイン
+            </Button>;
+        } else {
+            return <Button disabled={
+                !(username != "" && password != "")
+            } variant="contained" endIcon={<SendIcon />} onClick={loginAction}>
+                ログイン
+            </Button>;
+        }
     };
 
     return (
@@ -73,9 +118,7 @@ const LoginComponent = props => {
                     onChange={ev => setPassword(ev.target.value)} />
                 <FormHelperText></FormHelperText>
     
-                <Button variant="contained" endIcon={<SendIcon />} onClick={loginAction}>
-                    LOG IN
-                </Button>
+                {createButtons()}
             </Stack>
         </FormGroup>
     );

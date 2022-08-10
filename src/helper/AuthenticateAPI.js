@@ -1,6 +1,9 @@
 export default class AuthenticateAPI {
-    login(data) {
-      return fetch('/api/login/?format=json', {
+    login(data, queries={
+      'format': 'json'
+    }) {
+      const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+      return fetch(`/api/login/?${query}`, {
         method: 'post',
         mode: 'cors',
         headers: {
