@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { 
     FormGroup,
-    ButtonGroup,
     TextField,
     FormHelperText,
     Button,
     Stack,
+    Box,
 } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
@@ -67,58 +67,63 @@ const LoginComponent = props => {
             });
     };
 
-    const createButtons = () => {
-        if(username == "" && password == "") {
-            return <Button variant="outlined" color="secondary" endIcon={<SendIcon />} onClick={loginGuestAction}>
-                ゲストユーザとしてログイン
-            </Button>;
-        } else {
-            return <Button disabled={
-                !(username != "" && password != "")
-            } variant="contained" endIcon={<SendIcon />} onClick={loginAction}>
-                ログイン
-            </Button>;
-        }
-    };
-
     return (
         <FormGroup>
-            <Stack direction="column" spacing={1}>
-                <Collapse in={open}>
-                    <Alert
-                        severity="error"
-                        action={
-                            <IconButton
-                            aria-label="close"
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                setOpen(false);
-                            }}
-                            >
-                            <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        }
-                        sx={{ mb: 2 }}>
-                        ユーザ名またはパスワードが間違っています
-                    </Alert>
-                </Collapse>
-                <TextField 
-                    id="username" 
-                    label="ユーザ名" 
-                    value={username} 
-                    onChange={ev => setUsername(ev.target.value)} />
-                <FormHelperText></FormHelperText>
-                
-                <TextField 
-                    id="password" 
-                    label="パスワード" 
-                    type="password"
-                    value={password} 
-                    onChange={ev => setPassword(ev.target.value)} />
-                <FormHelperText></FormHelperText>
-    
-                {createButtons()}
+            <Stack direction="column" spacing={4}>
+                <Box>
+                    <Stack spacing={1} direction="column">
+                        <Collapse in={open}>
+                            <Alert
+                                severity="error"
+                                action={
+                                    <IconButton
+                                    aria-label="close"
+                                    color="inherit"
+                                    size="small"
+                                    onClick={() => {
+                                        setOpen(false);
+                                    }}
+                                    >
+                                    <CloseIcon fontSize="inherit" />
+                                    </IconButton>
+                                }
+                                sx={{ mb: 2 }}>
+                                ユーザ名またはパスワードが間違っています
+                            </Alert>
+                        </Collapse>
+                        <TextField 
+                            id="username" 
+                            label="ユーザ名" 
+                            value={username} 
+                            onChange={ev => setUsername(ev.target.value)} />
+                        <FormHelperText></FormHelperText>
+                        
+                        <TextField 
+                            id="password" 
+                            label="パスワード" 
+                            type="password"
+                            value={password} 
+                            onChange={ev => setPassword(ev.target.value)} />
+                        <FormHelperText></FormHelperText>
+            
+                        <Button disabled={
+                            !(username != "" && password != "")
+                        } variant="contained" startIcon={<SendIcon />} onClick={loginAction}>
+                            ログイン
+                        </Button>
+                    </Stack>
+                </Box>
+                <Box>
+                    <Stack spacing={1} direction="column">
+                        <Button 
+                            variant="outlined" 
+                            color="secondary"
+                            startIcon={<SendIcon />} 
+                            onClick={loginGuestAction} >
+                            ゲストユーザとしてログイン
+                        </Button>
+                    </Stack>
+                </Box>
             </Stack>
         </FormGroup>
     );
