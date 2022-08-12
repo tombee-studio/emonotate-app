@@ -81,10 +81,12 @@ const App = () => {
                 const ProfilePage = loadable(() => import('./pages/ProfilePage'));
                 return <ProfilePage />
               }} />
-              <Route exact path='/app/login/' component={_ => {
-                const LoginPage = loadable(() => import('./pages/LoginPage'));
-                return <LoginPage />
-              }} />
+              <Route exact path='/app/login/' >
+                <Redirect to="/app/dashboard/" />
+              </Route>
+              <Route exact path='/app/signup/' >
+                <Redirect to="/app/dashboard/" />
+              </Route>
               <Route exact path='/app/requests/' component={_ => {
                 const RequestPage = loadable(() => import('./pages/RequestPage'));
                 return <RequestPage />;
@@ -106,6 +108,10 @@ const App = () => {
           <Route exact path='/app/login/' component={_ => {
             const LoginPage = loadable(() => import('./pages/LoginPage'));
             return <LoginPage />
+          }} />
+          <Route exact path='/app/signup/' component={_ => {
+            const SignupPage = loadable(() => import('./pages/SignupPage'));
+            return <SignupPage />
           }} />
         </Switch>
       </Router>;
