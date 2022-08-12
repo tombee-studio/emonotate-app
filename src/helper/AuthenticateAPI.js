@@ -29,9 +29,15 @@ export default class AuthenticateAPI {
         'X-CSRFToken': window.django.csrf,
       },
       body: JSON.stringify(data)
-    }).then(res => {
-        if (res.status === 201) return res.json();
-        else throw res.json()
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === 201) {
+          return res;
+        }
+        else {
+          throw res;
+        }
     });
   }
 

@@ -22,6 +22,7 @@ const SignupComponent = props => {
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2] = useState("");
     const [email, setEmail] = useState("");
+    const [error, setError] = useState("");
     const { search } = useLocation();
 
     const convertQuery = params => {
@@ -50,16 +51,16 @@ const SignupComponent = props => {
         };
         const queries = convertQuery(params);
         queries['format'] = 'json';
-        api.signup(data, queries)
-            .then(res => {
-                window.location = '/';
-            })
-            .catch(feedback => {
-                setOpen(true);
-                setUsername("");
-                setPassword1("");
-                setPassword2("");
-            });
+        const promise = api.signup(data, queries);
+        promise.then(_ => window.location = '/');
+        promise.catch(error => {
+            setOpen(true);
+            setUsername("");
+            setEmail("");
+            setPassword1("");
+            setPassword2("");
+            setError(error.message);
+        });
     };
 
     const loginGuestAction = ev => {
@@ -101,7 +102,7 @@ const SignupComponent = props => {
                                     </IconButton>
                                 }
                                 sx={{ mb: 2 }}>
-                                ユーザ名またはパスワードが間違っています
+                                {error}
                             </Alert>
                         </Collapse>
 
