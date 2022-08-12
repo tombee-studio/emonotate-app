@@ -106,6 +106,10 @@ const App = () => {
             const LoginPage = loadable(() => import('./pages/LoginPage'));
             return <LoginPage />
           }} />
+          <Route exact path='/app/signup/' component={_ => {
+            const SignupPage = loadable(() => import('./pages/SignupPage'));
+            return <SignupPage />
+          }} />
         </Switch>
       </Router>;
     }

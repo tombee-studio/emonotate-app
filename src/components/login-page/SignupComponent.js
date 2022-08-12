@@ -16,10 +16,12 @@ import { useLocation } from 'react-router-dom';
 
 import AuthenticateAPI from "../../helper/AuthenticateAPI";
 
-const LoginComponent = props => {
+const SignupComponent = props => {
     const [open, setOpen] = React.useState(false);
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [password1, setPassword1] = useState("");
+    const [password2, setPassword2] = useState("");
+    const [email, setEmail] = useState("");
     const { search } = useLocation();
 
     const convertQuery = params => {
@@ -29,31 +31,34 @@ const LoginComponent = props => {
         }
         return queries;
     };
-    
-    const getSignupURL = (search) => {
+
+    const getLoginURL = (search) => {
         const queries = convertQuery(new URLSearchParams(search));
         const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
-        const signupURL = `/app/signup/${query == "" ? "" : '?' + query}`;
+        const signupURL = `/app/login/${query == "" ? "" : '?' + query}`;
         return signupURL;
     };
 
-    const loginAction = ev => {
+    const signupAction = ev => {
         const params = new URLSearchParams(search);
         const api = new AuthenticateAPI()
         const data = {
             username: username,
-            password: password
+            email: email,
+            password1: password1,
+            password2: password2
         };
         const queries = convertQuery(params);
         queries['format'] = 'json';
-        api.login(data, queries)
+        api.signup(data, queries)
             .then(res => {
                 window.location = '/';
             })
             .catch(feedback => {
                 setOpen(true);
                 setUsername("");
-                setPassword("");
+                setPassword1("");
+                setPassword2("");
             });
     };
 
@@ -70,7 +75,8 @@ const LoginComponent = props => {
             .catch(feedback => {
                 setOpen(true);
                 setUsername("");
-                setPassword("");
+                setPassword1("");
+                setPassword2("");
             });
     };
 
@@ -98,36 +104,52 @@ const LoginComponent = props => {
                                 ユーザ名またはパスワードが間違っています
                             </Alert>
                         </Collapse>
+
                         <TextField 
                             id="username" 
                             label="ユーザ名" 
                             value={username} 
                             onChange={ev => setUsername(ev.target.value)} />
                         <FormHelperText></FormHelperText>
-                        
+
+                        <TextField 
+                            id="email" 
+                            label="メールアドレス" 
+                            value={email} 
+                            onChange={ev => setEmail(ev.target.value)} />
+                        <FormHelperText></FormHelperText>
+
                         <TextField 
                             id="password" 
                             label="パスワード" 
                             type="password"
-                            value={password} 
-                            onChange={ev => setPassword(ev.target.value)} />
+                            value={password1} 
+                            onChange={ev => setPassword1(ev.target.value)} />
+                        <FormHelperText></FormHelperText>
+
+                        <TextField 
+                            id="password" 
+                            label="確認用パスワード" 
+                            type="password"
+                            value={password2} 
+                            onChange={ev => setPassword2(ev.target.value)} />
                         <FormHelperText></FormHelperText>
             
                         <Button disabled={
-                            !(username != "" && password != "")
-                        } variant="contained" startIcon={<SendIcon />} onClick={loginAction}>
-                            ログイン
+                            !(username != "" && password1 != "" && password2 != "")
+                        } variant="contained" startIcon={<SendIcon />} onClick={signupAction}>
+                            ユーザ登録
                         </Button>
                     </Stack>
                 </Box>
                 <Box>
                     <Stack spacing={1} direction="column">
-                        <Button
-                            variant="contained"
+                        <Button 
+                            variant="contained" 
                             color="secondary"
                             startIcon={<SendIcon />} 
-                            href={getSignupURL(search)} >
-                            ユーザ登録
+                            href={getLoginURL(search)} >
+                            ログイン
                         </Button>
                         <Button 
                             variant="outlined" 
@@ -143,4 +165,4 @@ const LoginComponent = props => {
     );
 };
 
-export default LoginComponent;
+export default SignupComponent;
