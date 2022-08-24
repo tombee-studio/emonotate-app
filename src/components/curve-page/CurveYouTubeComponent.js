@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
-import { Box, CircularProgress, Grid, RadioGroup, FormControlLabel, Radio, TextField } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import YouTubeVideoComponent from "./YouTubeVideoComponent";
 import InputField from "./InputField";
 
@@ -63,7 +62,7 @@ class CurveYouTubeComponent extends Component {
 
     render() {
         const { curve, videoId, onChangeCurve } = this.props;
-        const { isLoadedVideoFlag, duration, values } = this.state;
+        const { isLoadedVideoFlag, duration } = this.state;
 
         const changeValuesInCurve = _values => {
             const stateData = { ...this.state };
@@ -74,79 +73,6 @@ class CurveYouTubeComponent extends Component {
             _curve.values = _values;
             onChangeCurve(_curve);
         };
-
-        const selectState = (index, value) => {
-            const _curve = { ...curve };
-            const _values = [...values];
-            _values[index].state = value;
-            _curve.values = _values;
-            onChangeCurve(_curve);
-        };
-
-        const inputRanking = (index, value) => {
-            const _curve = { ...curve };
-            const _values = [...values];
-            _values[index].ranking = Number.parseInt(value);
-            _curve.values = _values;
-            onChangeCurve(_curve);
-        };
-
-        const columns = [
-            { 
-                field: 'id',
-                width: 100
-            }, { 
-                field: 'x',
-                width: 100
-            }, { 
-                field: 'y',
-                width: 100
-            }, { 
-                field: 'state',
-                width: 300,
-                renderCell: (params) => {
-                    const { id, row } = params;
-                    return <RadioGroup 
-                        row defaultValue={row.state || "middle"}>
-                        <FormControlLabel
-                            value="start"
-                            control={<Radio onClick={() => selectState(id, "start")} />}
-                            label="Start"
-                            labelPlacement="top" />
-                        <FormControlLabel
-                            value="middle"
-                            control={<Radio onClick={() => selectState(id, "middle")} />}
-                            label="Middle"
-                            labelPlacement="top" />
-                        <FormControlLabel
-                            value="end"
-                            control={<Radio onClick={() => selectState(id, "end")} />}
-                            label="End"
-                            labelPlacement="top" />
-                    </RadioGroup>;
-                }
-            }, { 
-                field: 'extreme_label',
-                headerName: '極値かどうか',
-                width: 300,
-                renderCell: (params) => {
-                    const { id, row } = params;
-                    return row.y == 1 ? "最大値" : (row.y == -1 ? "最小値" : "");
-                }
-            }, { 
-                field: '極値における順位',
-                width: 300,
-                renderCell: (params) => {
-                    const { id, row } = params;
-                    return <TextField 
-                        defaultValue={row.ranking}
-                        disabled={!(row.y == -1 || row.y == 1)}
-                        onChange={ev => inputRanking(id, ev.target.value)}
-                    />;
-                }
-            }
-        ];
-
         return (<Box>
             <Grid container spacing={2}>
                 { this.createVideoComponent(videoId, curve) }
@@ -159,18 +85,6 @@ class CurveYouTubeComponent extends Component {
                             setCurrent={this.setCurrent}
                             getCurrent={this.getCurrent} />)}
                 </Grid>
-                <Grid item xs={12}>
-                    <Box height={300} width="100%" m={2}>
-                        <DataGrid 
-                            columns={columns}
-                            rows={values.map((item, i) => {
-                                const newItem = {...item};
-                                newItem.id = i;
-                                return newItem;
-                            })}
-                        />
-                    </Box>
-                 </Grid>
              </Grid>
         </Box>);
     }
