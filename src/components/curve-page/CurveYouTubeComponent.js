@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
-import { Box, CircularProgress, Grid, RadioGroup, FormControlLabel, Radio, TextField } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import YouTubeVideoComponent from "./YouTubeVideoComponent";
 import InputField from "./InputField";
 
