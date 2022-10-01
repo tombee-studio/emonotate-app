@@ -12,8 +12,12 @@ export default class AuthenticateAPI {
       },
       body: JSON.stringify(data)
     }).then(res => {
-        if (res.status === 200) return res.json();
-        else throw res.json()
+        if (res.status === 200 || res.status === 302) {
+          return res.json();
+        }
+        else {
+          throw res.json()
+        }
     });
   }
 
