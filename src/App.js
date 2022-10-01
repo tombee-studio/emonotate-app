@@ -87,6 +87,11 @@ const App = () => {
               <Route exact path='/app/signup/' >
                 <Redirect to="/app/dashboard/" />
               </Route>
+              <Route exact path='/app/change_email/' component={_ => {
+                const ChangeEmailPage = loadable(() => import('./pages/ChangeEmailPage'));
+                return <ChangeEmailPage />
+              }}>
+              </Route>
               <Route exact path='/app/requests/' component={_ => {
                 const RequestPage = loadable(() => import('./pages/RequestPage'));
                 return <RequestPage />;
