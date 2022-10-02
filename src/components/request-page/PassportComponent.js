@@ -45,8 +45,12 @@ const PassportComponent = props => {
                                 placement='top'
                                 title='Copied!'>
                                 <IconButton
+                                    type="button"
                                     disabled={url === ''}
-                                >
+                                    onClick={ev => {
+                                        ev.preventDefault();
+                                        navigator.clipboard.writeText(url);
+                                    }}>
                                     <Assignment />
                                 </IconButton>
                             </Tooltip>
