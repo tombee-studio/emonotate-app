@@ -85,18 +85,14 @@ const RequestListComponent = () => {
                                             component="span"
                                             color="textPrimary"
                                         >
-                                            { 
-                                                request.title
-                                            }
+                                            { request.title }
                                         </Typography>
                                         <Typography
                                             component="span"
                                             variant="subtitle1"
                                             color="textSecondary"
                                         >
-                                            { 
-                                                ` from ${request.owner.email}`
-                                            }
+                                            { ` from ${request.owner.email}` }
                                         </Typography>
                                     </React.Fragment>}
                                     secondary={
