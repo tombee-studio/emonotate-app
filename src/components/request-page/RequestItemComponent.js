@@ -1,16 +1,28 @@
-import { Mail } from "@mui/icons-material";
-import { Avatar, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
+import { 
+    Mail,
+    Delete
+} from "@mui/icons-material";
+import { 
+    Avatar, 
+    ListItem, 
+    ListItemAvatar, 
+    ListItemText, 
+    ListItemSecondaryAction,
+    IconButton,
+    Typography } from "@mui/material";
 import React from "react";
 
 const RequestItemComponent = props => {
-    const { request } = props;
-    return <ListItem 
+    const { request, deleteAction } = props;
+    return <ListItem
+        component="span"
         alignItems="flex-start"
         key={request.room_name}>
-        <ListItemAvatar>
-            <Avatar>
-                <Mail />
-            </Avatar>
+            <ListItemAvatar>
+                <Avatar>
+                    <Mail />
+                </Avatar>
+            </ListItemAvatar>
             <ListItemText
                 primary={<React.Fragment>
                     <Typography
@@ -47,8 +59,19 @@ const RequestItemComponent = props => {
                         </React.Fragment>
                     }
                 />
-        </ListItemAvatar>
-    </ListItem>
+            <ListItemSecondaryAction>
+                <IconButton
+                    component="a"
+                    edge="end"
+                    aria-label="delete"
+                    onClick={ _ => {
+                        deleteAction(request);
+                    }}
+                    size="large">
+                    <Delete />
+                </IconButton>
+            </ListItemSecondaryAction>
+        </ListItem>
 };
 
 export default RequestItemComponent;
