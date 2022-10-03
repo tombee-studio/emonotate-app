@@ -34,9 +34,14 @@ const PassportComponent = props => {
         <Typography
             component="span"
             variant="h6"
-            color="textPrimary"
-        >
-            パスポートの作成
+            color="textPrimary">
+            ワンクリック参加URLの作成
+            <Typography 
+                color="textSecondary"
+                variant="body1">
+                シングルサインオンでリクエストに参加可能なURLを作成します。<br />
+                メールなどに作成されたURLを記載することで、参加者はURLをクリックしリクエストに参加することができます。
+            </Typography>
         </Typography>
         <Divider />
         <Box m={2}>
@@ -48,9 +53,8 @@ const PassportComponent = props => {
                         <InputAdornment position="end">
                             <Tooltip
                                 arrow
-                                disableHoverListener
                                 placement='top'
-                                title='Copied!'>
+                                title='クリップボードにURLをコピーします'>
                                 <IconButton
                                     type="button"
                                     disabled={url === ''}
@@ -70,7 +74,7 @@ const PassportComponent = props => {
             <Stack>
                 <Autocomplete 
                     options={requestList}
-                    renderInput={params => <TextField {...params}/>}
+                    renderInput={params => <TextField {...params} label="追加したいリクエストのタイトルを入力してください"/>}
                     getOptionLabel={request => request.title}
                     onInputChange={(event, value) => {
                         const api = new RequestListAPI();
