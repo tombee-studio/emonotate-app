@@ -75,7 +75,9 @@ const PassportComponent = props => {
             <Stack>
                 <Autocomplete 
                     options={requestList}
-                    renderInput={params => <TextField {...params} label="追加したいリクエストのタイトルを入力してください"/>}
+                    renderInput={params => <TextField 
+                        {...params} 
+                        label="追加したいリクエストのタイトルを入力してください"/>}
                     getOptionLabel={request => request.title}
                     onInputChange={(event, value) => {
                         const api = new RequestListAPI();
