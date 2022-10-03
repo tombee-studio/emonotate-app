@@ -12,7 +12,6 @@ const RequestPage = (props) => {
     list.push(<RequestListComponent />);
     if(user.groups.includes("Researchers")) {
       list.push(<RequireListComponent />);
-      list.push(<PassportComponent />);
     }
     return list;
   };

@@ -50,7 +50,7 @@ const RequestListComponent = () => {
     return (<Box m={2}>
         <Typography
             component="span"
-            variant="h6"
+            variant="h5"
             color="textPrimary"
         >
             あなたへの依頼
