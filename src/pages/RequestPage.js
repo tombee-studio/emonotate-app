@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Card } from '@mui/material';
 import RequestListComponent from '../components/request-page/RequestListComponent';
 import RequireListComponent from '../components/request-page/RequireListComponent';
-import PassportComponent from '../components/request-page/PassportComponent';
 
 const RequestPage = (props) => {
   const { user } = window.django;
