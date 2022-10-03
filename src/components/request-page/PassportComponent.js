@@ -10,7 +10,8 @@ import {
     InputAdornment,
     IconButton,
     FormControl,
-    Tooltip} from "@mui/material";
+    Tooltip,
+    Stack} from "@mui/material";
 import RequestListAPI from "../../helper/RequestListAPI";
 import RequestItemComponent from "./RequestItemComponent";
 import { Assignment } from "@mui/icons-material";
@@ -23,6 +24,12 @@ const PassportComponent = props => {
     }api/login/?passport=${
         selectedRequestList.map(item => item.id).join(",")
     }`;
+    const deleteAction = request => {
+        const index = selectedRequestList.findIndex(item => 
+            item.room_name == request.room_name);
+        selectedRequestList.splice(index, 1)
+        setSelectedRequestList([...selectedRequestList]);
+    };
     return <Box m={2}>
         <Typography
             component="span"
@@ -60,36 +67,40 @@ const PassportComponent = props => {
             </FormControl>
         </Box>
         <Box m={2}>
-            <Autocomplete 
-                options={requestList}
-                renderInput={params => <TextField {...params}/>}
-                getOptionLabel={request => request.title}
-                onInputChange={(event, value) => {
-                    const api = new RequestListAPI();
-                    api.get({
-                        "format": "json",
-                        "search": value,
-                        'role': "owner"
-                    })
-                    .then(data => {
-                        setRequestList(data.models);
-                    }, err => {
-                        console.log(err);
-                    })
-                }}
-                onChange={(_, request) => {
-                    if(!request) return;
-                    const tmpArray = [...selectedRequestList];
-                    tmpArray.push(request);
-                    setSelectedRequestList(tmpArray);
-                }}
-            />
-            <List>
-                {
-                selectedRequestList.map(item => 
-                    <RequestItemComponent request={item} />)
-                }
-            </List>
+            <Stack>
+                <Autocomplete 
+                    options={requestList}
+                    renderInput={params => <TextField {...params}/>}
+                    getOptionLabel={request => request.title}
+                    onInputChange={(event, value) => {
+                        const api = new RequestListAPI();
+                        api.get({
+                            "format": "json",
+                            "search": value,
+                            'role': "owner"
+                        })
+                        .then(data => {
+                            setRequestList(data.models);
+                        }, err => {
+                            console.log(err);
+                        })
+                    }}
+                    onChange={(_, request) => {
+                        if(!request) return;
+                        const tmpArray = [...selectedRequestList];
+                        tmpArray.push(request);
+                        setSelectedRequestList(tmpArray);
+                    }}
+                />
+                <List>
+                    {
+                    selectedRequestList.map(request => 
+                        <RequestItemComponent 
+                            request={request} 
+                            deleteAction={deleteAction} />)
+                    }
+                </List>
+            </Stack>
         </Box>
     </Box>;
 };
