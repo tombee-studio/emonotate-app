@@ -19,11 +19,12 @@ import { Assignment } from "@mui/icons-material";
 const PassportComponent = props => {
     const [requestList, setRequestList] = useState([]);
     const [selectedRequestList, setSelectedRequestList] = useState([]);
+    const query = selectedRequestList.length > 0 
+        ? `?passport=${selectedRequestList.map(item => item.id).join(",")}`
+        : "";
     const url = `${
         process.env.REACT_APP_API_URL
-    }api/login/?passport=${
-        selectedRequestList.map(item => item.id).join(",")
-    }`;
+    }api/login/${query}`;
     const deleteAction = request => {
         const index = selectedRequestList.findIndex(item => 
             item.room_name == request.room_name);
