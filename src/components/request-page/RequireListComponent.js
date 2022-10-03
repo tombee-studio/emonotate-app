@@ -18,6 +18,7 @@ import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import RequestListAPI from '../../helper/RequestListAPI';
+import PassportComponent from './PassportComponent';
 
 const RequireListComponent = props => {
     const [result, setResult] = useState({});
@@ -51,7 +52,7 @@ const RequireListComponent = props => {
     return (<Box m={2}>
             <Typography
                 component="div"
-                variant="h6"
+                variant="h5"
                 color="textPrimary">
                 あなたが設定した実験
                 <IconButton
@@ -127,6 +128,7 @@ const RequireListComponent = props => {
                             })
                         }
                     </List>
+                    <PassportComponent />
                 </Stack>}
         </Box>
     );
