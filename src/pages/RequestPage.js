@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Card } from '@mui/material';
 import RequestListComponent from '../components/request-page/RequestListComponent';
 import RequireListComponent from '../components/request-page/RequireListComponent';
+import PassportComponent from '../components/request-page/PassportComponent';
 
 const RequestPage = (props) => {
   const { user } = window.django;
@@ -11,6 +12,7 @@ const RequestPage = (props) => {
     list.push(<RequestListComponent />);
     if(user.groups.includes("Researchers")) {
       list.push(<RequireListComponent />);
+      list.push(<PassportComponent />);
     }
     return list;
   };

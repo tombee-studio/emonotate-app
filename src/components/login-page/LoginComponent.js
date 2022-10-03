@@ -48,7 +48,11 @@ const LoginComponent = props => {
         queries['format'] = 'json';
         api.login(data, queries)
             .then(res => {
-                window.location = '/';
+                if(res.url) {
+                    window.location = res.url;
+                } else {
+                    window.location = '/';
+                }
             })
             .catch(feedback => {
                 setOpen(true);
@@ -65,7 +69,11 @@ const LoginComponent = props => {
         queries['format'] = 'json';
         queries['guest'] = 'true';
         api.login(data, queries).then(res => {
-                window.location = '/';
+                if(res.url) {
+                    window.location = res.url;
+                } else {
+                    window.location = '/';
+                }
             })
             .catch(feedback => {
                 setOpen(true);

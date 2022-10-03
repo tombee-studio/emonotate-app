@@ -21,5 +21,25 @@ export default class EmonotateAPI {
                 }
             });
     }
+
+    changeEmail(data, queries) {
+        var query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+        return fetch(`/api/change_email/?${query}`, {
+            method: 'post',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': window.django.csrf,
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if(res.status == 202) {
+                return res.json();
+            } else {
+                return res.text();
+            }
+        });
+    }
 };
   
