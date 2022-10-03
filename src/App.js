@@ -69,10 +69,6 @@ const App = () => {
                 const CurvePage = loadable(() => import('./pages/CurvePage'));
                 return <CurvePage />;
               }} />
-              <Route exact path='/app/rooms/' component={ _ => {
-                const RoomPage = loadable(() => import('./pages/RoomPage'));
-                return <RoomPage keyword={keyword} />;
-              }} />
               <Route path='/app/curves/:id(\d+)' component={ props => {
                 const CurvePage = loadable(() => import('./pages/CurvePage'));
                 return <CurvePage id={props.match.params.id} />;
@@ -96,10 +92,18 @@ const App = () => {
                 const RequestPage = loadable(() => import('./pages/RequestPage'));
                 return <RequestPage />;
               }} />
-              <Route exact path='/app/rooms/:id(\d+)' component={ props => {
-                const RoomPage = loadable(() => import('./pages/RoomPage'));
-                return <RoomPage id={props.match.params.id} keyword={keyword} />;
-              }} />
+              { userData.groups.includes("Researchers") &&
+                <Route exact path='/app/rooms/' component={ _ => {
+                  const RoomPage = loadable(() => import('./pages/RoomPage'));
+                  return <RoomPage keyword={keyword} />;
+                }} />
+              }
+              { userData.groups.includes("Researchers") &&
+                <Route exact path='/app/rooms/:id(\d+)' component={props => {
+                  const RoomPage = loadable(() => import('./pages/RoomPage'));
+                  return <RoomPage id={props.match.params.id} />;
+                }} />
+              }
             </Switch>);
           }} />
         </Router>
