@@ -20,16 +20,23 @@ import UpdateCurveYouTubeComponent from '../components/curve-page/UpdateCurveYou
 import YouTubeDataAPI from '../helper/YouTubeDataAPI';
 import UpdateCurveVideoComponent from '../components/curve-page/UpdateCurveVideoComponent';
 import YouTubeContentListAPI from '../helper/YouTubeContentListAPI';
+import RequestDetailComponent from '../components/curve-page/RequestDetailComponent';
 
-const createNewCurveComponent = (curve, setCurveData) => {
+const createNewCurveComponent = (curve, setCurveData, request) => {
     const { video_id } = curve.content;
     if(curve.content.video_id) {
         return <CurveYouTubeComponent 
             curve={curve} 
             videoId={video_id}
+            details={
+                <RequestDetailComponent request={request} />
+            }
             onChangeCurve={curve => setCurveData(curve)} />;
     } else {
         return <CurveVideoComponent curve={curve} 
+            details={
+                <RequestDetailComponent request={request} />
+            }
             onChangeCurve={curve => setCurveData(curve)} />
     }
 };
@@ -59,6 +66,7 @@ const CurvePage = props => {
     const { id }  = props;
     const [useSnackbar, setSnackbar] = useState(false);
     const [curve, setCurveData] = useState({});
+    const [request, setRequest] = useState({});
     const [isLoadedFlag, setLoadedFlag] = useState(false);
     const create = ev => {
         const _curve = {...curve};
@@ -175,6 +183,7 @@ const CurvePage = props => {
                         "content": req.content,
                         "value_type": req.value_type
                     });
+                    setRequest(req);
                     setLoadedFlag(true);
                 });
         } else {
@@ -272,7 +281,9 @@ const CurvePage = props => {
                 } else {
                     return (<Box p={2}>
                         <Stack>
-                            { createNewCurveComponent(curve, setCurveData) }
+                            { 
+                                createNewCurveComponent(curve, setCurveData, request) 
+                            }
                             <ButtonGroup>
                                 <Button variant="outlined" onClick={create}>作成</Button>
                             </ButtonGroup>

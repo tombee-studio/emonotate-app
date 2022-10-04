@@ -55,19 +55,20 @@ class CurveVideoComponent extends Component {
         this.initCurveComponent(video, curve);
     }
 
-    createVideoComponent(curve) {
+    createVideoComponent(curve, child) {
         return  <VideoComponent 
             url={curve.content.url} 
-            onReady={this.onReady} />;
+            onReady={this.onReady} 
+            details={child}/>;
     };
 
     render() {
-        const { curve } = this.props;
+        const { curve, details } = this.props;
         const { isLoadedVideoFlag, duration } = this.state;
 
         return (<Box>
             <Grid container spacing={2}>
-                { this.createVideoComponent(curve) }
+                { this.createVideoComponent(curve, details) }
                  <Grid item xs={12}>
                     {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
                         (<InputField 

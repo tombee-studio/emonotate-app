@@ -6,8 +6,6 @@ import {
 import { useState } from "react";
 import YouTube from 'react-youtube';
 
-import VideoController from './VideoController';
-
 const YouTubeVideoComponent = props => {
     const [config, setConfig] = useState({
         autoplay: false,
@@ -15,7 +13,7 @@ const YouTubeVideoComponent = props => {
         disablekb: true,
         loop: false,
     });
-    const { onReady, videoId } = props;
+    const { onReady, videoId, details } = props;
     return <Box>
         <Grid container>
             <Grid item xs="auto">
@@ -29,8 +27,7 @@ const YouTubeVideoComponent = props => {
                     }} />
             </Grid>
             <Grid item xs>
-                <VideoController config={config} 
-                    onControllerChanged={config => setConfig(config) }/>
+                { details }
             </Grid>
         </Grid>
     </Box>;

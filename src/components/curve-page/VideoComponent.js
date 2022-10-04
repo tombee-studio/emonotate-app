@@ -26,6 +26,7 @@ class VideoComponent extends React.Component {
     }
 
     render() {
+        const { details } = this.props;
         return <Box>
             <Grid container>
                 <Grid item xs="auto">
@@ -36,6 +37,7 @@ class VideoComponent extends React.Component {
                         className="video-js" />
                 </Grid>
                 <Grid item xs>
+                    { details }
                 </Grid>
             </Grid>
         </Box>;
