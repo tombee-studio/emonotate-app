@@ -53,15 +53,16 @@ class CurveYouTubeComponent extends Component {
         });
     }
 
-    createVideoComponent(videoId, curve) {
+    createVideoComponent(videoId, curve, details) {
         const video_id = videoId;
         return  <YouTubeVideoComponent 
             videoId={video_id}
+            details={details}
             onReady={event => this.initCurveComponent(event, curve)} />;
     };
 
     render() {
-        const { curve, videoId, onChangeCurve } = this.props;
+        const { curve, videoId, onChangeCurve, details } = this.props;
         const { isLoadedVideoFlag, duration } = this.state;
 
         const changeValuesInCurve = _values => {
@@ -75,7 +76,9 @@ class CurveYouTubeComponent extends Component {
         };
         return (<Box>
             <Grid container spacing={2}>
-                { this.createVideoComponent(videoId, curve) }
+                { 
+                    this.createVideoComponent(videoId, curve, details) 
+                }
                 <Grid item xs={12}>
                     {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
                         (<InputField 
