@@ -20,6 +20,7 @@ import UpdateCurveYouTubeComponent from '../components/curve-page/UpdateCurveYou
 import YouTubeDataAPI from '../helper/YouTubeDataAPI';
 import UpdateCurveVideoComponent from '../components/curve-page/UpdateCurveVideoComponent';
 import YouTubeContentListAPI from '../helper/YouTubeContentListAPI';
+import RequestDetailComponent from '../components/curve-page/RequestDetailComponent';
 
 const createNewCurveComponent = (curve, setCurveData, request) => {
     const { video_id } = curve.content;
@@ -28,17 +29,13 @@ const createNewCurveComponent = (curve, setCurveData, request) => {
             curve={curve} 
             videoId={video_id}
             details={
-                <Box m={2}>
-                    {request.description}
-                </Box>
+                <RequestDetailComponent request={request} />
             }
             onChangeCurve={curve => setCurveData(curve)} />;
     } else {
         return <CurveVideoComponent curve={curve} 
             details={
-                <Box m={2}>
-                    {request.description}
-                </Box>
+                <RequestDetailComponent request={request} />
             }
             onChangeCurve={curve => setCurveData(curve)} />
     }
