@@ -21,6 +21,7 @@ import YouTubeDataAPI from '../helper/YouTubeDataAPI';
 import UpdateCurveVideoComponent from '../components/curve-page/UpdateCurveVideoComponent';
 import YouTubeContentListAPI from '../helper/YouTubeContentListAPI';
 import RequestDetailComponent from '../components/curve-page/RequestDetailComponent';
+import EnqueteAnswerListComponent from '../components/curve-page/EnqueteAnswerListComponent';
 
 const createNewCurveComponent = (curve, setCurveData, request) => {
     const { video_id } = curve.content;
@@ -65,7 +66,16 @@ const CurvePage = props => {
     const requestId = params.get('request');
     const { id }  = props;
     const [useSnackbar, setSnackbar] = useState(false);
-    const [curve, setCurveData] = useState({});
+    const [curve, setCurveData] = useState({
+        "values": [],
+        "version": "0.1.1",
+        "room_name": "",
+        "locked": true,
+        "user": django.user.id,
+        "content": null,
+        "value_type": null,
+        "enquete": []
+    });
     const [request, setRequest] = useState({});
     const [isLoadedFlag, setLoadedFlag] = useState(false);
     const create = ev => {
@@ -181,7 +191,12 @@ const CurvePage = props => {
                         "locked": true,
                         "user": django.user.id,
                         "content": req.content,
-                        "value_type": req.value_type
+                        "value_type": req.value_type,
+                        "enquete": req.enquetes.map(enquete => {
+                            const enqueteClone = {...enquete};
+                            enqueteClone["answer"] = "";
+                            return enqueteClone;
+                        })
                     });
                     setRequest(req);
                     setLoadedFlag(true);
@@ -222,7 +237,8 @@ const CurvePage = props => {
                                 "title": "幸福度",
                                 "axis_type": 1,
                                 "user": 1
-                            }
+                            },
+                            "enquete": []
                         });
                         setLoadedFlag(true);
                     });
@@ -241,7 +257,8 @@ const CurvePage = props => {
                                     "title": "幸福度",
                                     "axis_type": 1,
                                     "user": 1
-                                }
+                                },
+                                "enquete": []
                             });
                             setLoadedFlag(true);
                         });
@@ -249,6 +266,11 @@ const CurvePage = props => {
             });
         }
     }, []);
+    const setAnswers = answers => {
+        const curveClone = { ...curve };
+        curveClone.enquete = answers;
+        setCurveData(curveClone);
+    };
     return (
         <Route render={
             props => {
@@ -260,13 +282,16 @@ const CurvePage = props => {
                     return (<Box p={2}>
                         <Stack>
                             { createUpdateCurveComponent(curve, setCurveData) }
+                            <EnqueteAnswerListComponent 
+                                enquetes={curve.enquete}
+                                setAnswers={setAnswers} />
                             <Grid container spacing={2}>
                                 <Grid item>
                                     <ButtonGroup>
                                         <Button 
                                             variant="outlined" 
                                             onClick={update}
-                                            disabled={curve.locked} >更新</Button>
+                                            disabled={curve.locked}>更新</Button>
                                     </ButtonGroup>
                                 </Grid>
                             </Grid>
@@ -281,9 +306,10 @@ const CurvePage = props => {
                 } else {
                     return (<Box p={2}>
                         <Stack>
-                            { 
-                                createNewCurveComponent(curve, setCurveData, request) 
-                            }
+                            { createNewCurveComponent(curve, setCurveData, request) }
+                            <EnqueteAnswerListComponent
+                                setAnswers={setAnswers}
+                                enquetes={request.enquetes} />
                             <ButtonGroup>
                                 <Button variant="outlined" onClick={create}>作成</Button>
                             </ButtonGroup>
