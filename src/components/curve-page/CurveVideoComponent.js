@@ -63,15 +63,24 @@ class CurveVideoComponent extends Component {
     };
 
     render() {
-        const { curve, details } = this.props;
+        const { curve, details, onChangeCurve } = this.props;
         const { isLoadedVideoFlag, duration } = this.state;
+        const changeValuesInCurve = _values => {
+            const stateData = { ...this.state };
+            stateData.values = _values;
+            this.setState(stateData);
 
+            const _curve = { ...curve };
+            _curve.values = _values;
+            onChangeCurve(_curve);
+        };
         return (<Box>
             <Grid container spacing={2}>
                 { this.createVideoComponent(curve, details) }
                  <Grid item xs={12}>
                     {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
                         (<InputField 
+                            changeValuesInCurve={changeValuesInCurve}
                             duration={duration} 
                             data={curve.values} 
                             setCurrent={this.setCurrent}
