@@ -8,6 +8,12 @@ class InputField extends Component {
         this.node = createRef();
         const { duration, data, getCurrent, setCurrent, changeValuesInCurve } = props;
         this.data = data;
+        this.sectionsData = [
+            0.0,
+            duration / 3,
+            duration * 2 / 3,
+            duration
+        ];
         this.duration = duration;
         this.getCurrent = getCurrent;
         this.setCurrent = setCurrent;
@@ -23,8 +29,9 @@ class InputField extends Component {
     }
 
     createLineChart(node) {
-        var self = this;
-        var margin = { top: 20, right: 20, bottom: 20, left: 40 };
+        const self = this;
+        const margin = { top: 20, right: 20, bottom: 20, left: 40 };
+        this.margin = margin;
 
         this.svg = d3.select(node);
         this.size = {
@@ -102,6 +109,7 @@ class InputField extends Component {
             .attr('y2', this.size.height - margin.bottom)
             .attr("stroke-width",4)
             .attr("stroke","#0e9aa7");
+
         setInterval(() => {
             this.current = this.getCurrent();
             this.headLine
@@ -119,6 +127,39 @@ class InputField extends Component {
             else if(d1.x < d2.x) return -1;
             return 0;
         });
+
+        this.sectionsData.sort((d1, d2) => { 
+            if(d1 > d2) return 1;
+            else if(d1 < d2) return -1;
+            return 0;
+        });
+
+        const sectionsDataLength = this.sectionsData.length;
+        
+        const sections = this.svg.selectAll(".section")
+            .data(this.sectionsData);
+        const colorScale = d3.scaleOrdinal(d3.schemeSet3);
+        sections.enter().append("rect")
+            .merge(sections)
+            .attr("class", "section")
+            .attr("x", d => xScale(d))
+            .attr("y", _ => yScale(-1))
+            .attr("width", (d, i) => {
+                if(i < sectionsDataLength - 1) {
+                    console.log(xScale(this.sectionsData[i + 1]) - xScale(this.sectionsData[i]));
+                    return xScale(this.sectionsData[i + 1]) - xScale(this.sectionsData[i]);
+                } else {
+                    return 0.0;
+                }
+            })
+            .attr("height", 10)
+            .attr("fill", (_, i) => colorScale(i))
+            .on("click", d => {
+                this.sectionsData.push(xScale.invert(d3.event.offsetX));
+                this.updateChart();
+            });
+        sections.exit()
+            .remove();
 
         const circle = this.svg.selectAll("circle")
             .data(this.data, d => { return d; });
