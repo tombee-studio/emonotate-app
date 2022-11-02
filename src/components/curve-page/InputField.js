@@ -165,6 +165,7 @@ class InputField extends Component {
             .data(this.data, d => { return d; });
         this.svg.select(".line").attr("d", this.line(this.data));
         circle.enter().append("circle")
+            .merge(circle)
             .attr("fill", d => {
                 if(d.state == "start") return "green";
                 else if(d.state == "end") return "red";
@@ -179,33 +180,6 @@ class InputField extends Component {
                 return yScale(d.y);
             })
             .style("cursor", function(d) { 
-                if(d.axis.includes('v') && d.axis.includes('h')) return 'all-scroll';
-                else if(d.axis.includes('v')) return 'ns-resize';
-                else if(d.axis.includes('h')) return 'ew-resize';
-                else return 'pointer';
-            })
-            .attr("r", this.option.r)
-            .call(this.onDraggablePoint())
-            .on('dblclick', (d, i) => {
-                if(d.type === 'custom') {
-                    this.data.splice(i, 1);
-                    this.updateChart();
-                }
-            });
-        circle
-            .attr("stroke", "rgb(0, 0, 0)")
-            .attr("fill", d => {
-                if(d.state == "start") return "green";
-                else if(d.state == "end") return "red";
-                else return "white";
-            })
-            .attr("cx", (d) => { 
-                return xScale(d.x); 
-            })
-            .attr("cy", (d) => { 
-                return yScale(d.y);
-            })
-            .style("cursor", function(d) {
                 if(d.axis.includes('v') && d.axis.includes('h')) return 'all-scroll';
                 else if(d.axis.includes('v')) return 'ns-resize';
                 else if(d.axis.includes('h')) return 'ew-resize';
