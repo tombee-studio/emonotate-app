@@ -165,7 +165,7 @@ class InputField extends Component {
             .attr("x1", d => xScale(d))
             .attr("x2", d => xScale(d))
             .attr("y1", yScale(-1))
-            .attr("y2", yScale(-1.2))
+            .attr("y2", yScale(-1) + 10)
             .attr("stroke-width", 4)
             .attr("stroke", "#000")
             .style("cursor", 'ew-resize')
