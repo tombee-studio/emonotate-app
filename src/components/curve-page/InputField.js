@@ -132,6 +132,8 @@ class InputField extends Component {
             return 0;
         });
 
+        this.changeValuesInCurve(this.data, this.sectionsData);
+
         const sectionsDataLength = this.sectionsData.length;
         const colorScale = d3.scaleOrdinal(d3.schemeSet3);
         const sectionRects = this.svg.selectAll(".section")
@@ -233,7 +235,7 @@ class InputField extends Component {
             })
             .on('end', d => {
                 this.selected = undefined;
-                this.changeValuesInCurve(this.data);
+                this.changeValuesInCurve(this.data, this.sectionsData);
             });
     }
 
