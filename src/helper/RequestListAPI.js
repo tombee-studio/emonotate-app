@@ -27,7 +27,9 @@ export default class RequestListAPI {
                 },
                 body: JSON.stringify(data) })
             .then(res => {
-                if(res.status !== 200 && res.status !== 201) throw res.message;
+                if(res.status !== 200 && res.status !== 201) {
+                    throw res.text();
+                }
                 return res.json();
             });
     }
