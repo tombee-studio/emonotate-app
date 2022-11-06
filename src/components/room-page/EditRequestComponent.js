@@ -10,9 +10,10 @@ import ObserverComponent from './ObserverComponent';
 
 import RequestListAPI from "../../helper/RequestListAPI";
 import EmonotateAPI from '../../helper/EmonotateAPI';
+import SectionAPI from '../../helper/SectionAPI';
 
 const EditRequestComponent = props => {
-    const { request, setRequest } = props;
+    const { request, sectionData, setRequest } = props;
     const [usingSnackbar, setSnackbar] = useState({
         isOpened: false,
         data: {}
@@ -21,24 +22,32 @@ const EditRequestComponent = props => {
     const [_selectedRows, selectedRows] = useState([]);
 
     const update = ev => {
-        const req = { ...request };
-        const { questionaire, content, owner, value_type, values } = request;
-
-        const api = new RequestListAPI();
-        req.content = content.id;
-        req.owner = owner.id;
-        req.value_type = value_type.id;
-        req.questionaire = questionaire ? questionaire.id : null;
-        req.values = values.map(point => {
-            const p = {...point};
-            p.y = 0;
-            p.axis = "v";
-            p.type = "fixed";
-            return p;
-        });
-        req.participants = req.participants.map(participant => participant.email);
-        api.update(req.id, req)
-            .then(json => {
+        const sectionAPI = new SectionAPI();
+        const { 
+            content, owner, value_type, values, section
+        } = request;
+        const tmp = { ...sectionData };
+        tmp.content = tmp.content.id;
+        tmp.values = section;
+        sectionAPI.update(tmp)
+            .then(_section => {
+                const api = new RequestListAPI();
+                const req = { ...request };
+                req.content = content.id;
+                req.owner = owner.id;
+                req.value_type = value_type.id;
+                req.values = values.map(point => {
+                    const p = {...point};
+                    p.y = 0;
+                    p.axis = "v";
+                    p.type = "fixed";
+                    return p;
+                });
+                req.section = _section.id;
+                req.enquetes = [1];
+                req.participants = req.participants.map(participant => participant.email);
+                return api.update(req.id, req);
+            }).then(json => {
                 setRequest(json);
                 handleClick(json, "更新しました");
             })
