@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import ObserverComponent from './ObserverComponent';
 
 import RequestListAPI from "../../helper/RequestListAPI"
+import SectionAPI from '../../helper/SectionAPI';
 
 const CreateRequestComponent = props => {
     const { request, setRequest } = props;
@@ -17,32 +18,38 @@ const CreateRequestComponent = props => {
         data: {}
     });
     const create = ev => {
-        const api = new RequestListAPI();
-        const req = { ...request };
-
+        const sectionAPI = new SectionAPI();
         const { 
-            questionaire, content, owner, value_type, values 
+            content, owner, value_type, values, section
         } = request;
-        req.content = content.id;
-        req.owner = owner;
-        req.value_type = value_type.id;
-        req.questionaire = questionaire ? questionaire.id : null;
-        req.values = values.map(point => {
-            const p = {...point};
-            p.y = 0;
-            p.axis = "v";
-            p.type = "fixed";
-            return p;
-        });
-        req.participants = req.participants.map(participant => participant.email);
-        console.log(req);
-        api.create(req)
-            .then(json => {
-                handleClick(json, "作成しました");
-            })
-            .catch(err => {
-                alert(err);
+        sectionAPI.create({
+            "title": request.title,
+            "content": content.id,
+            "values": section
+        }).then(sectionData => {
+            const api = new RequestListAPI();
+            const req = { ...request };
+            req.content = content.id;
+            req.owner = owner;
+            req.value_type = value_type.id;
+            req.enquetes = [1];
+            req.section = sectionData.id;
+            req.values = values.map(point => {
+                const p = {...point};
+                p.y = 0;
+                p.axis = "v";
+                p.type = "fixed";
+                return p;
             });
+            req.participants = req.participants.map(participant => participant.email);
+            console.log(req);
+            return api.create(req);
+        }).then(json => {
+            handleClick(json, "作成しました");
+        })
+        .catch(err => {
+            console.log(err);
+        });
     };
     const handleClick = (json, message) => {
         const _useSnackbar = { ...usingSnackbar };
