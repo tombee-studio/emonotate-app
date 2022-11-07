@@ -6,8 +6,12 @@ class InputField extends Component {
         super(props)
         this.createLineChart = this.createLineChart.bind(this);
         this.node = createRef();
-        const { duration, data, getCurrent, setCurrent, changeValuesInCurve } = props;
+        const { duration, data, getCurrent, setCurrent, changeValuesInCurve, sectionsData } = props;
         this.data = data;
+        this.sectionsData = sectionsData || [
+            0.0,
+            duration
+        ];
         this.duration = duration;
         this.getCurrent = getCurrent;
         this.setCurrent = setCurrent;
@@ -23,8 +27,9 @@ class InputField extends Component {
     }
 
     createLineChart(node) {
-        var self = this;
-        var margin = { top: 20, right: 20, bottom: 20, left: 40 };
+        const self = this;
+        const margin = { top: 20, right: 20, bottom: 20, left: 40 };
+        this.margin = margin;
 
         this.svg = d3.select(node);
         this.size = {
@@ -102,6 +107,7 @@ class InputField extends Component {
             .attr('y2', this.size.height - margin.bottom)
             .attr("stroke-width",4)
             .attr("stroke","#0e9aa7");
+
         setInterval(() => {
             this.current = this.getCurrent();
             this.headLine
@@ -120,10 +126,65 @@ class InputField extends Component {
             return 0;
         });
 
+        this.sectionsData.sort((d1, d2) => { 
+            if(d1 > d2) return 1;
+            else if(d1 < d2) return -1;
+            return 0;
+        });
+
+        this.changeValuesInCurve(this.data, this.sectionsData);
+
+        const sectionsDataLength = this.sectionsData.length;
+        const colorScale = d3.scaleOrdinal(d3.schemeSet3);
+        const sectionRects = this.svg.selectAll(".section")
+            .data(this.sectionsData);
+        sectionRects.enter().append("rect")
+            .merge(sectionRects)
+            .attr("class", "section")
+            .attr("x", d => xScale(d))
+            .attr("y", _ => yScale(-1))
+            .attr("width", (d, i) => {
+                if(i < sectionsDataLength - 1) {
+                    return xScale(this.sectionsData[i + 1]) - xScale(this.sectionsData[i]);
+                } else {
+                    return 0.0;
+                }
+            })
+            .attr("height", 10)
+            .attr("fill", (_, i) => colorScale(i))
+            .on("click", d => {
+                this.sectionsData.push(xScale.invert(d3.event.offsetX));
+                this.updateChart();
+            });
+        sectionRects.exit()
+            .remove();
+        
+        const sectionLines = this.svg.selectAll(".sectionLine")
+            .data(this.sectionsData);
+        sectionLines.enter().append("line")
+            .merge(sectionLines)
+            .attr("class", "sectionLine")
+            .attr("x1", d => xScale(d))
+            .attr("x2", d => xScale(d))
+            .attr("y1", yScale(-1))
+            .attr("y2", yScale(-1) + 10)
+            .attr("stroke-width", 4)
+            .attr("stroke", "#000")
+            .style("cursor", 'ew-resize')
+            .call(this.onDraggableSection(xScale))
+            .on('dblclick', (d, i) => {
+                if(i == 0 || i == this.sectionsData.length - 1) {
+                    return;
+                }
+                this.sectionsData.splice(i, 1);
+                this.updateChart();
+            });
+
         const circle = this.svg.selectAll("circle")
             .data(this.data, d => { return d; });
         this.svg.select(".line").attr("d", this.line(this.data));
         circle.enter().append("circle")
+            .merge(circle)
             .attr("fill", d => {
                 if(d.state == "start") return "green";
                 else if(d.state == "end") return "red";
@@ -138,33 +199,6 @@ class InputField extends Component {
                 return yScale(d.y);
             })
             .style("cursor", function(d) { 
-                if(d.axis.includes('v') && d.axis.includes('h')) return 'all-scroll';
-                else if(d.axis.includes('v')) return 'ns-resize';
-                else if(d.axis.includes('h')) return 'ew-resize';
-                else return 'pointer';
-            })
-            .attr("r", this.option.r)
-            .call(this.onDraggablePoint())
-            .on('dblclick', (d, i) => {
-                if(d.type === 'custom') {
-                    this.data.splice(i, 1);
-                    this.updateChart();
-                }
-            });
-        circle
-            .attr("stroke", "rgb(0, 0, 0)")
-            .attr("fill", d => {
-                if(d.state == "start") return "green";
-                else if(d.state == "end") return "red";
-                else return "white";
-            })
-            .attr("cx", (d) => { 
-                return xScale(d.x); 
-            })
-            .attr("cy", (d) => { 
-                return yScale(d.y);
-            })
-            .style("cursor", function(d) {
                 if(d.axis.includes('v') && d.axis.includes('h')) return 'all-scroll';
                 else if(d.axis.includes('v')) return 'ns-resize';
                 else if(d.axis.includes('h')) return 'ew-resize';
@@ -201,7 +235,20 @@ class InputField extends Component {
             })
             .on('end', d => {
                 this.selected = undefined;
-                this.changeValuesInCurve(this.data);
+                this.changeValuesInCurve(this.data, this.sectionsData);
+            });
+    }
+
+    onDraggableSection(xScale) {
+        var self = this;
+        return d3.drag()
+            .on('start', d => {
+            })
+            .on('drag', (_, i) => {
+                this.sectionsData[i] = xScale.invert(d3.event.x);
+                this.updateChart();
+            })
+            .on('end', d => {
             });
     }
 

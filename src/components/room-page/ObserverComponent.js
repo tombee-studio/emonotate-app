@@ -21,13 +21,13 @@ const createNewCurveComponent = (curve, setCurveData) => {
             <CurveYouTubeComponent 
                 curve={curve} 
                 videoId={curve.content.video_id}
-                onChangeCurve={curve => setCurveData(curve)} />
+                onChangeCurve={(curve, sections) => setCurveData(curve, sections)} />
         </Box>;
     } else {
         return <Box m={2}>
             <CurveVideoComponent 
                 curve={curve} 
-                onChangeCurve={curve => setCurveData(curve)} />
+                onChangeCurve={(curve, sections) => setCurveData(curve, sections)} />
         </Box>;
     }
 };
@@ -42,6 +42,7 @@ const ObserverComponent = (props) => {
     const [content, setContent] = useState(request.content);
     const [valueType, setValueType] = useState(request.value_type);
     const [participants, setParticipants] = useState(request.participants);
+    const [section, setSection] = useState(request.section);
     const [values, setValues] = useState([]);
 
     const [curve, setCurve] = useState({
@@ -51,7 +52,8 @@ const ObserverComponent = (props) => {
         "locked": false,
         "user": django.user.id,
         "content": content,
-        "value_type": valueType 
+        "value_type": valueType,
+        "section": section
     });
     const [curvesList, setCurvesList] = useState([]);
 
@@ -91,7 +93,7 @@ const ObserverComponent = (props) => {
 
     useEffect(() => {
         const {
-            title, description, content, value_type, values, participants
+            title, description, content, value_type, values, participants, section
         } = request;
         setTitle(title);
         setDescription(description);
@@ -99,6 +101,7 @@ const ObserverComponent = (props) => {
         setValueType(value_type);
         setValues(values);
         setParticipants(participants);
+        setSection(section);
     });
 
     return (
@@ -171,10 +174,12 @@ const ObserverComponent = (props) => {
             <Button onClick={() => loadContentAndValueType(request)}>ロード</Button>
             <hr />
             { (curve.content && curve.value_type) && createNewCurveComponent(
-                curve, (_curve) => {
+                curve, (_curve, _sections) => {
                     const req = {...request};
                     req.values = _curve.values;
+                    req.section = _sections;
                     setValues(_curve.values);
+                    setSection(_sections);
                     onChange(req);
                     setCurve(_curve);
                 })}
