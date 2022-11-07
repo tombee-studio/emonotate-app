@@ -64,32 +64,49 @@ class CurveYouTubeComponent extends Component {
     render() {
         const { curve, videoId, onChangeCurve, details } = this.props;
         const { isLoadedVideoFlag, duration } = this.state;
+        const { section } = curve;
 
-        const changeValuesInCurve = _values => {
+        const changeValuesInCurve = (_values, _sections) => {
             const stateData = { ...this.state };
             stateData.values = _values;
             this.setState(stateData);
 
             const _curve = { ...curve };
             _curve.values = _values;
-            onChangeCurve(_curve);
+            onChangeCurve(_curve, _sections);
         };
-        return (<Box>
-            <Grid container spacing={2}>
-                { 
-                    this.createVideoComponent(videoId, curve, details) 
-                }
-                <Grid item xs={12}>
-                    {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
-                        (<InputField 
-                            changeValuesInCurve={changeValuesInCurve}
-                            duration={duration} 
-                            data={curve.values}
-                            setCurrent={this.setCurrent}
-                            getCurrent={this.getCurrent} />)}
-                </Grid>
-             </Grid>
-        </Box>);
+        if(section) {
+            return (<Box>
+                <Grid container spacing={2}>
+                    { this.createVideoComponent(videoId, curve, details) }
+                     <Grid item xs={12}>
+                        {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
+                            (<InputField 
+                                changeValuesInCurve={changeValuesInCurve}
+                                duration={duration} 
+                                data={curve.values}
+                                sectionsData={section.values || []}
+                                setCurrent={this.setCurrent}
+                                getCurrent={this.getCurrent} />)}
+                     </Grid>
+                 </Grid>
+            </Box>);
+        } else {
+            return (<Box>
+                <Grid container spacing={2}>
+                    { this.createVideoComponent(videoId, curve, details) }
+                     <Grid item xs={12}>
+                        {!isLoadedVideoFlag ? (<Box><CircularProgress /></Box>) : 
+                            (<InputField 
+                                changeValuesInCurve={changeValuesInCurve}
+                                duration={duration} 
+                                data={curve.values}
+                                setCurrent={this.setCurrent}
+                                getCurrent={this.getCurrent} />)}
+                     </Grid>
+                 </Grid>
+            </Box>);
+        }
     }
 }
 

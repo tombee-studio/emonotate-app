@@ -15,6 +15,7 @@ const RoomPage = props => {
         owner: window.django.user.id,
         participants: []
     });
+    const [originalSectionData, setOriginalSectionData] = useState({});
     useEffect(() => {
         if(!id) {
             setLoading(true);
@@ -40,6 +41,7 @@ const RoomPage = props => {
                     });
                 req.values = values;
                 setRequest(req);
+                setOriginalSectionData(req.section);
                 setLoading(true);
             }).catch(message => {
                 setRequest({
@@ -61,7 +63,8 @@ const RoomPage = props => {
                     return (<Box m={2}>
                         <EditRequestComponent 
                             id={id}
-                            request={ request } 
+                            request={ request }
+                            sectionData={ originalSectionData }
                             setRequest={ req => setRequest(req) }
                         />
                     </Box>);
