@@ -71,7 +71,10 @@ const RequestListComponent = () => {
                                 <ListItem
                                     button
                                     component="a"
-                                    href={ `/app/curves?request=${request.id}` }
+                                    href={ request.is_required_free_hand ?
+                                        `/free-hand/${request.id}/` :
+                                        `/app/curves?request=${request.id}`
+                                    }
                                     key={request.room_name}
                                     alignItems="flex-start">
                                     <ListItemAvatar>

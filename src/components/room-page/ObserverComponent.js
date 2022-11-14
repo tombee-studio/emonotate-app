@@ -5,7 +5,9 @@ import {
     Box,
     TextField,
     Button,
-    Autocomplete } from "@mui/material";
+    Autocomplete,
+    Switch,
+    FormControlLabel} from "@mui/material";
 import "video.js/dist/video-js.css";
 import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
 import CurveVideoComponent from "../../components/curve-page/CurveVideoComponent";
@@ -44,6 +46,7 @@ const ObserverComponent = (props) => {
     const [participants, setParticipants] = useState(request.participants);
     const [section, setSection] = useState(request.section);
     const [values, setValues] = useState([]);
+    const [isRequiredFreeHand, setRequiredFreeHand] = useState(request.is_required_free_hand);
 
     const [curve, setCurve] = useState({
         "values": request.values,
@@ -93,7 +96,7 @@ const ObserverComponent = (props) => {
 
     useEffect(() => {
         const {
-            title, description, content, value_type, values, participants, section
+            title, description, content, value_type, values, participants, section, is_required_free_hand
         } = request;
         setTitle(title);
         setDescription(description);
@@ -102,6 +105,7 @@ const ObserverComponent = (props) => {
         setValues(values);
         setParticipants(participants);
         setSection(section);
+        setRequiredFreeHand(is_required_free_hand);
     });
 
     return (
@@ -195,6 +199,22 @@ const ObserverComponent = (props) => {
                 }}
                 selectedRows={selectedRows}
                 _selectedRows={_selectedRows} />
+            <Box m={2}>
+                <FormControlLabel
+                    label="フリーハンドで入力を要求する" 
+                    control={
+                        <Switch
+                            checked={isRequiredFreeHand}
+                            onChange={ev => {
+                                const flag = ev.target.checked;
+                                const req = {...request};
+                                req.is_required_free_hand = flag;
+                                setRequiredFreeHand(flag);
+                                onChange(req);
+                            }}
+                        />}
+                />
+            </Box>
         </FormControl>
     );
 };

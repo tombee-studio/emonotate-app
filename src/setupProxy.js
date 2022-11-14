@@ -12,6 +12,10 @@ module.exports = app => {
             target: "http://127.0.0.1:8000/",
             changeOrigin: true
         }));
+        app.use("/free-hand/**", createProxyMiddleware({
+            target: "http://127.0.0.1:8000/",
+            changeOrigin: true
+        }));
     } else if(staging == "alpha") {
         app.use("/api/**", createProxyMiddleware({
             target: "https://enigmatic-thicket-08912.herokuapp.com/",
@@ -21,12 +25,20 @@ module.exports = app => {
             target: "https://enigmatic-thicket-08912.herokuapp.com/",
             changeOrigin: true
         }));
+        app.use("/free-hand/**", createProxyMiddleware({
+            target: "https://enigmatic-thicket-08912.herokuapp.com/",
+            changeOrigin: true
+        }));
     } else if(staging == "prod") {
         app.use("/api/**", createProxyMiddleware({
             target: "https://www.emonotate.com/",
             changeOrigin: true
         }));
         app.use("/history/**", createProxyMiddleware({
+            target: "https://www.emonotate.com/",
+            changeOrigin: true
+        }));
+        app.use("/free-hand/**", createProxyMiddleware({
             target: "https://www.emonotate.com/",
             changeOrigin: true
         }));
