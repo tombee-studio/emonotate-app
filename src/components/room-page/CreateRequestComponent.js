@@ -20,7 +20,7 @@ const CreateRequestComponent = props => {
     const create = ev => {
         const sectionAPI = new SectionAPI();
         const { 
-            content, owner, value_type, values, section
+            content, owner, value_type, values, section, is_required_free_hand
         } = request;
         sectionAPI.create({
             "title": request.title,
@@ -34,6 +34,7 @@ const CreateRequestComponent = props => {
             req.value_type = value_type.id;
             req.enquetes = [1];
             req.section = sectionData.id;
+            req.is_required_free_hand = is_required_free_hand;
             req.values = values.map(point => {
                 const p = {...point};
                 p.y = 0;

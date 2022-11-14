@@ -24,7 +24,7 @@ const EditRequestComponent = props => {
     const update = ev => {
         const sectionAPI = new SectionAPI();
         const { 
-            content, owner, value_type, values, section
+            content, owner, value_type, values, section, is_required_free_hand
         } = request;
         const tmp = { ...sectionData };
         tmp.content = tmp.content.id;
@@ -45,6 +45,7 @@ const EditRequestComponent = props => {
                 });
                 req.section = _section.id;
                 req.enquetes = [1];
+                req.is_required_free_hand = is_required_free_hand;
                 req.participants = req.participants.map(participant => participant.email);
                 return api.update(req.id, req);
             }).then(json => {
@@ -118,12 +119,13 @@ const EditRequestComponent = props => {
 
     const sendMailsToSelectedUsers = () => {
         const req = { ...request };
-        const { questionaire, content, owner, value_type, values } = request;
+        const { questionaire, content, owner, value_type, values, is_required_free_hand } = request;
         const api = new RequestListAPI();
         req.content = content.id;
         req.owner = owner.id;
         req.value_type = value_type.id;
         req.questionaire = questionaire ? questionaire.id : null;
+        req.is_required_free_hand = is_required_free_hand;
         req.values = values.map(point => {
             const p = {...point};
             p.y = 0;
