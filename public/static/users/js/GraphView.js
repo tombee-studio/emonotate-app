@@ -1,16 +1,3 @@
-
-/*
-参考サイト
-https://api.anychart.com/v8/anychart
-*/
-
-//youtube読み込み
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-
 var flag=-1;
 var cont=document.getElementById('GraphView');
 var stage = acgraph.create('GraphView');
