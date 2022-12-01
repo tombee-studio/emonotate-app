@@ -114,6 +114,13 @@ const CurvePage = props => {
             curveClone["value_type"] = curve.value_type.id;
             curvesListAPI.create(curveClone)
             .then(json => {
+                if(request.has_google_form) {
+                    const { google_form } = request;
+                    window.open(`${google_form.url}?${
+                        google_form.username_entry_field}=${
+                            window.django.user.username}&${
+                                google_form.curve_id_entry_field}=${json.id}`);
+                }
                 handleClick();
             }).catch(err => {
                 const { body } = err;

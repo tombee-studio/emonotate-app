@@ -21,6 +21,7 @@ import RequestListAPI from '../../helper/RequestListAPI';
 const RequestListComponent = () => {
     const [result, setResult] = useState({});
     const [loading, setLoading] = useState(true);
+    const { user } = window.django;
     const handlePaginate = (e, page) => {
         setLoading(true);
         const api = new RequestListAPI();
@@ -53,7 +54,7 @@ const RequestListComponent = () => {
             variant="h5"
             color="textPrimary"
         >
-            あなたへの依頼
+            {`${user.username}への依頼`}
         </Typography>
         <Divider />
         {loading ? 
@@ -114,19 +115,9 @@ const RequestListComponent = () => {
                                         </React.Fragment>
                                     }
                                     />
-                                    {request.questionaire &&
+                                    {request.has_google_form &&
                                         <ListItemSecondaryAction>
-                                            <IconButton
-                                                component="a"
-                                                href={
-                                                    `${request.questionaire.url}?${request.questionaire.user_id_form}=${window.django.user.username}`
-                                                }
-                                                target="_blank"
-                                                edge="end"
-                                                aria-label="enter"
-                                                size="large">
-                                                <NoteIcon />
-                                            </IconButton>
+                                            <NoteIcon />
                                         </ListItemSecondaryAction>
                                     }
                                 </ListItem>
