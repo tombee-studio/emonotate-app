@@ -23,6 +23,7 @@ import PassportComponent from './PassportComponent';
 const RequireListComponent = props => {
     const [result, setResult] = useState({});
     const [loading, setLoading] = useState(true);
+    const { user } = window.django;
     const handlePaginate = (e, page) => {
         setLoading(true);
         const api = new RequestListAPI();
@@ -54,7 +55,7 @@ const RequireListComponent = props => {
                 component="div"
                 variant="h5"
                 color="textPrimary">
-                あなたが設定した実験
+                {`${user.username}が設定した実験`}
                 <IconButton
                     component="a"
                     edge="end"

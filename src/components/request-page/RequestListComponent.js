@@ -21,6 +21,7 @@ import RequestListAPI from '../../helper/RequestListAPI';
 const RequestListComponent = () => {
     const [result, setResult] = useState({});
     const [loading, setLoading] = useState(true);
+    const { user } = window.django;
     const handlePaginate = (e, page) => {
         setLoading(true);
         const api = new RequestListAPI();
@@ -53,7 +54,7 @@ const RequestListComponent = () => {
             variant="h5"
             color="textPrimary"
         >
-            あなたへの依頼
+            {`${user.username}への依頼`}
         </Typography>
         <Divider />
         {loading ? 
