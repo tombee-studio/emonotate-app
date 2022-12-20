@@ -108,8 +108,7 @@ const ObserverComponent = (props) => {
         setRequiredFreeHand(is_required_free_hand);
     });
 
-    return (
-        <FormControl fullWidth sx={{ m: 1 }}>
+    const createTitleComponent = () => <>
             <FormLabel>タイトル</FormLabel>
             <TextField 
                 id="title" 
@@ -120,75 +119,69 @@ const ObserverComponent = (props) => {
                     setTitle(ev.target.value);
                     onChange(req);
                 }} />
-            <hr />
-            <FormLabel>説明</FormLabel>
-            <TextField 
-                id="description" 
-                multiline
-                rows={4}
-                value={description}
-                onChange={ev => {
-                    const req = { ...request };
-                    req.description = ev.target.value;
-                    setDescription(ev.target.value);
-                    onChange(req);
-                }} />
-            <hr />
-            <FormLabel>コンテンツ</FormLabel>
-            <Autocomplete 
-                options={contents}
-                defaultValue={curve.content}
-                getOptionLabel={content => content.title}
-                renderInput={params => <TextField {...params}/>}
-                onInputChange={(event, value) => {
-                    const api = new ContentsListAPI();
-                    api.list({
-                        'format': 'json',
-                        'search': value
-                    })
-                    .then(data => {
-                        setContents(data.models);
-                    }, err => {
-                        console.log(err);
-                    })
-                }}
-                onChange={(_, content) => {
-                    if(!content) return;
-                    const req = { ...request };
-                    req.content = content;
-                    curve.values = [];
-                    setContent(content);
-                    onChange(req);
-                }}
-            />
-            <hr />
-            <ValueTypeComponent 
-                defaultValue={curve.value_type}
-                onChange={(_, value) => {
-                    if(!value) return;
-                    const req = { ...request };
-                    req.value_type = value;
-                    curve.values = [];
-                    console.log(value);
-                    setValueType(value);
-                    onChange(req);
-                }}
-            />
-            <hr />
-            <Button onClick={() => loadContentAndValueType(request)}>ロード</Button>
-            <hr />
-            { (curve.content && curve.value_type) && createNewCurveComponent(
-                curve, (_curve, _sections) => {
-                    const req = {...request};
-                    req.values = _curve.values;
-                    req.section = _sections;
-                    setValues(_curve.values);
-                    setSection(_sections);
-                    onChange(req);
-                    setCurve(_curve);
-                })}
-            <hr />
-            <EmailAddressList 
+        </>;
+    const createDescriptionComponent = () => <>
+        <FormLabel>説明</FormLabel>
+        <TextField 
+            id="description" 
+            multiline
+            rows={4}
+            value={description}
+            onChange={ev => {
+                const req = { ...request };
+                req.description = ev.target.value;
+                setDescription(ev.target.value);
+                onChange(req);
+            }} />
+    </>
+    const createSelectContentComponent = () => <>
+        <FormLabel>コンテンツ</FormLabel>
+        <Autocomplete 
+            options={contents}
+            defaultValue={curve.content}
+            getOptionLabel={content => content.title}
+            renderInput={params => <TextField {...params}/>}
+            onInputChange={(event, value) => {
+                const api = new ContentsListAPI();
+                api.list({
+                    'format': 'json',
+                    'search': value
+                })
+                .then(data => {
+                    setContents(data.models);
+                }, err => {
+                    console.log(err);
+                })
+            }}
+            onChange={(_, content) => {
+                if(!content) return;
+                const req = { ...request };
+                req.content = content;
+                curve.values = [];
+                setContent(content);
+                onChange(req);
+            }}
+        />
+    </>;
+    const createValueTypeComponent = () => <>
+        <ValueTypeComponent 
+            defaultValue={curve.value_type}
+            onChange={(_, value) => {
+                if(!value) return;
+                const req = { ...request };
+                req.value_type = value;
+                curve.values = [];
+                console.log(value);
+                setValueType(value);
+                onChange(req);
+            }}
+        />
+    </>;
+    const createLoadContentButton = () => <>
+        <Button onClick={() => loadContentAndValueType(request)}>ロード</Button>
+    </>;
+    const createEmailAddressList = () => <>
+        <EmailAddressList 
                 curves={curvesList}
                 participants={participants} 
                 onChangeEmailList={(participants) => {
@@ -199,22 +192,59 @@ const ObserverComponent = (props) => {
                 }}
                 selectedRows={selectedRows}
                 _selectedRows={_selectedRows} />
-            <Box m={2}>
-                <FormControlLabel
-                    label="フリーハンドで入力を要求する" 
-                    control={
-                        <Switch
-                            checked={isRequiredFreeHand}
-                            onChange={ev => {
-                                const flag = ev.target.checked;
-                                const req = {...request};
-                                req.is_required_free_hand = flag;
-                                setRequiredFreeHand(flag);
-                                onChange(req);
-                            }}
-                        />}
-                />
-            </Box>
+    </>;
+    const createFreeHandButton = () => <>
+        <Box m={2}>
+            <FormControlLabel
+                label="フリーハンドで入力を要求する" 
+                control={
+                    <Switch
+                        checked={isRequiredFreeHand}
+                        onChange={ev => {
+                            const flag = ev.target.checked;
+                            const req = {...request};
+                            req.is_required_free_hand = flag;
+                            setRequiredFreeHand(flag);
+                            onChange(req);
+                        }}
+                    />}
+            />
+        </Box>
+    </>;
+    const createDivider = () => <hr />
+
+    const domList = [];
+    domList.push(createTitleComponent());
+    domList.push(createDivider());
+    domList.push(createDescriptionComponent());
+    domList.push(createDivider());
+    domList.push(createSelectContentComponent());
+    domList.push(createDivider());
+    domList.push(createValueTypeComponent());
+    domList.push(createDivider());
+    domList.push(createLoadContentButton());
+    domList.push(createDivider());
+    if(curve.content && curve.value_type) {
+        domList.push(createNewCurveComponent(
+            curve, (_curve, _sections) => {
+                const req = {...request};
+                req.values = _curve.values;
+                req.section = _sections;
+                setValues(_curve.values);
+                setSection(_sections);
+                onChange(req);
+                setCurve(_curve);
+            }));
+    }
+    domList.push(createDivider());
+    if(!request.is_many_participants) {
+        domList.push(createEmailAddressList());
+    }
+    domList.push(createFreeHandButton());
+
+    return (
+        <FormControl fullWidth sx={{ m: 1 }}>
+            { domList }
         </FormControl>
     );
 };

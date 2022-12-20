@@ -198,28 +198,30 @@ const EditRequestComponent = props => {
         setSnackbar(_useSnackbar);
     };
 
-    const createSendButtons = participants => {
-        const buttons = [
-            <Button 
+    const createSendButtons = request => {
+        const { participants } = request;
+        const buttons = [];
+        if(!request.is_many_participants) {
+            buttons.push(<Button 
                 variant="outlined" 
                 onClick={sendMails}>
                 すべての参加者にメール送信
-            </Button>
-        ];
-        if(_selectedRows.length != 0) {
-            buttons.push(<Button 
-                variant="outlined"
-                onClick={sendMailsToSelectedUsers}>
-                選択された人にメール送信
             </Button>);
-        }
-        if(!participants.every(participant => participant.sended_mail)) {
-            buttons.push(<Button 
-                variant="outlined" 
-                color="error"
-                onClick={resendMails}>
-                再送信
-            </Button>);
+            if(_selectedRows.length != 0) {
+                buttons.push(<Button 
+                    variant="outlined"
+                    onClick={sendMailsToSelectedUsers}>
+                    選択された人にメール送信
+                </Button>);
+            }
+            if(!participants.every(participant => participant.sended_mail)) {
+                buttons.push(<Button 
+                    variant="outlined" 
+                    color="error"
+                    onClick={resendMails}>
+                    再送信
+                </Button>);
+            }
         }
         return <ButtonGroup>{ buttons }</ButtonGroup>;
     };
@@ -250,7 +252,7 @@ const EditRequestComponent = props => {
                 </ButtonGroup>
             </Grid>
             <Grid item>
-                {createSendButtons(request.participants)}
+                {createSendButtons(request)}
             </Grid>
             <Grid item>
                 <ButtonGroup>
