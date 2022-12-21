@@ -164,7 +164,10 @@ const EditRequestComponent = props => {
 
                 handleClick(req, "ダウンロードが成功しました");
             }
-            transport(json);
+            console.log(json);
+            if(json["state"] == "SUCCESSED") {
+                transport(json);
+            }
         })
         .catch(err => {
             alert(err);
