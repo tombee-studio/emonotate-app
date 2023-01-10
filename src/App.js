@@ -53,9 +53,9 @@ const App = () => {
                 const HistoryPage = loadable(() => import('./pages/HistoryPage'));
                 return <HistoryPage />
               }} />
-              <Route exact path='/app/requests/' component={_ => {
-                const RequestPage = loadable(() => import('./pages/RequestPage'));
-                return <RequestPage />;
+              <Route exact path='/app/request_list/' component={_ => {
+                const RequestListPage = loadable(() => import('./pages/RequestListPage'));
+                return <RequestListPage />;
               }} />
               <Route exact path='/app/content/' component={_ => {
                 const ContentListPage = loadable(() => import('./pages/ContentListPage'));
@@ -88,20 +88,16 @@ const App = () => {
                 return <ChangeEmailPage />
               }}>
               </Route>
-              <Route exact path='/app/requests/' component={_ => {
-                const RequestPage = loadable(() => import('./pages/RequestPage'));
-                return <RequestPage />;
-              }} />
               { userData.groups.includes("Researchers") &&
-                <Route exact path='/app/rooms/' component={ _ => {
-                  const RoomPage = loadable(() => import('./pages/RoomPage'));
-                  return <RoomPage keyword={keyword} />;
+                <Route exact path='/app/requests/' component={ _ => {
+                  const RequestPage = loadable(() => import('./pages/RequestPage'));
+                  return <RequestPage keyword={keyword} />;
                 }} />
               }
               { userData.groups.includes("Researchers") &&
-                <Route exact path='/app/rooms/:id(\d+)' component={props => {
-                  const RoomPage = loadable(() => import('./pages/RoomPage'));
-                  return <RoomPage id={props.match.params.id} />;
+                <Route exact path='/app/requests/:id(\d+)' component={props => {
+                  const RequestPage = loadable(() => import('./pages/RequestPage'));
+                  return <RequestPage id={props.match.params.id} />;
                 }} />
               }
             </Switch>);
