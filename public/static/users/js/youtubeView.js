@@ -1,19 +1,17 @@
-function YouTubeView(youtubePlayerID, videoId) {
+function YouTubeView(
+    youtubePlayerID, 
+    videoId, 
+    onPlayerReady,
+    onStateChange
+    ) {
     this.onYouTubeIframeAPIReady = function() {
         this.player = new YT.Player(youtubePlayerID, {
             height: '360',
             width: '640',
             videoId: videoId,
             events: {
-                'onReady': function(event) {
-                    event.target.playVideo();
-                }.bind(this),
-                'onStateChange': function(event) {
-                    if (event.data == YT.PlayerState.PLAYING && !done) {
-                        setTimeout(stopVideo, 6000);
-                        done = true;
-                    }
-                }.bind(this)
+                'onReady': onPlayerReady.bind(this),
+                'onStateChange': onStateChange.bind(this)
             }
         });
     }.bind(this);
