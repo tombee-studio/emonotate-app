@@ -60,7 +60,7 @@ const RequireListComponent = props => {
                     component="a"
                     edge="end"
                     aria-label="delete"
-                    href={`/app/rooms/`}
+                    href={`/app/requests/`}
                     size="large">
                     <AddIcon />
                 </IconButton>
@@ -81,7 +81,7 @@ const RequireListComponent = props => {
                                     <ListItem
                                         button
                                         component="a"
-                                        href={`/app/rooms/${request.id}`}
+                                        href={`/app/requests/${request.id}`}
                                         key={request.room_name}>
                                         <ListItemAvatar>
                                             <Avatar>
@@ -97,14 +97,6 @@ const RequireListComponent = props => {
                                             }
                                         />
                                         <ListItemSecondaryAction>
-                                            <IconButton
-                                                component="a"
-                                                href={`/app/requests/${request.id}`}
-                                                edge="end"
-                                                aria-label="enter"
-                                                size="large">
-                                                <EditIcon />
-                                            </IconButton>
                                             <IconButton
                                                 component="a"
                                                 edge="end"

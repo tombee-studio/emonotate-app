@@ -49,7 +49,7 @@ export const mainListItems = (numRequest) => {
         </div>
       }
       <ListSubheader>実験者ツール</ListSubheader>
-      <ListItem button component="a" href="/app/requests/">
+      <ListItem button component="a" href="/app/request_list/">
         <ListItemIcon>
         <Badge badgeContent={numRequest} color="primary">
           <MailIcon />

@@ -126,59 +126,59 @@ class InputField extends Component {
             return 0;
         });
 
-        this.sectionsData.sort((d1, d2) => { 
-            if(d1 > d2) return 1;
-            else if(d1 < d2) return -1;
-            return 0;
-        });
+        // this.sectionsData.sort((d1, d2) => { 
+        //     if(d1 > d2) return 1;
+        //     else if(d1 < d2) return -1;
+        //     return 0;
+        // });
 
         this.changeValuesInCurve(this.data, this.sectionsData);
 
-        const sectionsDataLength = this.sectionsData.length;
-        const colorScale = d3.scaleOrdinal(d3.schemeSet3);
-        const sectionRects = this.svg.selectAll(".section")
-            .data(this.sectionsData);
-        sectionRects.enter().append("rect")
-            .merge(sectionRects)
-            .attr("class", "section")
-            .attr("x", d => xScale(d))
-            .attr("y", _ => yScale(-1))
-            .attr("width", (d, i) => {
-                if(i < sectionsDataLength - 1) {
-                    return xScale(this.sectionsData[i + 1]) - xScale(this.sectionsData[i]);
-                } else {
-                    return 0.0;
-                }
-            })
-            .attr("height", 10)
-            .attr("fill", (_, i) => colorScale(i))
-            .on("click", d => {
-                this.sectionsData.push(xScale.invert(d3.event.offsetX));
-                this.updateChart();
-            });
-        sectionRects.exit()
-            .remove();
+        // const sectionsDataLength = this.sectionsData.length;
+        // const colorScale = d3.scaleOrdinal(d3.schemeSet3);
+        // const sectionRects = this.svg.selectAll(".section")
+        //     .data(this.sectionsData);
+        // sectionRects.enter().append("rect")
+        //     .merge(sectionRects)
+        //     .attr("class", "section")
+        //     .attr("x", d => xScale(d))
+        //     .attr("y", _ => yScale(-1))
+        //     .attr("width", (d, i) => {
+        //         if(i < sectionsDataLength - 1) {
+        //             return xScale(this.sectionsData[i + 1]) - xScale(this.sectionsData[i]);
+        //         } else {
+        //             return 0.0;
+        //         }
+        //     })
+        //     .attr("height", 10)
+        //     .attr("fill", (_, i) => colorScale(i))
+        //     .on("click", d => {
+        //         this.sectionsData.push(xScale.invert(d3.event.offsetX));
+        //         this.updateChart();
+        //     });
+        // sectionRects.exit()
+        //     .remove();
         
-        const sectionLines = this.svg.selectAll(".sectionLine")
-            .data(this.sectionsData);
-        sectionLines.enter().append("line")
-            .merge(sectionLines)
-            .attr("class", "sectionLine")
-            .attr("x1", d => xScale(d))
-            .attr("x2", d => xScale(d))
-            .attr("y1", yScale(-1))
-            .attr("y2", yScale(-1) + 10)
-            .attr("stroke-width", 4)
-            .attr("stroke", "#000")
-            .style("cursor", 'ew-resize')
-            .call(this.onDraggableSection(xScale))
-            .on('dblclick', (d, i) => {
-                if(i == 0 || i == this.sectionsData.length - 1) {
-                    return;
-                }
-                this.sectionsData.splice(i, 1);
-                this.updateChart();
-            });
+        // const sectionLines = this.svg.selectAll(".sectionLine")
+        //     .data(this.sectionsData);
+        // sectionLines.enter().append("line")
+        //     .merge(sectionLines)
+        //     .attr("class", "sectionLine")
+        //     .attr("x1", d => xScale(d))
+        //     .attr("x2", d => xScale(d))
+        //     .attr("y1", yScale(-1))
+        //     .attr("y2", yScale(-1) + 10)
+        //     .attr("stroke-width", 4)
+        //     .attr("stroke", "#000")
+        //     .style("cursor", 'ew-resize')
+        //     .call(this.onDraggableSection(xScale))
+        //     .on('dblclick', (d, i) => {
+        //         if(i == 0 || i == this.sectionsData.length - 1) {
+        //             return;
+        //         }
+        //         this.sectionsData.splice(i, 1);
+        //         this.updateChart();
+        //     });
 
         const circle = this.svg.selectAll("circle")
             .data(this.data, d => { return d; });
