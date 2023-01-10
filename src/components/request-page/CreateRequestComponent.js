@@ -4,8 +4,6 @@ import RequestListAPI from "../../helper/RequestListAPI";
 import ObserverComponent from "./ObserverComponent";
 
 const CreateRequestComponent = props => {
-    const { id } = props;
-    const [isLoadedRequest, setFlagLoadedRequest] = useState(false);
     const [request, setRequest] = useState({});
     const create = ev => {
         const api = new RequestListAPI();
