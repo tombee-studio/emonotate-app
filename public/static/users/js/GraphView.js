@@ -1,95 +1,146 @@
+function GraphView(graphId, curve) {
+    this.graphId = graphId;
+    this.stage = acgraph.create(graphId);
+    this.layer = this.stage.layer();
+    this.curve = curve;
+    this.path = acgraph.path();
+    this.subPath = acgraph.path();
+    this.width = 640;
+    this.height = 320;
+    this.isDragging = false;
+    this.subValues = [];
 
-/*
-参考サイト
-https://api.anychart.com/v8/anychart
-*/
+    this.initialize = function(duration) {
+        this.duration = duration;
+        this.graphArea = this.layer
+            .rect(0, 0, this.width , this.height)
+            .fill("#FFFFaa");
 
-//youtube読み込み
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-
-var flag=-1;
-var cont=document.getElementById('GraphView');
-var stage = acgraph.create('GraphView');
-var areaStage=stage.layer();
-var lineDrawStage= stage.layer();
-
-//グラフエリア描画
-var rectangle = areaStage.rect(0,0,1000,350)
-rectangle.fill({
-        color: '#2196F3',
-        opacity: 0.5
-});
-rectangle.parent(areaStage);
-
-/*時間軸設定*/
-function onPlayerReady(event) {
-        //時間取得
-        var time=event.target.getDuration();
-        TimeText(time);
-        //時間軸表示
-}
-
-//曲線描画
-var linePath=lineDrawStage.path();
-linePath.stroke('2 #000000');
-var Point=[[0,350]];
-linePath.parent(lineDrawStage);
-cont.addEventListener('mousedown',function(){
-        if(flag===-1){
-                linePath.moveTo(0,350);
-        }else{
-                console.log(Point[Point.length-1]);
-                linePath.moveTo(Point[Point.length-1][0],Point[Point.length-1][1]);
-        }
-        flag=1;
-});
-cont.addEventListener('click',function(){
-        if(flag===-1){
-                linePath.moveTo(0,0);
-        }else{
-                linePath.moveTo(Point[Point.length-1][0],Point[Point.length-1][1]);
-        }
-        cont.addEventListener('click',LineDraw);
-});
-cont.addEventListener('mousemove',function(){
-        if(flag===1){
-                cont.addEventListener('mousemove',LineDraw);             
-        }
-});
-cont.addEventListener('mouseup',function(){
-        flag=0;
-        cont.removeEventListener('mousemove',LineDraw);
-});
-
-//時間テキスト描画
-function TimeText(time){
-        var timeArray=[0];
-        var displayCount=(Math.floor(time/10))+1;
-        var newTime=0;
-        console.log(newTime);
-        while(newTime<time){
-                if((newTime+10)<time){
-                        newTime=newTime+10;
-                }else{
-                        newTime=time;
+        this.curve.values = [
+            {"x": 0.0, "y": 0.0},
+            {"x": duration, "y": 0.0}
+        ];
+        this.layer.listen(
+            "mousedown", 
+            function(ev) {
+                this.isDragging = true;
+                const { offsetX, offsetY } = ev;
+                this.subValues.push({
+                    x: this.xScale(offsetX),
+                    y: this.yScale(offsetY)
+                });
+                this.drawGraph();
+            }.bind(this));
+        this.layer.listen(
+            "mousemove", 
+            function(ev) {
+                if(!this.isDragging) {
+                    return;
                 }
-                timeArray.push(newTime);
-                console.log(timeArray);
-        }
-        
-        
-}
-//描画関数
-function LineDraw(e){
-        var x=e.pageX - GraphView.offsetLeft;
-        var y=e.pageY - GraphView.offsetTop;
-        if(y<350){
-                linePath.lineTo(x,y);
-                Point.push([x,y]);        
-        }
-}
+                const { offsetX, offsetY } = ev;
+                this.subValues.push({
+                    x: this.xScale(offsetX),
+                    y: this.yScale(offsetY)
+                });
+                this.drawGraph();
+            }.bind(this));
+        this.layer.listen(
+            "mouseup", 
+            function(ev) {
+                this.isDragging = false;
+                const { offsetX, offsetY } = ev;
+                this.subValues.push({
+                    x: this.xScale(offsetX),
+                    y: this.yScale(offsetY)
+                });
+                this.updateData();
+                this.drawGraph();
+            }.bind(this));
+        this.drawGraph();
+    }.bind(this);
 
+    this.drawGraph = function() {
+        this.path.remove();
+        this.path = acgraph.path();
+        this.layer.addChild(this.path);
+        this.stage.suspend();
+        this.drawMainGraph();
+        this.drawSubGraph();
+        this.stage.resume();
+    }.bind(this);
+
+    this.drawMainGraph = function() {
+        let points = this.curve.values.map(function(point) {
+            return {
+                x: this.xScaleInvert(point.x),
+                y: this.yScaleInvert(point.y)
+            };
+        }.bind(this));
+
+        let path = this.path.moveTo(
+            points[0].x,
+            points[0].y
+        );
+        for(var point of points.slice(1)) {
+            path.lineTo(point.x, point.y);
+        }
+    }.bind(this);
+
+    this.drawSubGraph = function() {
+        let points = this.subValues.map(function(point) {
+            return {
+                x: this.xScaleInvert(point.x),
+                y: this.yScaleInvert(point.y)
+            };
+        }.bind(this));
+        if(points.length > 0) {
+            let path = this.path.moveTo(
+                points[0].x,
+                points[0].y
+            );
+            for(var point of points.slice(1)) {
+                path.lineTo(point.x, point.y);
+            }
+        }
+    }.bind(this);
+
+    this.updateData = function() {
+        this.subValues.sort(this.comparisonFunction);
+        if(this.subValues.length > 0) {
+            let start = this.subValues[0].x;
+            let end = this.subValues[this.subValues.length - 1].x;
+            this.curve.values = this.curve.values.filter(function(p) {
+                return p.x < start || p.x > end;
+            });
+            this.curve.values.push(...this.subValues);
+        }
+        this.curve.values.sort(this.comparisonFunction);
+        this.subValues = [];
+    }.bind(this);
+
+    this.comparisonFunction = function(p1, p2) {
+        if(p1.x > p2.x) {
+            return 1;
+        } else if(p1.x < p2.x) {
+            return -1;
+        } else {
+            return 0;
+        }
+    };
+
+    this.xScale = function(x) {
+        return this.duration * x / this.width;
+    }.bind(this);
+
+    this.yScale = function(y) {
+        return y / this.height;
+    }.bind(this);
+
+    this.xScaleInvert = function(xValue) {
+        return this.width * (xValue / this.duration);
+    }.bind(this);
+
+    this.yScaleInvert = function(yValue) {
+        return yValue * this.height;
+    }.bind(this);
+}
