@@ -15,7 +15,6 @@ import {
     Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import RequestListAPI from '../../helper/RequestListAPI';
 import PassportComponent from './PassportComponent';
@@ -108,7 +107,7 @@ const RequireListComponent = props => {
                                                     })
                                                     .then(res => {
                                                         if(res.status == 200 || res.status == 204) {
-                                                            window.location.href = '/app/requests/';
+                                                            window.location.href = '/app/request_list/';
                                                         }
                                                     });
                                                 }}
