@@ -1,5 +1,6 @@
-import { CircularProgress, Button, ButtonGroup } from "@mui/material";
+import { CircularProgress, Button, ButtonGroup, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import EmonotateAPI from "../../helper/EmonotateAPI";
 import RequestListAPI from "../../helper/RequestListAPI";
 import ObserverComponent from "../request-page/ObserverComponent";
 
@@ -34,6 +35,39 @@ const EditRequestComponent = props => {
             setRequest(data);
         });
     };
+    const download = ev => {
+        const api = new EmonotateAPI();
+        api.getRequestItemAPI("get_download_curve_data", request.id)
+        .then(json => {
+            const transport = (json) => {
+                const req = { ...request };
+                const link = document.createElement('a');
+                document.body.appendChild(link);
+                link.href = json["url"];
+                link.setAttribute('download', json["file_name"]);
+                link.click();
+                document.body.removeChild(link);
+            }
+            if(json["state"] == "SUCCESSED") {
+                transport(json);
+            }
+            setRequest(json.request);
+        })
+        .catch(err => {
+            alert(err);
+        });
+    };
+    var downloadButtonMessage =  "ダウンロード準備進行中";
+    if(request.state_processing_to_download == 2) {
+        downloadButtonMessage = "ダウンロード可能";
+    } 
+    else if(request.state_processing_to_download == -1) {
+        downloadButtonMessage = "再度ダウンロードボタンを押してください";
+    } 
+    else if(request.state_processing_to_download == 0) {
+        downloadButtonMessage = "ダウンロード準備開始";
+    }
+
     const createContent = () => {
         if(isLoadedRequest) {
             return <>
@@ -41,9 +75,18 @@ const EditRequestComponent = props => {
                     request={request}
                     onChange={ req => setRequest(req)}
                 />
-                <ButtonGroup>
-                    <Button onClick={update}>更新</Button>
-                </ButtonGroup>
+                <Stack m={2} spacing={2} direction={"row"}>
+                    <ButtonGroup>
+                        <Button onClick={update}>更新</Button>
+                    </ButtonGroup>
+                    <ButtonGroup>
+                        <Button 
+                            onClick={download}
+                            disabled={ request.state_processing_to_download == 1 }>
+                            { downloadButtonMessage }
+                        </Button>
+                    </ButtonGroup>
+                </Stack>
             </>
         } else {
             return <CircularProgress />
