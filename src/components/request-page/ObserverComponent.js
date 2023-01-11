@@ -15,6 +15,7 @@ import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
 import ValueTypeComponent from "../common/ValueTypeComponent";
+import EmailAddressList from "./EmailAddressList";
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
@@ -187,6 +188,11 @@ const ObserverComponent = (props) => {
             />
         </Box>
     </>;
+    const createEmailAddressList = () => <>
+        <EmailAddressList
+            request={request}
+        />
+    </>
     const createDivider = () => <hr />
 
     const domList = [];
@@ -212,6 +218,8 @@ const ObserverComponent = (props) => {
     }
     domList.push(createDivider());
     domList.push(createFreeHandButton());
+    domList.push(createDivider());
+    domList.push(createEmailAddressList());
 
     return (
         <FormControl fullWidth sx={{ m: 1 }}>
