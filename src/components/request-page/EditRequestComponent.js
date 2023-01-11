@@ -23,7 +23,9 @@ const EditRequestComponent = props => {
         req.content = request.content.id;
         req.value_type = request.value_type.id;
         req.owner = request.owner.id;
-        req.google_form = request.google_form.id;
+        if(req.google_form != undefined) {
+            req.google_form = request.google_form.id;
+        }
         req.values = request.values;
         req.is_required_free_hand = request.is_required_free_hand;
 
