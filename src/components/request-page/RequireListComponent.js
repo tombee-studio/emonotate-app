@@ -13,11 +13,23 @@ import {
     Pagination,
     CircularProgress, 
     Stack} from '@mui/material';
+import { withStyles } from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import AddIcon from '@mui/icons-material/Add';
 import RequestListAPI from '../../helper/RequestListAPI';
 import PassportComponent from './PassportComponent';
+
+import DownloadIcon from '@mui/icons-material/Download';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CancelIcon from '@mui/icons-material/Cancel';
+
+const ListItemWithWiderSecondaryAction = withStyles({
+    secondaryAction: {
+      paddingRight: 96
+    }
+})(ListItem);
 
 const RequireListComponent = props => {
     const [result, setResult] = useState({});
@@ -76,8 +88,21 @@ const RequireListComponent = props => {
                     <List>
                         {
                             result.models.map(request => {
+                                const createStateIconToDownload = () => {
+                                    console.log(request)
+                                    switch(request.state_processing_to_download) {
+                                    case 0:
+                                        return <PlayArrowIcon />
+                                    case 1:
+                                        return <HourglassBottomIcon />
+                                    case 2:
+                                        return <DownloadIcon />
+                                    case -1:
+                                        return <CancelIcon />
+                                    }
+                                };
                                 return (
-                                    <ListItem
+                                    <ListItemWithWiderSecondaryAction
                                         button
                                         component="a"
                                         href={`/app/requests/${request.id}`}
@@ -96,6 +121,9 @@ const RequireListComponent = props => {
                                             }
                                         />
                                         <ListItemSecondaryAction>
+                                            <IconButton>
+                                                { createStateIconToDownload() }
+                                            </IconButton>
                                             <IconButton
                                                 component="a"
                                                 edge="end"
@@ -115,7 +143,7 @@ const RequireListComponent = props => {
                                                 <DeleteIcon />
                                             </IconButton>
                                         </ListItemSecondaryAction>
-                                    </ListItem>
+                                    </ListItemWithWiderSecondaryAction>
                                 );
                             })
                         }
