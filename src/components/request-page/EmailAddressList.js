@@ -6,10 +6,10 @@ import {
     GridToolbarContainer
 } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
-import ReplayIcon from '@mui/icons-material/Replay';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import FaceIcon from '@mui/icons-material/Face';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import "./styles.css";
 import ParticipantAPI from "../../helper/ParticipantAPI";
@@ -117,9 +117,9 @@ const EmailAddressList = props => {
                     選択された参加者を削除
             </Button>
             <Button color="primary" 
-                startIcon={<ReplayIcon />} 
+                startIcon={<UploadIcon />} 
                 onClick={replayAction}>
-                    参加者を追加
+                    参加者リストを同期
             </Button>
         </GridToolbarContainer>
     );
@@ -138,8 +138,10 @@ const EmailAddressList = props => {
     };
     const handleOnDelete = (v) => {
         const _participants = [...participants.filter(participant => 
-            !selectedRows.includes(participant.id))];
-        setParticipants(_participants);
+            selectedRows.includes(participant.id))];
+        const api = new ParticipantAPI();
+        api.delete(request.id, _participants.map(participant => participant.email))
+            .then(json => setParticipants(json.participants));
     };
     const handleOnPaste = (ev) => {
         const pattern = /^.+@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
@@ -168,7 +170,9 @@ const EmailAddressList = props => {
             onCellEditCommit={handleOnCellEditCommit}
             checkboxSelection
             disableSelectionOnClick
-            onSelectionModelChange={(v) => selectedRows(v)}
+            onSelectionModelChange={
+                user => setSelectedRows([...user])
+            }
             density='compact' 
             autoHeight
         />
