@@ -9,7 +9,9 @@ import {
     ListItemText, 
     ListItemSecondaryAction,
     IconButton,
-    Typography } from "@mui/material";
+    Typography
+} from "@mui/material";
+
 import React from "react";
 
 const RequestItemComponent = props => {
