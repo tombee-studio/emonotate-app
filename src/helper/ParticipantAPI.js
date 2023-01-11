@@ -17,5 +17,18 @@ export default class ParticipantAPI {
         })
         .then(res => res.json());
     }
+
+    delete(requestId, data) {
+        return fetch(`/api/participants/${requestId}`, {
+            method: 'delete',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': window.django.csrf,
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json());
+    }
 };
-  
