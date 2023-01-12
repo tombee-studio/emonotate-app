@@ -60,5 +60,19 @@ export default class RequestListAPI {
               'X-CSRFToken': window.django.csrf,
             }});
     }
+
+    duplicate(id, queries = {}) {
+        var query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+        return fetch(`/api/requests/${id}/?${query}`,{
+            method: 'put',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': window.django.csrf,
+            },
+            body: JSON.stringify({
+                "mode": "duplicate"
+            })});
+    } 
 };
   
