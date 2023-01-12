@@ -98,8 +98,6 @@ const App = () => {
                 const RequestPage = loadable(() => import('./pages/RequestPage'));
                 return <RequestPage id={props.match.params.id} />;
               }} />);
-            }
-            if(user.is_staff) {
               entries.push(<Route exact path='/app/inviting/' component={_ => {
                 const InvitingPage = loadable(() => import('./pages/InvitingPage'));
                 return <InvitingPage />;
