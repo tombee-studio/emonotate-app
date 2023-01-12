@@ -8,6 +8,7 @@ const EditRequestComponent = props => {
     const { id } = props;
     const [isLoadedRequest, setFlagLoadedRequest] = useState(false);
     const [request, setRequest] = useState({});
+    const { user } = window.django;
     useEffect(() => {
         const api = new RequestListAPI();
         api.getItem(id, {"format": "json"})
@@ -57,6 +58,17 @@ const EditRequestComponent = props => {
             alert(err);
         });
     };
+    const copy = ev => {
+        const api = new RequestListAPI();
+        api.duplicate(request.id, {
+            'format': 'json'
+        })
+        .then(res => {
+            if(res.status == 201) {
+                window.location.href = '/app/request_list/';
+            }
+        });
+    };
     var downloadButtonMessage =  "ダウンロード準備進行中";
     if(request.state_processing_to_download == 2) {
         downloadButtonMessage = "ダウンロード可能";
@@ -67,25 +79,32 @@ const EditRequestComponent = props => {
     else if(request.state_processing_to_download == 0) {
         downloadButtonMessage = "ダウンロード準備開始";
     }
-
     const createContent = () => {
         if(isLoadedRequest) {
+            const buttons = [];
+            if(user.id == request.owner.id) {
+                buttons.push(<ButtonGroup>
+                    <Button onClick={update}>更新</Button>
+                </ButtonGroup>);
+                buttons.push(<ButtonGroup>
+                    <Button 
+                        onClick={download}
+                        disabled={ request.state_processing_to_download == 1 }>
+                        { downloadButtonMessage }
+                    </Button>
+                </ButtonGroup>);
+            } else {
+                buttons.push(<ButtonGroup>
+                    <Button onClick={copy}>コピー</Button>
+                </ButtonGroup>);
+            }
             return <>
                 <ObserverComponent 
                     request={request}
                     onChange={ req => setRequest(req)}
                 />
                 <Stack m={2} spacing={2} direction={"row"}>
-                    <ButtonGroup>
-                        <Button onClick={update}>更新</Button>
-                    </ButtonGroup>
-                    <ButtonGroup>
-                        <Button 
-                            onClick={download}
-                            disabled={ request.state_processing_to_download == 1 }>
-                            { downloadButtonMessage }
-                        </Button>
-                    </ButtonGroup>
+                    { buttons }
                 </Stack>
             </>
         } else {

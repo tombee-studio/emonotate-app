@@ -84,7 +84,7 @@ const PassportComponent = props => {
                         api.get({
                             "format": "json",
                             "search": value,
-                            'role': "owner"
+                            "role": "owner"
                         })
                         .then(data => {
                             setRequestList(data.models);

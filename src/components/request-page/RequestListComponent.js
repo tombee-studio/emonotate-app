@@ -91,27 +91,20 @@ const RequestListComponent = () => {
                                         >
                                             { request.title }
                                         </Typography>
-                                        <Typography
-                                            component="span"
-                                            variant="subtitle1"
-                                            color="textSecondary"
-                                        >
-                                            { ` from ${request.owner.email}` }
-                                        </Typography>
                                     </React.Fragment>}
                                     secondary={
                                         <React.Fragment>
                                             <Typography
+                                                sx={{ display: 'inline' }}
                                                 component="span"
                                                 variant="body2"
-                                                color="textSecondary"
+                                                color="text.primary"
                                             >
-                                                { 
-                                                    request.description.length > 30?
-                                                    request.description.substr(0, 30) + "...":
-                                                    request.description
-                                                }
+                                                {`${request.owner.username}`}
                                             </Typography>
+                                            {` — ${request.description.length > 30?
+                                                    request.description.substr(0, 30) + "...":
+                                                    request.description}`}
                                         </React.Fragment>
                                     }
                                     />

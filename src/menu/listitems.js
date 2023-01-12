@@ -9,7 +9,7 @@ import MovieIcon from '@mui/icons-material/Movie';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
-import CampaignIcon from '@mui/icons-material/Campaign';
+import LoyaltyIcon from '@mui/icons-material/Loyalty';
 
 export const mainListItems = (numRequest) => {
   const { user } = window.django;
@@ -55,15 +55,15 @@ export const mainListItems = (numRequest) => {
       </ListItemIcon>
       <ListItemText primary="表現語" />
     </ListItem>);
+    items.push(<ListItem button component="a" href="/app/inviting/">
+      <ListItemIcon>
+        <LoyaltyIcon />
+      </ListItemIcon>
+      <ListItemText primary="招待" />
+    </ListItem>);
   }
   if(user.is_staff) {
     items.push(<ListSubheader>開発者</ListSubheader>);
-    items.push(<ListItem button component="a" href="/app/spreading/">
-      <ListItemIcon>
-        <CampaignIcon />
-      </ListItemIcon>
-      <ListItemText primary="普及" />
-    </ListItem>);
   }
   return <>{items}</>;
 };
