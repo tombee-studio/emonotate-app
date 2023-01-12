@@ -1,4 +1,4 @@
-export default class ParticipantAPI {
+export default class InvitingTokenAPI {
     get() {
         return fetch(`/api/inviting_tokens/`)
             .then(res => res.json());
