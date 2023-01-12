@@ -103,6 +103,8 @@ const App = () => {
                 return <InvitingPage />;
               }} />);
             }
+            if(user.is_staff) {
+            }
             entries.push(<Route>
               { <Redirect to="/app/dashboard/" /> }
             </Route>);
