@@ -24,10 +24,11 @@ import DownloadIcon from '@mui/icons-material/Download';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CancelIcon from '@mui/icons-material/Cancel';
+import ContentCopy from '@mui/icons-material/ContentCopy';
 
 const ListItemWithWiderSecondaryAction = withStyles({
     secondaryAction: {
-      paddingRight: 96
+      paddingRight: 144
     }
 })(ListItem);
 
@@ -89,7 +90,6 @@ const RequireListComponent = props => {
                         {
                             result.models.map(request => {
                                 const createStateIconToDownload = () => {
-                                    console.log(request)
                                     switch(request.state_processing_to_download) {
                                     case 0:
                                         return <PlayArrowIcon />
@@ -101,6 +101,46 @@ const RequireListComponent = props => {
                                         return <CancelIcon />
                                     }
                                 };
+                                const iconButtons = [];
+                                iconButtons.push(<IconButton>
+                                    { createStateIconToDownload() }
+                                </IconButton>);
+                                iconButtons.push(<IconButton
+                                    component="a"
+                                    edge="end"
+                                    aria-label="duplicate"
+                                    onClick={_ => {
+                                        const api = new RequestListAPI();
+                                        api.duplicate(request.id, {
+                                            'format': 'json'
+                                        })
+                                        .then(res => {
+                                            if(res.status == 201 || res.status == 204) {
+                                                window.location.href = '/app/request_list/';
+                                            }
+                                        });
+                                    }}
+                                    size="large">
+                                    <ContentCopy />
+                                </IconButton>);
+                                iconButtons.push(<IconButton
+                                    component="a"
+                                    edge="end"
+                                    aria-label="delete"
+                                    onClick={_ => {
+                                        const api = new RequestListAPI();
+                                        api.delete(request.id, {
+                                            'format': 'json'
+                                        })
+                                        .then(res => {
+                                            if(res.status == 200 || res.status == 204) {
+                                                window.location.href = '/app/request_list/';
+                                            }
+                                        });
+                                    }}
+                                    size="large">
+                                    <DeleteIcon />
+                                </IconButton>);
                                 return (
                                     <ListItemWithWiderSecondaryAction
                                         button
@@ -121,27 +161,7 @@ const RequireListComponent = props => {
                                             }
                                         />
                                         <ListItemSecondaryAction>
-                                            <IconButton>
-                                                { createStateIconToDownload() }
-                                            </IconButton>
-                                            <IconButton
-                                                component="a"
-                                                edge="end"
-                                                aria-label="delete"
-                                                onClick={_ => {
-                                                    const api = new RequestListAPI();
-                                                    api.delete(request.id, {
-                                                        'format': 'json'
-                                                    })
-                                                    .then(res => {
-                                                        if(res.status == 200 || res.status == 204) {
-                                                            window.location.href = '/app/request_list/';
-                                                        }
-                                                    });
-                                                }}
-                                                size="large">
-                                                <DeleteIcon />
-                                            </IconButton>
+                                            { iconButtons }
                                         </ListItemSecondaryAction>
                                     </ListItemWithWiderSecondaryAction>
                                 );
