@@ -23,7 +23,7 @@ const PassportComponent = props => {
         ? `?passport=${selectedRequestList.map(item => item.id).join(",")}`
         : "";
     const url = `${
-        process.env.REACT_APP_API_URL
+        process.env.REACT_APP_APP_URL
     }api/login/${query}`;
     const deleteAction = request => {
         const index = selectedRequestList.findIndex(item => 

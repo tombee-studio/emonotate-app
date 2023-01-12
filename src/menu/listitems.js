@@ -9,54 +9,61 @@ import MovieIcon from '@mui/icons-material/Movie';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
+import CampaignIcon from '@mui/icons-material/Campaign';
 
 export const mainListItems = (numRequest) => {
-  return (
-    <div>
-      <ListSubheader>一般</ListSubheader>
-      <ListItem button component="a" href="/app/dashboard/">
-        <ListItemIcon>
-          <HomeIcon />
-        </ListItemIcon>
-        <ListItemText primary="ホーム" />
-      </ListItem>
-      <ListItem button component="a" href="/app/profile/">
-        <ListItemIcon>
-          <PersonIcon />
-        </ListItemIcon>
-        <ListItemText primary="プロファイル" />
-      </ListItem>
-      <ListItem button component="a" href="/app/history/">
-        <ListItemIcon>
-          <HistoryIcon />
-        </ListItemIcon>
-        <ListItemText primary="履歴" />
-      </ListItem>
-      { window.django.user.groups.includes("Researchers") &&
-        <div>
-          <ListItem button component="a" href="/app/content/">
-            <ListItemIcon>
-              <MovieIcon />
-            </ListItemIcon>
-            <ListItemText primary="コンテンツ" />
-          </ListItem>
-          <ListItem button component="a" href="/app/word/">
-            <ListItemIcon>
-              <TextFormatIcon />
-            </ListItemIcon>
-            <ListItemText primary="表現語" />
-          </ListItem>
-        </div>
-      }
-      <ListSubheader>実験者ツール</ListSubheader>
-      <ListItem button component="a" href="/app/request_list/">
-        <ListItemIcon>
-        <Badge badgeContent={numRequest} color="primary">
-          <MailIcon />
-        </Badge>
-        </ListItemIcon>
-        <ListItemText primary="実験" />
-      </ListItem>
-    </div>
-  );
+  const { user } = window.django;
+  const items = [];
+  items.push(<ListSubheader>一般</ListSubheader>);
+  items.push(<ListItem button component="a" href="/app/dashboard/">
+    <ListItemIcon>
+      <HomeIcon />
+    </ListItemIcon>
+    <ListItemText primary="ホーム" />
+  </ListItem>);
+  items.push(<ListItem button component="a" href="/app/profile/">
+    <ListItemIcon>
+      <PersonIcon />
+    </ListItemIcon>
+    <ListItemText primary="プロファイル" />
+  </ListItem>);
+  items.push(<ListItem button component="a" href="/app/history/">
+    <ListItemIcon>
+      <HistoryIcon />
+    </ListItemIcon>
+    <ListItemText primary="履歴" />
+  </ListItem>);
+  items.push(<ListItem button component="a" href="/app/request_list/">
+    <ListItemIcon>
+    <Badge badgeContent={numRequest} color="primary">
+      <MailIcon />
+    </Badge>
+    </ListItemIcon>
+    <ListItemText primary="リクエスト" />
+  </ListItem>);
+  if(user.groups.includes("Researchers")) {
+    items.push(<ListSubheader>研究者</ListSubheader>);
+    items.push(<ListItem button component="a" href="/app/content/">
+      <ListItemIcon>
+        <MovieIcon />
+      </ListItemIcon>
+      <ListItemText primary="コンテンツ" />
+    </ListItem>);
+    items.push(<ListItem button component="a" href="/app/word/">
+      <ListItemIcon>
+        <TextFormatIcon />
+      </ListItemIcon>
+      <ListItemText primary="表現語" />
+    </ListItem>);
+  }
+  if(user.is_staff) {
+    items.push(<ListSubheader>開発者</ListSubheader>);
+    items.push(<ListItem button component="a" href="/app/spreading/">
+      <ListItemIcon>
+        <CampaignIcon />
+      </ListItemIcon>
+      <ListItemText primary="普及" />
+    </ListItem>);
+  }
+  return <>{items}</>;
 };
