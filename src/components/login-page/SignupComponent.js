@@ -52,7 +52,9 @@ const SignupComponent = props => {
         const queries = convertQuery(params);
         queries['format'] = 'json';
         const promise = api.signup(data, queries);
-        promise.then(_ => window.location = '/');
+        promise.then(json => {
+            window.location = json.url;
+        });
         promise.catch(error => {
             setOpen(true);
             setUsername("");
@@ -80,6 +82,26 @@ const SignupComponent = props => {
                 setPassword2("");
             });
     };
+
+    const buttons = [];
+    buttons.push(<Button 
+        variant="contained" 
+        color="secondary"
+        startIcon={<SendIcon />} 
+        href={getLoginURL(search)} >
+        ログイン
+    </Button>);
+    
+    const queries = convertQuery(new URLSearchParams(search));
+    if(!"inviting" in queries) {
+        buttons.push(<Button 
+            variant="outlined" 
+            color="secondary"
+            startIcon={<SendIcon />} 
+            onClick={loginGuestAction} >
+            ゲストユーザとしてログイン
+        </Button>);
+    }
 
     return (
         <FormGroup>
@@ -145,20 +167,7 @@ const SignupComponent = props => {
                 </Box>
                 <Box>
                     <Stack spacing={1} direction="column">
-                        <Button 
-                            variant="contained" 
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            href={getLoginURL(search)} >
-                            ログイン
-                        </Button>
-                        <Button 
-                            variant="outlined" 
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            onClick={loginGuestAction} >
-                            ゲストユーザとしてログイン
-                        </Button>
+                        { buttons }
                     </Stack>
                 </Box>
             </Stack>
