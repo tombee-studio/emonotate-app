@@ -119,11 +119,9 @@ const GenerateInvitingTokenComponent = props => {
     } else {
         items.push(<CircularProgress />)
     }
-    return <FormGroup>
-        <Stack spacing={2}>
-            { items }
-        </Stack>
-    </FormGroup>;
+    return <Stack m={2} spacing={2}>
+        { items }
+    </Stack>;
 };
 
 export default GenerateInvitingTokenComponent;
