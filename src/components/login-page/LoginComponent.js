@@ -82,6 +82,26 @@ const LoginComponent = props => {
             });
     };
 
+    const buttons = [];
+    buttons.push(<Button
+        variant="contained"
+        color="secondary"
+        startIcon={<SendIcon />} 
+        href={getSignupURL(search)} >
+        ユーザ登録
+    </Button>);
+
+    const queries = convertQuery(new URLSearchParams(search));
+    if(!"inviting" in queries) {
+        buttons.push(<Button 
+            variant="outlined" 
+            color="secondary"
+            startIcon={<SendIcon />} 
+            onClick={loginGuestAction} >
+            ゲストユーザとしてログイン
+        </Button>);
+    }
+
     return (
         <FormGroup>
             <Stack direction="column" spacing={4}>
@@ -130,20 +150,7 @@ const LoginComponent = props => {
                 </Box>
                 <Box>
                     <Stack spacing={1} direction="column">
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            href={getSignupURL(search)} >
-                            ユーザ登録
-                        </Button>
-                        <Button 
-                            variant="outlined" 
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            onClick={loginGuestAction} >
-                            ゲストユーザとしてログイン
-                        </Button>
+                        { buttons }
                     </Stack>
                 </Box>
             </Stack>
