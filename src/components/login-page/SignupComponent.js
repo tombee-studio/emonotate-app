@@ -52,15 +52,16 @@ const SignupComponent = props => {
         const queries = convertQuery(params);
         queries['format'] = 'json';
         const promise = api.signup(data, queries);
-        promise.then(_ => window.location = '/');
-        promise.catch(error => {
-            setOpen(true);
-            setUsername("");
-            setEmail("");
-            setPassword1("");
-            setPassword2("");
-            setError(error.message);
-        });
+        promise.then(json => window.location = json.url);
+        promise.catch(res => res.text())
+            .then(feedback => {
+                setOpen(true);
+                setUsername("");
+                setEmail("");
+                setPassword1("");
+                setPassword2("");
+                setError(feedback);
+            });
     };
 
     const loginGuestAction = ev => {
@@ -70,16 +71,37 @@ const SignupComponent = props => {
         const queries = convertQuery(params);
         queries['format'] = 'json';
         queries['guest'] = 'true';
-        api.login(data, queries).then(res => {
-                window.location = '/';
-            })
-            .catch(feedback => {
-                setOpen(true);
-                setUsername("");
-                setPassword1("");
-                setPassword2("");
-            });
+        const promise = api.login(data, queries);
+        promise.then(res => {
+            window.location = '/';
+        });
+        promise.catch(feedback => {
+            setOpen(true);
+            setUsername("");
+            setPassword1("");
+            setPassword2("");
+        });
     };
+
+    const buttons = [];
+    buttons.push(<Button 
+        variant="contained" 
+        color="secondary"
+        startIcon={<SendIcon />} 
+        href={getLoginURL(search)} >
+        ログイン
+    </Button>);
+    
+    const queries = convertQuery(new URLSearchParams(search));
+    if(queries["inviting"] == undefined) {
+        buttons.push(<Button 
+            variant="outlined" 
+            color="secondary"
+            startIcon={<SendIcon />} 
+            onClick={loginGuestAction} >
+            ゲストユーザとしてログイン
+        </Button>);
+    }
 
     return (
         <FormGroup>
@@ -145,20 +167,7 @@ const SignupComponent = props => {
                 </Box>
                 <Box>
                     <Stack spacing={1} direction="column">
-                        <Button 
-                            variant="contained" 
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            href={getLoginURL(search)} >
-                            ログイン
-                        </Button>
-                        <Button 
-                            variant="outlined" 
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            onClick={loginGuestAction} >
-                            ゲストユーザとしてログイン
-                        </Button>
+                        { buttons }
                     </Stack>
                 </Box>
             </Stack>

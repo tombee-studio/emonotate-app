@@ -17,11 +17,6 @@ import { useLocation } from 'react-router-dom';
 import AuthenticateAPI from "../../helper/AuthenticateAPI";
 
 const LoginComponent = props => {
-    const [open, setOpen] = React.useState(false);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const { search } = useLocation();
-
     const convertQuery = params => {
         const queries = {};
         for(const [key, value] of params) {
@@ -29,6 +24,13 @@ const LoginComponent = props => {
         }
         return queries;
     };
+    const { search } = useLocation();
+    const queries = convertQuery(new URLSearchParams(search));
+
+    const [open, setOpen] = React.useState("error" in queries);
+    const [errorMessage, setErrorMessage] = useState(queries["error"]);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     
     const getSignupURL = (search) => {
         const queries = convertQuery(new URLSearchParams(search));
@@ -56,6 +58,7 @@ const LoginComponent = props => {
             })
             .catch(feedback => {
                 setOpen(true);
+                setErrorMessage("ユーザ名またはパスワードが間違っています");
                 setUsername("");
                 setPassword("");
             });
@@ -82,6 +85,24 @@ const LoginComponent = props => {
             });
     };
 
+    const buttons = [];
+    buttons.push(<Button
+        variant="contained"
+        color="secondary"
+        startIcon={<SendIcon />} 
+        href={getSignupURL(search)} >
+        ユーザ登録
+    </Button>);
+    if(queries["inviting"] == undefined) {
+        buttons.push(<Button 
+            variant="outlined" 
+            color="secondary"
+            startIcon={<SendIcon />} 
+            onClick={loginGuestAction} >
+            ゲストユーザとしてログイン
+        </Button>);
+    }
+
     return (
         <FormGroup>
             <Stack direction="column" spacing={4}>
@@ -103,7 +124,7 @@ const LoginComponent = props => {
                                     </IconButton>
                                 }
                                 sx={{ mb: 2 }}>
-                                ユーザ名またはパスワードが間違っています
+                                {errorMessage}
                             </Alert>
                         </Collapse>
                         <TextField 
@@ -130,20 +151,7 @@ const LoginComponent = props => {
                 </Box>
                 <Box>
                     <Stack spacing={1} direction="column">
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            href={getSignupURL(search)} >
-                            ユーザ登録
-                        </Button>
-                        <Button 
-                            variant="outlined" 
-                            color="secondary"
-                            startIcon={<SendIcon />} 
-                            onClick={loginGuestAction} >
-                            ゲストユーザとしてログイン
-                        </Button>
+                        { buttons }
                     </Stack>
                 </Box>
             </Stack>
