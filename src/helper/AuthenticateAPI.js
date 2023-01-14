@@ -56,5 +56,22 @@ export default class AuthenticateAPI {
         return res.json()
     })
   }
+
+  sendVerificationMail() {
+    return fetch('/api/verify/', {
+      method: 'post',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': window.django.csrf,
+      }
+    }).then(res => {
+      if(Math.trunc(res.status / 100) == 2) {
+        return res.text();
+      } else {
+        throw res;
+      }
+    })
+  }
 };
   
