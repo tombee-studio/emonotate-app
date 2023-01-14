@@ -9,12 +9,14 @@ import {
     Button, 
     Alert,
     Collapse,
-    IconButton
+    IconButton,
+    InputAdornment,
+    OutlinedInput
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import UserAPI from '../../helper/UserAPI';
 import AuthenticateAPI from '../../helper/AuthenticateAPI';
-import { Close } from '@mui/icons-material';
+import { Close, GppBad, Verified } from '@mui/icons-material';
 
 const ProfileComponent = props => {
     const { user } = props;
@@ -23,6 +25,7 @@ const ProfileComponent = props => {
     const [message, setMessage] = useState("");
     const [isOpen, setOpen] = useState(false);
     const [severity, setSeverity] = useState("");
+    const [isVerified, setVerified] = useState(user.is_verified);
 
     const handleOnUpdate = _ => {
         const api = new UserAPI();
@@ -34,13 +37,19 @@ const ProfileComponent = props => {
 
         const promise = api.update(_user.id, _user)
         promise.then(json => {
+            setMessage("ユーザ設定を更新しました");
+            setSeverity("success");
+            setOpen(true);
             setUsername(json.username);
             setEmail(json.email);
-        });
-        promise.catch(res => res.text())
-            .then(message => {
-                setMessage(message);
-            });
+            setVerified(json.is_verified);
+        })
+        promise.catch(res => res.text()
+        .then(message => {
+            setMessage(message);
+            setSeverity("error");
+            setOpen(true);
+        }));
     };
 
     const handleOnSendingVerificationMail = _ => {
@@ -57,6 +66,18 @@ const ProfileComponent = props => {
                 setSeverity("error");
                 setOpen(true);
             });
+    };
+
+    const generateIconButton = () => {
+        if(isVerified) {
+            return <IconButton>
+                <Verified />
+            </IconButton>;
+        } else {
+            return <IconButton>
+                <GppBad />
+            </IconButton>
+        }
     };
 
     const items = [];
@@ -96,12 +117,17 @@ const ProfileComponent = props => {
     </FormControl>);
     items.push(<FormControl variant="outlined">
         <FormLabel>メールアドレス</FormLabel>
-        <TextField 
-            id="email" 
+        <OutlinedInput
+            id="email"
             value={email}
             onChange={ev => {
                 setEmail(ev.target.value);
-            }} />
+            }}
+            endAdornment={
+                <InputAdornment position="end">
+                    { generateIconButton() }
+                </InputAdornment>
+            } />
     </FormControl>);
 
     items.push(<Stack spacing={2} direction="row">
@@ -115,7 +141,7 @@ const ProfileComponent = props => {
         <ButtonGroup spacing={2}>
             <Button
                 color="error"
-                disabled={user.is_verified}
+                disabled={isVerified}
                 onClick={handleOnSendingVerificationMail}>
                 認証メールの送信
             </Button>
