@@ -52,17 +52,16 @@ const SignupComponent = props => {
         const queries = convertQuery(params);
         queries['format'] = 'json';
         const promise = api.signup(data, queries);
-        promise.then(json => {
-            window.location = json.url;
-        });
-        promise.catch(error => {
-            setOpen(true);
-            setUsername("");
-            setEmail("");
-            setPassword1("");
-            setPassword2("");
-            setError(error.message);
-        });
+        promise.then(json => window.location = json.url);
+        promise.catch(res => res.text())
+            .then(feedback => {
+                setOpen(true);
+                setUsername("");
+                setEmail("");
+                setPassword1("");
+                setPassword2("");
+                setError(feedback);
+            });
     };
 
     const loginGuestAction = ev => {
@@ -72,15 +71,16 @@ const SignupComponent = props => {
         const queries = convertQuery(params);
         queries['format'] = 'json';
         queries['guest'] = 'true';
-        api.login(data, queries).then(res => {
-                window.location = '/';
-            })
-            .catch(feedback => {
-                setOpen(true);
-                setUsername("");
-                setPassword1("");
-                setPassword2("");
-            });
+        const promise = api.login(data, queries);
+        promise.then(res => {
+            window.location = '/';
+        });
+        promise.catch(feedback => {
+            setOpen(true);
+            setUsername("");
+            setPassword1("");
+            setPassword2("");
+        });
     };
 
     const buttons = [];
@@ -93,7 +93,7 @@ const SignupComponent = props => {
     </Button>);
     
     const queries = convertQuery(new URLSearchParams(search));
-    if(!"inviting" in queries) {
+    if(queries["inviting"] == undefined) {
         buttons.push(<Button 
             variant="outlined" 
             color="secondary"
