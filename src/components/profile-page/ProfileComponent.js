@@ -1,77 +1,156 @@
-import React, { useEffect, useState } from 'react';
-import { Box, FormControl, Stack, Input, InputLabel } from '@mui/material';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
+import React, { useState } from 'react';
+import { 
+    FormControl, 
+    Stack,
+    FormLabel, 
+    TextField, 
+    Divider, 
+    ButtonGroup, 
+    Button, 
+    Alert,
+    Collapse,
+    IconButton,
+    InputAdornment,
+    OutlinedInput
+} from '@mui/material';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import UserAPI from '../../helper/UserAPI';
+import AuthenticateAPI from '../../helper/AuthenticateAPI';
+import { Close, GppBad, Verified } from '@mui/icons-material';
 
 const ProfileComponent = props => {
-    const { user, setUserData } = props;
+    const { user } = props;
     const [username, setUsername] = useState(user.username);
     const [email, setEmail] = useState(user.email);
-    const [password, setPassword] = useState("");
-    const [password2, setPassword2] = useState("");
+    const [message, setMessage] = useState("");
+    const [isOpen, setOpen] = useState(false);
+    const [severity, setSeverity] = useState("");
+    const [isVerified, setVerified] = useState(user.is_verified);
 
-    useEffect(() => {
+    const handleOnUpdate = _ => {
+        const api = new UserAPI();
         const _user = { ...user };
+
         _user.username = username;
         _user.email = email;
-        if(password != "") {
-            _user.password = password;
-            _user.password2 = password2;
-        }
-        setUserData(_user);
-    }, [username, email, password, password2]);
+        _user.inviting_users = []
 
-    return (<Box m={2}>
-        <Stack spacing={2}>
-            <FormControl sx={{ m: 2 }} variant="outlined">
-                <InputLabel htmlFor="component-simple">
-                    ユーザ名
-                </InputLabel>
-                <Input
-                    value={username}
-                    onChange={event => setUsername(event.target.value)} />
-            </FormControl>
-            <FormControl sx={{ m: 2 }} variant="outlined">
-                <InputLabel htmlFor="component-simple">
-                    メールアドレス
-                </InputLabel>
-                <Input
-                    value={email}
-                    onChange={event => setEmail(event.target.value)} />
-            </FormControl>
-            <Accordion>
-                <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header">
-                    <Typography>パスワードの変更</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <FormControl sx={{ m: 2 }} variant="outlined">
-                        <InputLabel htmlFor="component-simple">
-                            Password
-                        </InputLabel>
-                        <Input
-                            type="password"
-                            value={password}
-                            onChange={event => setPassword(event.target.value)} />
-                    </FormControl>
-                    <FormControl sx={{ m: 2 }} variant="outlined">
-                        <InputLabel htmlFor="component-simple">
-                            Password(2回目)
-                        </InputLabel>
-                        <Input
-                            type="password"
-                            value={password2}
-                            onChange={event => setPassword2(event.target.value)} />
-                    </FormControl>
-                </AccordionDetails>
-            </Accordion>
-        </Stack>
-    </Box>);
+        const promise = api.update(_user.id, _user)
+        promise.then(json => {
+            setMessage("ユーザ設定を更新しました");
+            setSeverity("success");
+            setOpen(true);
+            setUsername(json.username);
+            setEmail(json.email);
+            setVerified(json.is_verified);
+        })
+        promise.catch(res => res.text()
+        .then(message => {
+            setMessage(message);
+            setSeverity("error");
+            setOpen(true);
+        }));
+    };
+
+    const handleOnSendingVerificationMail = _ => {
+        const api = new AuthenticateAPI();
+        const promise = api.sendVerificationMail();
+        promise.then(message => {
+                setMessage(message);
+                setSeverity("success");
+                setOpen(true);
+            });
+        promise.catch(res => res.text())
+            .then(message => {
+                setMessage(message);
+                setSeverity("error");
+                setOpen(true);
+            });
+    };
+
+    const generateIconButton = () => {
+        if(isVerified) {
+            return <IconButton>
+                <Verified />
+            </IconButton>;
+        } else {
+            return <IconButton>
+                <GppBad />
+            </IconButton>
+        }
+    };
+
+    const items = [];
+    items.push(<Typography
+        component="div"
+        variant="h5"
+        color="textPrimary">
+        {`プロファイル`}
+    </Typography>);
+    items.push(<Divider />);
+    items.push(<Collapse in={isOpen}>
+        <Alert 
+            severity={severity}
+            action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  <Close fontSize="inherit" />
+                </IconButton>
+              }>
+            { message }
+        </Alert>
+    </Collapse>);
+    items.push(<FormControl variant="outlined">
+        <FormLabel>ユーザ名</FormLabel>
+        <TextField 
+            id="username" 
+            value={username}
+            onChange={ev => {
+                setUsername(ev.target.value);
+            }} />
+    </FormControl>);
+    items.push(<FormControl variant="outlined">
+        <FormLabel>メールアドレス</FormLabel>
+        <OutlinedInput
+            id="email"
+            value={email}
+            onChange={ev => {
+                setEmail(ev.target.value);
+            }}
+            endAdornment={
+                <InputAdornment position="end">
+                    { generateIconButton() }
+                </InputAdornment>
+            } />
+    </FormControl>);
+
+    items.push(<Stack spacing={2} direction="row">
+        <ButtonGroup spacing={2}>
+            <Button
+                disabled={isOpen}
+                onClick={handleOnUpdate}>
+                更新
+            </Button>
+        </ButtonGroup>
+        <ButtonGroup spacing={2}>
+            <Button
+                color="error"
+                disabled={isVerified}
+                onClick={handleOnSendingVerificationMail}>
+                認証メールの送信
+            </Button>
+        </ButtonGroup>
+    </Stack>);
+
+    return (<Stack m={2} spacing={2}>
+        { items }
+    </Stack>);
 };
 
 export default ProfileComponent;

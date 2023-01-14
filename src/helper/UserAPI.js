@@ -37,6 +37,30 @@ export default class UserAPI {
         'X-CSRFToken': window.django.csrf,
       },
       body: JSON.stringify(data),
+    }).then(res => {
+      if(res.status == 200) {
+        return res.json();
+      } else {
+        throw res;
+      }
+    });
+  }
+
+  changePassword(userId, data) {
+    return fetch(`/api/change_password/${userId}`, {
+      method: 'put',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': window.django.csrf,
+      },
+      body: JSON.stringify(data),
+    }).then(res => {
+      if(Math.trunc(res.status / 100) == 2) {
+        return res.text();
+      } else {
+        throw res;
+      }
     });
   }
 };
