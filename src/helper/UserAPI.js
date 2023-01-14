@@ -38,7 +38,7 @@ export default class UserAPI {
       },
       body: JSON.stringify(data),
     }).then(res => {
-      if(Math.trunc(res.status / 100) == 2) {
+      if(res.status == 200) {
         return res.json();
       } else {
         throw res;
