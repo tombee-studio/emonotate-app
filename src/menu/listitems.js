@@ -13,6 +13,17 @@ import LoyaltyIcon from '@mui/icons-material/Loyalty';
 
 export const mainListItems = (numRequest) => {
   const { user } = window.django;
+
+  const createProfileIcon = () => {
+    if(user.notifications.profile.length > 0) {
+      return <Badge variant="dot"color="primary">
+        <PersonIcon />
+      </Badge>
+    } else {
+      return <PersonIcon />
+    }
+  };
+
   const items = [];
   items.push(<ListSubheader>一般</ListSubheader>);
   items.push(<ListItem button component="a" href="/app/dashboard/">
@@ -23,7 +34,7 @@ export const mainListItems = (numRequest) => {
   </ListItem>);
   items.push(<ListItem button component="a" href="/app/profile/">
     <ListItemIcon>
-      <PersonIcon />
+      {createProfileIcon()}
     </ListItemIcon>
     <ListItemText primary="プロファイル" />
   </ListItem>);

@@ -28,8 +28,8 @@ const ProfileComponent = props => {
     const [isVerified, setVerified] = useState(user.is_verified);
 
     useEffect(() => {
-        if(!user.is_verified) {
-            setMessage("本人確認がされていないため、研究者向け機能を使用することができません");
+        if(user.notifications.profile.length > 0) {
+            setMessage(user.notifications.profile[0]);
             setSeverity("warning");
             setOpen(true);
         }
@@ -151,7 +151,7 @@ const ProfileComponent = props => {
                 color="error"
                 disabled={isVerified}
                 onClick={handleOnSendingVerificationMail}>
-                認証メールの送信
+                認証メールを送信
             </Button>
         </ButtonGroup>
     </Stack>);
