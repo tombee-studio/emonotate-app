@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
     FormControl, 
     Stack,
@@ -26,6 +26,14 @@ const ProfileComponent = props => {
     const [isOpen, setOpen] = useState(false);
     const [severity, setSeverity] = useState("");
     const [isVerified, setVerified] = useState(user.is_verified);
+
+    useEffect(() => {
+        if(!user.is_verified) {
+            setMessage("本人確認がされていないため、研究者向け機能を使用することができません");
+            setSeverity("warning");
+            setOpen(true);
+        }
+    }, []);
 
     const handleOnUpdate = _ => {
         const api = new UserAPI();
