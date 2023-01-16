@@ -15,6 +15,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { useLocation } from 'react-router-dom';
 
 import AuthenticateAPI from "../../helper/AuthenticateAPI";
+import { RestartAlt } from "@mui/icons-material";
 
 const LoginComponent = props => {
     const convertQuery = params => {
@@ -36,6 +37,13 @@ const LoginComponent = props => {
         const queries = convertQuery(new URLSearchParams(search));
         const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
         const signupURL = `/app/signup/${query == "" ? "" : '?' + query}`;
+        return signupURL;
+    };
+
+    const getPasswordResetURL = (search) => {
+        const queries = convertQuery(new URLSearchParams(search));
+        const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
+        const signupURL = `/app/reset_password/${query == "" ? "" : '?' + query}`;
         return signupURL;
     };
 
@@ -92,6 +100,15 @@ const LoginComponent = props => {
         startIcon={<SendIcon />} 
         href={getSignupURL(search)} >
         ユーザ登録
+    </Button>);
+
+    buttons.push(<Button
+        warning
+        component="a"
+        href={getPasswordResetURL()}
+        startIcon={<RestartAlt />}
+        variant="outlined">
+        パスワードを忘れた場合
     </Button>);
     if(queries["inviting"] == undefined) {
         buttons.push(<Button 
