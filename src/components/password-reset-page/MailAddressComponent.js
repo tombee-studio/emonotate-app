@@ -58,11 +58,11 @@ const MailAddressComponent = props => {
         component="div"
         variant="h5"
         color="textPrimary">
-            パスワードをリセット
+            メールによるログイン
     </Typography>);
     items.push(<Typography variant="body1" gutterBottom>
-        パスワードをリセットするためにEmonotateで登録しているメールアドレスを入力してください。 <br />
-        入力されたメールアドレス宛にパスワードリセット用のURLが送信されます。
+        パスワードを忘れた方は以下にメールアドレスを入力してください。<br />
+        ログイン用のURLが記載されたメールが送信されます。
     </Typography>);
     items.push(<TextField
         value={email}
