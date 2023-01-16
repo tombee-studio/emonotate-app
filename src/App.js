@@ -126,6 +126,10 @@ const App = () => {
             const SignupPage = loadable(() => import('./pages/SignupPage'));
             return <SignupPage />
           }} />
+          <Route exact path='/app/reset_password/' component={_ => {
+            const PasswordResetPage = loadable(() => import('./pages/PasswordResetPage'));
+            return <PasswordResetPage />
+          }} />
         </Switch>
       </Router>;
     }

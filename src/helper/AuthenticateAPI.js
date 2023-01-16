@@ -71,7 +71,25 @@ export default class AuthenticateAPI {
       } else {
         throw res;
       }
-    })
+    });
+  }
+
+  sendPasswordResetMail(data) {
+    return fetch('/api/reset_password/', {
+      method: 'post',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': window.django.csrf,
+      },
+      body: JSON.stringify(data)
+    }).then(res => {
+      if(res.status == 200) {
+        return res.text();
+      } else {
+        throw res;
+      }
+    });
   }
 };
   
