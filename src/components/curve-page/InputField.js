@@ -6,12 +6,8 @@ class InputField extends Component {
         super(props)
         this.createLineChart = this.createLineChart.bind(this);
         this.node = createRef();
-        const { duration, data, getCurrent, setCurrent, changeValuesInCurve, sectionsData } = props;
+        const { duration, data, getCurrent, setCurrent, changeValuesInCurve } = props;
         this.data = data;
-        this.sectionsData = sectionsData || [
-            0.0,
-            duration
-        ];
         this.duration = duration;
         this.getCurrent = getCurrent;
         this.setCurrent = setCurrent;
@@ -132,7 +128,7 @@ class InputField extends Component {
         //     return 0;
         // });
 
-        this.changeValuesInCurve(this.data, this.sectionsData);
+        this.changeValuesInCurve(this.data);
 
         // const sectionsDataLength = this.sectionsData.length;
         // const colorScale = d3.scaleOrdinal(d3.schemeSet3);
