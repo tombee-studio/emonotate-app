@@ -30,8 +30,6 @@ const SectionComponent = props => {
     const [message, setMessage] = useState("");
     const [webvtt, setWebvtt] = useState(is_included_section ? section.webvtt : "");
     const [title, setTitle] = useState(is_included_section ? section.title : "");
-    const items = [];
-    const buttons = [];
     const create = () => {
         const api = new SectionAPI();
         const _section = {};
@@ -66,18 +64,40 @@ const SectionComponent = props => {
         promise.then(data => {
             window.location.href = `/app/requests/${request.id}`;
         });
-        promise.catch(res => res.text()
-            .then(message => {
+        promise.catch(res => res.json()
+            .then(data => {
                 setOpenFlag(true);
                 setSeverity("error");
-                setMessage(message);
+                setMessage(data["webvtt"]);
             }));
     };
+
+    const items = [];
+    const buttons = [];
     if(is_included_section) {
         buttons.push(<Button onClick={update}>更新</Button>);
     } else {
         buttons.push(<Button onClick={create}>作成</Button>);
     }
+    items.push(<Collapse in={isOpen}>
+        <Alert
+            severity={severity}
+            action={
+                <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                    setOpenFlag(false);
+                }}
+                >
+                <Close fontSize="inherit" />
+                </IconButton>
+            }
+            sx={{ mb: 2 }}>
+          {message}
+        </Alert>
+      </Collapse>);
     items.push(<FormGroup>
         <FormLabel>タイトル</FormLabel>
         <TextField
