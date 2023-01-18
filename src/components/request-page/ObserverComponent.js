@@ -1,13 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
-    FormControl,
     FormLabel,
     Box,
     TextField,
     Button,
     Autocomplete,
     Switch,
-    FormControlLabel} from "@mui/material";
+    FormControlLabel,
+    Divider,
+    Stack
+} from "@mui/material";
 import "video.js/dist/video-js.css";
 import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
 import CurveVideoComponent from "../../components/curve-page/CurveVideoComponent";
@@ -16,6 +18,7 @@ import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
 import ValueTypeComponent from "../common/ValueTypeComponent";
 import EmailAddressList from "./EmailAddressList";
+import SectionComponent from "./SectionComponent";
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
@@ -77,7 +80,7 @@ const ObserverComponent = (props) => {
             setCurve(_curve);
         });
     };
-    
+
     useEffect(() => {
         const api = new CurvesListAPI();
         api.list({
@@ -89,7 +92,7 @@ const ObserverComponent = (props) => {
 
     useEffect(() => {
         const {
-            title, description, content, value_type, values, participants, section, is_required_free_hand
+            title, description, content, value_type, is_required_free_hand
         } = request;
         setTitle(title);
         setDescription(description);
@@ -170,6 +173,13 @@ const ObserverComponent = (props) => {
     const createLoadContentButton = () => <>
         <Button onClick={() => loadContentAndValueType(request)}>ロード</Button>
     </>;
+    const createSection = (content) => <>
+        <SectionComponent
+            request={request}
+            content={content.id}
+            is_included_section={request.is_included_section}
+            section={request.section} />
+    </>;
     const createFreeHandButton = () => <>
         <Box m={2}>
             <FormControlLabel
@@ -193,38 +203,34 @@ const ObserverComponent = (props) => {
             request={request}
         />
     </>
-    const createDivider = () => <hr />
+    const createDivider = () => <Divider />
 
     const domList = [];
     domList.push(createTitleComponent());
-    domList.push(createDivider());
     domList.push(createDescriptionComponent());
-    domList.push(createDivider());
     domList.push(createSelectContentComponent());
-    domList.push(createDivider());
     domList.push(createValueTypeComponent());
-    domList.push(createDivider());
     domList.push(createLoadContentButton());
-    domList.push(createDivider());
     if(curve.content && curve.value_type) {
         domList.push(createNewCurveComponent(
-            curve, (_curve, _sections) => {
+            curve, _curve => {
                 const req = {...request};
                 req.values = _curve.values;
-                req.section = _sections;
                 onChange(req);
                 setCurve(_curve);
             }));
+        if(request.id != undefined) {
+            domList.push(createSection(curve.content));
+        }
     }
-    domList.push(createDivider());
     domList.push(createFreeHandButton());
     domList.push(createDivider());
     domList.push(createEmailAddressList());
 
     return (
-        <FormControl fullWidth sx={{ m: 1 }}>
+        <Stack fullWidth spacing={2} sx={{ m: 1 }}>
             { domList }
-        </FormControl>
+        </Stack>
     );
 };
 
