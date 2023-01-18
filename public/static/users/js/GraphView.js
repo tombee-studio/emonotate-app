@@ -1,4 +1,17 @@
-function GraphView(graphId, curve) {
+function GraphView(graphId, curve, request) {
+    this.changeDataFrom = function(item) {
+        return {
+            "start": this.changeSecondsFrom(item.start),
+            "end": this.changeSecondsFrom(item.end),
+            "text": item.text
+        };
+    }.bind(this);
+    this.changeSecondsFrom = function(time) {
+        let array = time.split(":").map((str, i) => Number(str) * Math.pow(60, 2 - i));
+        return array.reduce(function(sum, element) {
+            return sum + element;
+        });
+    }.bind(this);
     this.graphId = graphId;
     this.stage = acgraph.create(graphId);
     this.layer = this.stage.layer();
@@ -9,6 +22,12 @@ function GraphView(graphId, curve) {
     this.height = 320;
     this.isDragging = false;
     this.subValues = [];
+    this.borders = [];
+    if(request.is_included_section) {
+        this.sections = request.section.values.map(this.changeDataFrom);
+    } else {
+        this.sections = [];
+    }
 
     this.initialize = function(duration) {
         this.duration = duration;
@@ -64,9 +83,28 @@ function GraphView(graphId, curve) {
         this.path = acgraph.path();
         this.layer.addChild(this.path);
         this.stage.suspend();
+        this.drawLines();
         this.drawMainGraph();
         this.drawSubGraph();
         this.stage.resume();
+    }.bind(this);
+
+    this.drawLines = function() {
+        for(var border of this.borders) {
+            border.remove();
+        }
+        let borders = this.sections
+            .slice(0, this.sections.length - 1)
+            .map(item => item.end);
+        this.borders = [];
+        for(let x of borders) {
+            let path = acgraph.path();
+            path.moveTo(this.xScaleInvert(x), 0);
+            path.lineTo(this.xScaleInvert(x), this.height);
+            path.stroke("#aaa", 2, "2 2")
+            this.borders.push(path);
+            this.layer.addChild(path);
+        }
     }.bind(this);
 
     this.drawMainGraph = function() {
