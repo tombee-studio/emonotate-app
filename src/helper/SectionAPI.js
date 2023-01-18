@@ -19,11 +19,11 @@ export default class SectionAPI {
         });
     }
   
-    update(data, queries={
+    update(id, data, queries={
       'format': 'json'
     }) {
       const query = Object.keys(queries).map(key => `${key}=${queries[key]}`).join('&');
-      return fetch(`/api/sections/${data.id}/?${query}`, {
+      return fetch(`/api/sections/${id}/?${query}`, {
           method: 'put',
           mode: 'cors',
           headers: {
@@ -33,7 +33,7 @@ export default class SectionAPI {
           body: JSON.stringify(data)
         })
         .then(res => {
-          if(res.status != 200 && res.status != 201) throw res;
+          if(res.status >= 300) throw res;
           return res.json();
         });
     }
@@ -47,6 +47,18 @@ export default class SectionAPI {
           'X-CSRFToken': window.django.csrf,
         }
       })
+    }
+
+    set_section(requestId, sectionId) {
+      return fetch(`/api/set_section/${requestId}`, {
+        method: 'put',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': window.django.csrf,
+        },
+        body: JSON.stringify({ "section": sectionId })
+      });
     }
   };
   
