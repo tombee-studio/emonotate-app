@@ -1,5 +1,5 @@
 window.onload = function() {
-    var graphView = new GraphView(graphViewId, curve);
+    var graphView = new GraphView(graphViewId, curve, request);
     var onPlayerReady = function(event) {
         var { target } = event;
         graphView.initialize(target.getDuration());
