@@ -30,51 +30,17 @@ function GraphView(graphId, curve, request) {
     }
 
     this.initialize = function(duration) {
-        this.duration = duration;
-        this.graphArea = this.layer
+        this.bgArea = this.layer
             .rect(0, 0, this.width , this.height)
             .fill("#FFFFaa");
+        this.duration = duration;
+        this.graphArea = this.layer
+            .rect(0, 0, this.width , this.height);
 
         this.curve.values = [
             {"x": 0.0, "y": 0.0},
             {"x": duration, "y": 0.0}
         ];
-        this.layer.listen(
-            "mousedown", 
-            function(ev) {
-                this.isDragging = true;
-                const { offsetX, offsetY } = ev;
-                this.subValues.push({
-                    x: this.xScale(offsetX),
-                    y: this.yScale(offsetY)
-                });
-                this.drawGraph();
-            }.bind(this));
-        this.layer.listen(
-            "mousemove", 
-            function(ev) {
-                if(!this.isDragging) {
-                    return;
-                }
-                const { offsetX, offsetY } = ev;
-                this.subValues.push({
-                    x: this.xScale(offsetX),
-                    y: this.yScale(offsetY)
-                });
-                this.drawGraph();
-            }.bind(this));
-        this.layer.listen(
-            "mouseup", 
-            function(ev) {
-                this.isDragging = false;
-                const { offsetX, offsetY } = ev;
-                this.subValues.push({
-                    x: this.xScale(offsetX),
-                    y: this.yScale(offsetY)
-                });
-                this.updateData();
-                this.drawGraph();
-            }.bind(this));
         this.drawGraph();
     }.bind(this);
 
@@ -86,7 +52,53 @@ function GraphView(graphId, curve, request) {
         this.drawLines();
         this.drawMainGraph();
         this.drawSubGraph();
+        this.drawControllArea();
         this.stage.resume();
+    }.bind(this);
+
+    this.drawControllArea = function() {
+        this.graphArea.remove();
+        this.graphArea = this.layer
+            .rect(0, 0, this.width , this.height)
+            .fill("#FFFFaa 0.0");
+        const startDrawCurve = function(ev) {
+            this.isDragging = true;
+            const { offsetX, offsetY } = ev;
+            this.subValues.push({
+                x: this.xScale(offsetX),
+                y: this.yScale(offsetY)
+            });
+            this.drawGraph();
+            return true;
+        }.bind(this);
+        const runningDrawCurve = function(ev) {
+            if(!this.isDragging) {
+                return;
+            }
+            const { offsetX, offsetY } = ev;
+            this.subValues.push({
+                x: this.xScale(offsetX),
+                y: this.yScale(offsetY)
+            });
+            this.drawGraph();
+            return true;
+        }.bind(this);
+        const endDrawCurve = function(ev) {
+            this.isDragging = false;
+            const { offsetX, offsetY } = ev;
+            this.subValues.push({
+                x: this.xScale(offsetX),
+                y: this.yScale(offsetY)
+            });
+            this.updateData();
+            this.drawGraph();
+            return true;
+        }.bind(this);
+
+        this.graphArea.listen("mousedown", startDrawCurve);
+        this.graphArea.listen("mousemove", runningDrawCurve);
+        this.graphArea.listen("mouseup", endDrawCurve);
+        this.graphArea.listen("mouseout", endDrawCurve);
     }.bind(this);
 
     this.drawLines = function() {
@@ -108,6 +120,7 @@ function GraphView(graphId, curve, request) {
     }.bind(this);
 
     this.drawMainGraph = function() {
+        this.path.stroke("#000");
         let points = this.curve.values.map(function(point) {
             return {
                 x: this.xScaleInvert(point.x),
@@ -143,16 +156,25 @@ function GraphView(graphId, curve, request) {
     }.bind(this);
 
     this.updateData = function() {
-        this.subValues.sort(this.comparisonFunction);
+        const tmpArray = this.subValues.map(point => point.x);
         if(this.subValues.length > 0) {
-            let start = this.subValues[0].x;
-            let end = this.subValues[this.subValues.length - 1].x;
+            const xFirst = tmpArray[0];
+            const xLast = tmpArray[tmpArray.length - 1];
+            let start = xFirst;
+            let end = xLast;
+            this.subValues.sort(this.comparisonFunction);
+            const subValues = this.subValues.filter(function(p) {
+                return p.x >= start && p.x < end;
+            });
             this.curve.values = this.curve.values.filter(function(p) {
                 return p.x < start || p.x > end;
             });
-            this.curve.values.push(...this.subValues);
+            this.curve.values.push(...subValues);
         }
         this.curve.values.sort(this.comparisonFunction);
+        const array = [...this.curve.values];
+        let map = new Map(array.map(o => [o.x, o]));
+        console.log(Array.from(map, function(item) { return item[1]; }));
         this.subValues = [];
     }.bind(this);
 
@@ -171,7 +193,7 @@ function GraphView(graphId, curve, request) {
     }.bind(this);
 
     this.yScale = function(y) {
-        return y / this.height;
+        return 1.0 - y / this.height;
     }.bind(this);
 
     this.xScaleInvert = function(xValue) {
@@ -179,6 +201,6 @@ function GraphView(graphId, curve, request) {
     }.bind(this);
 
     this.yScaleInvert = function(yValue) {
-        return yValue * this.height;
+        return this.height - yValue * this.height;
     }.bind(this);
 }
