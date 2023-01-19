@@ -176,7 +176,7 @@ const ObserverComponent = (props) => {
     const createSection = (content) => <>
         <SectionComponent
             request={request}
-            content={content.id}
+            content={content}
             is_included_section={request.is_included_section}
             section={request.section} />
     </>;
