@@ -21,6 +21,7 @@ function GraphView(graphId, curve, request) {
     this.width = 640;
     this.height = 320;
     this.isDragging = false;
+    this.current = 0.0;
     this.subValues = [];
     this.borders = [];
     if(request.is_included_section) {
@@ -29,18 +30,25 @@ function GraphView(graphId, curve, request) {
         this.sections = [];
     }
 
-    this.initialize = function(duration) {
+    this.initialize = function(youtubeView) {
         this.bgArea = this.layer
             .rect(0, 0, this.width , this.height)
             .fill("#FFFFaa");
-        this.duration = duration;
+        this.duration = youtubeView.getDuration();
         this.graphArea = this.layer
             .rect(0, 0, this.width , this.height);
+        this.progressBar = this.layer
+            .path();
 
         this.curve.values = [
             {"x": 0.0, "y": 0.0},
-            {"x": duration, "y": 0.0}
+            {"x": this.duration, "y": 0.0}
         ];
+        this.youtubeView = youtubeView;
+        setInterval(function() {
+            this.current = this.youtubeView.getCurrentTime();
+            this.drawGraph();
+        }.bind(this), 100);
         this.drawGraph();
     }.bind(this);
 
@@ -52,8 +60,18 @@ function GraphView(graphId, curve, request) {
         this.drawLines();
         this.drawMainGraph();
         this.drawSubGraph();
+        this.drawProgressBar();
         this.drawControllArea();
         this.stage.resume();
+    }.bind(this);
+
+    this.drawProgressBar = function() {
+        this.progressBar.remove();
+        this.progressBar = acgraph.path();
+        this.progressBar.moveTo(this.xScaleInvert(this.current), 0);
+        this.progressBar.lineTo(this.xScaleInvert(this.current), this.height);
+        this.progressBar.stroke("#00a", 3);
+        this.layer.addChild(this.progressBar);
     }.bind(this);
 
     this.drawControllArea = function() {
