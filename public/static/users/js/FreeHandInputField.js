@@ -2,7 +2,7 @@ window.onload = function() {
     var graphView = new GraphView(graphViewId, curve, request);
     var onPlayerReady = function(event) {
         var { target } = event;
-        graphView.initialize(target.getDuration());
+        graphView.initialize(target);
     };
     var onStateChange = function(event) {
         // var { data } = event;
