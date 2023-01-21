@@ -29,6 +29,13 @@ function createCurve() {
         return res.json();
     })
     .then(data => {
-        window.location.href = "/app/request_list/";
+        if(request.has_google_form) {
+            const { google_form } = request;
+            const googleFormURL = `${google_form.url}?${google_form.curve_id_entry_field}=${data.id}&${google_form.username_entry_field}=${data.user.username}`;
+            window.open(googleFormURL);
+            window.location.href = "/app/request_list/";
+        } else {
+            window.location.href = "/app/request_list/";
+        }
     });
 }
