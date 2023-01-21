@@ -41,7 +41,7 @@ const SectionComponent = props => {
         const promise = api.create(_section, { "format": "json" });
         promise.then(data => {
             const promiseSetSection = api.set_section(request.id, data.id);
-            promiseSetSection.then(data => {
+            promiseSetSection.then(_ => {
                 window.location.href = `/app/requests/${request.id}`;
             });
         });
@@ -61,7 +61,7 @@ const SectionComponent = props => {
         _section.webvtt = webvtt;
         _section.title = title;
         const promise = api.update(_section.id, _section, { "format": "json" });
-        promise.then(data => {
+        promise.then(_ => {
             window.location.href = `/app/requests/${request.id}`;
         });
         promise.catch(res => res.json()

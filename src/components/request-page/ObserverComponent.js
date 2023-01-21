@@ -19,6 +19,7 @@ import CurvesListAPI from "../../helper/CurvesListAPI";
 import ValueTypeComponent from "../common/ValueTypeComponent";
 import EmailAddressList from "./EmailAddressList";
 import SectionComponent from "./SectionComponent";
+import GoogleFormComponent from "./GoogleFormComponent";
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
@@ -203,6 +204,10 @@ const ObserverComponent = (props) => {
             request={request}
         />
     </>
+    const createGoogleForm = () => <>
+        <GoogleFormComponent
+            request={request} />
+    </>;
     const createDivider = () => <Divider />
 
     const domList = [];
@@ -225,10 +230,11 @@ const ObserverComponent = (props) => {
     }
     domList.push(createFreeHandButton());
     domList.push(createDivider());
+    domList.push(createGoogleForm());
     domList.push(createEmailAddressList());
 
     return (
-        <Stack fullWidth spacing={2} sx={{ m: 1 }}>
+        <Stack fullWidth spacing={2} m={2}>
             { domList }
         </Stack>
     );
