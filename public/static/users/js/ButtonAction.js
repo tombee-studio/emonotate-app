@@ -29,6 +29,6 @@ function createCurve() {
         return res.json();
     })
     .then(data => {
-        window.location.href = "/app/dashboard/";
+        window.location.href = "/app/request_list/";
     });
 }
