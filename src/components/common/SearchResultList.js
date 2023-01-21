@@ -20,9 +20,7 @@ const SearchResultList = props => {
                 setItems(json.items);
                 setPageToken(json.nextPageToken);
             })
-            .catch(err => {
-                alert(err.status);
-            });
+            .catch(err => console.log(err));
         }, 2000);
     
         return () => {
