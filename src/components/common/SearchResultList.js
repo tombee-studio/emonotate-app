@@ -14,28 +14,21 @@ const SearchResultList = props => {
         setLoading(true);
     
         const timeOutId = setTimeout(() => {
-            api.get({ 'q': keyword, 'type': 'video', 
-            'part': 'snippet', 'key': YOUTUBE_API_KEY, 'maxResults': 12 })
-            .then(json => {
+            const promise = api.get({ 'q': keyword, 'type': 'video', 
+                'part': 'snippet', 'key': YOUTUBE_API_KEY, 'maxResults': 12 })
+            promise.then(json => {
                 setItems(json.items);
                 setPageToken(json.nextPageToken);
-            })
-            .catch(err => console.log(err));
+            });
+            promise.catch(err => alert(err));
         }, 2000);
     
         return () => {
             clearTimeout(timeOutId);
         };
       }, [keyword]);
-    return (<ImageList cols={4} gap={16} style={{bgcolor: "#000"}}>
-        { items.map(item => <ImageListItem
-            key={item.id.videoId} 
-            component="a" 
-            href={
-                `/app/curves/?videoId=${item.id.videoId}&title=${item.snippet.title}`
-            }>
-            <SearchItem item={item} key={item.id.videoId} />
-        </ImageListItem>) }
+    return (<ImageList variant="masonry" cols={4} gap={16} style={{bgcolor: "#000"}}>
+        { items.map(item => <SearchItem item={item} key={item.id.videoId} />) }
     </ImageList>);
 };
 

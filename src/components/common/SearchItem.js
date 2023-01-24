@@ -1,24 +1,28 @@
 import React from 'react';
 
 import { 
-    Box, ImageListItemBar
+    ImageListItem, ImageListItemBar
 } from '@mui/material';
 
 const SearchItem = props => {
-    const { item, imgSize } = props;
+    const { item } = props;
     const { snippet } = item;
     return (
-        <Box>
+        <ImageListItem 
+            key={item.id.videoId} 
+            component="a"
+            href={`/app/curves/?videoId=${item.id.videoId}&title=${item.snippet.title}`}>
             <img
                 srcSet={snippet.thumbnails["medium"].url}
                 alt={item.title}
                 loading="lazy"
             />
             <ImageListItemBar
+                position="below"
                 title={snippet.title}
-                subtitle={snippet.channelTitle}
+                subtitle={`by ${snippet.channelTitle}`}
             />
-        </Box>);
+        </ImageListItem>);
 };
 
 export default SearchItem;
