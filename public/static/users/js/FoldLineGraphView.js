@@ -17,12 +17,11 @@ function FoldLineGraphView(graphId, curve, request) {
     this.layer = this.stage.layer();
     this.curve = curve;
     this.path = acgraph.path();
-    this.subPath = acgraph.path();
+    this.circles = [];
     this.width = 640;
     this.height = 320;
     this.isDragging = false;
     this.current = 0.0;
-    this.subValues = [];
     this.borders = [];
     if(request.is_included_section) {
         this.sections = request.section.values.map(this.changeDataFrom);
@@ -41,8 +40,8 @@ function FoldLineGraphView(graphId, curve, request) {
             .path();
 
         this.curve.values = [
-            {"x": 0.0, "y": 0.0},
-            {"x": this.duration, "y": 0.0}
+            {"x": 0.0, "y": 0.0, "axis": "v"},
+            {"x": this.duration, "y": 0.0, "axis": "v"}
         ];
         this.youtubeView = youtubeView;
         setInterval(function() {
@@ -59,9 +58,9 @@ function FoldLineGraphView(graphId, curve, request) {
         this.stage.suspend();
         this.drawLines();
         this.drawMainGraph();
-        this.drawSubGraph();
         this.drawProgressBar();
         this.drawControllArea();
+        this.drawPoints();
         this.stage.resume();
     }.bind(this);
 
@@ -79,44 +78,23 @@ function FoldLineGraphView(graphId, curve, request) {
         this.graphArea = this.layer
             .rect(0, 0, this.width , this.height)
             .fill("#FFFFaa 0.0");
-        const startDrawCurve = function(ev) {
-            this.isDragging = true;
+        const addPoint = function(ev) {
             const { offsetX, offsetY } = ev;
-            this.subValues.push({
+            this.curve.values.push({
                 x: this.xScale(offsetX),
-                y: this.yScale(offsetY)
+                y: this.yScale(offsetY),
+                axis: "vh"
             });
-            this.drawGraph();
-            return true;
-        }.bind(this);
-        const runningDrawCurve = function(ev) {
-            if(!this.isDragging) {
-                return;
-            }
-            const { offsetX, offsetY } = ev;
-            this.subValues.push({
-                x: this.xScale(offsetX),
-                y: this.yScale(offsetY)
-            });
-            this.drawGraph();
-            return true;
-        }.bind(this);
-        const endDrawCurve = function(ev) {
-            this.isDragging = false;
-            const { offsetX, offsetY } = ev;
-            this.subValues.push({
-                x: this.xScale(offsetX),
-                y: this.yScale(offsetY)
-            });
-            this.updateData();
-            this.drawGraph();
+            this.updateGraph();
             return true;
         }.bind(this);
 
-        this.graphArea.listen("mousedown", startDrawCurve);
-        this.graphArea.listen("mousemove", runningDrawCurve);
-        this.graphArea.listen("mouseup", endDrawCurve);
-        this.graphArea.listen("mouseout", endDrawCurve);
+        this.graphArea.listen("mousedown", addPoint);
+    }.bind(this);
+
+    this.updateGraph = function() {
+        this.updateData();
+        this.drawGraph();
     }.bind(this);
 
     this.drawLines = function() {
@@ -142,7 +120,8 @@ function FoldLineGraphView(graphId, curve, request) {
         let points = this.curve.values.map(function(point) {
             return {
                 x: this.xScaleInvert(point.x),
-                y: this.yScaleInvert(point.y)
+                y: this.yScaleInvert(point.y),
+                axis: point.axis
             };
         }.bind(this));
 
@@ -155,45 +134,55 @@ function FoldLineGraphView(graphId, curve, request) {
         }
     }.bind(this);
 
-    this.drawSubGraph = function() {
-        let points = this.subValues.map(function(point) {
-            return {
-                x: this.xScaleInvert(point.x),
-                y: this.yScaleInvert(point.y)
-            };
-        }.bind(this));
-        if(points.length > 0) {
-            let path = this.path.moveTo(
-                points[0].x,
-                points[0].y
-            );
-            for(var point of points.slice(1)) {
-                path.lineTo(point.x, point.y);
-            }
+    this.startDragging = function(ev) {
+        ev.preventDefault();
+        this.isDragging = true;
+    }.bind(this);
+
+    this.updatePoint = function(ev) {
+        ev.preventDefault();
+        if(!this.isDragging) return;
+        const { offsetX, offsetY } = ev;
+        const { data } = ev.target;
+        const value = this.curve.values[data.index];
+        this.curve.values[data.index] = {
+            x: data.axis.includes("h") ? this.xScale(offsetX) : value.x,
+            y: data.axis.includes("v") ? this.yScale(offsetY) : value.y,
+            axis: value.axis
+        };
+        this.updateGraph();
+    }.bind(this);
+
+    this.endDragging = function(ev) {
+        ev.preventDefault();
+        this.isDragging = false;
+     }.bind(this);
+
+    this.drawPoints = function() {
+        for(let circle of this.circles) {
+            circle.remove();
+        }
+        for(let point of this.curve.values) {
+            let circle = this.stage.circle(
+                this.xScaleInvert(point.x), 
+                this.yScaleInvert(point.y),
+                15).fill("white");
+            circle.data = point;
+            circle.listen("mousedown", this.startDragging);
+            circle.listen("mousemove", this.updatePoint);
+            circle.listen("mouseup", this.endDragging);
+            circle.listen("mouseout", this.endDragging);
+            this.circles.push(circle);
         }
     }.bind(this);
 
     this.updateData = function() {
-        const tmpArray = this.subValues.map(point => point.x);
-        if(this.subValues.length > 0) {
-            const xFirst = tmpArray[0];
-            const xLast = tmpArray[tmpArray.length - 1];
-            let start = xFirst;
-            let end = xLast;
-            this.subValues.sort(this.comparisonFunction);
-            const subValues = this.subValues.filter(function(p) {
-                return p.x >= start && p.x < end;
-            });
-            this.curve.values = this.curve.values.filter(function(p) {
-                return p.x < start || p.x > end;
-            });
-            this.curve.values.push(...subValues);
-        }
         this.curve.values.sort(this.comparisonFunction);
-        const array = [...this.curve.values];
-        let map = new Map(array.map(o => [o.x, o]));
-        console.log(Array.from(map, function(item) { return item[1]; }));
-        this.subValues = [];
+        this.curve.values = this.curve.values.map((point, i) => {
+            let clonePoint = { ...point };
+            clonePoint.index = i;
+            return clonePoint;
+        });
     }.bind(this);
 
     this.comparisonFunction = function(p1, p2) {
