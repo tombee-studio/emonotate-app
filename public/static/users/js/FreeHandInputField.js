@@ -3,6 +3,7 @@ window.onload = function() {
     var onPlayerReady = function(event) {
         var { target } = event;
         graphView.initialize(target);
+        window.buttonAction = new ButtonAction(graphView, youtubeView);
     };
     var onStateChange = function(event) {
         // var { data } = event;
