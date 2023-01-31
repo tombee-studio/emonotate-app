@@ -73,8 +73,8 @@ const RequestListComponent = () => {
                                     button
                                     component="a"
                                     href={ request.is_required_free_hand ?
-                                        `/free-hand/${request.id}/` :
-                                        `/app/curves?request=${request.id}`
+                                        `/free-hand/?request=${request.id}`:
+                                        `/fold-line/?request=${request.id}`
                                     }
                                     key={request.room_name}
                                     alignItems="flex-start">
