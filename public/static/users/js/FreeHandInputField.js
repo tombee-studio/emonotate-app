@@ -2,6 +2,12 @@ window.onload = function() {
     var graphView = new GraphView(graphViewId, curve, request);
     var onPlayerReady = function(event) {
         var { target } = event;
+        if(option == "new") {
+            graphView.curve.values = [
+                {"x": 0.0, "y": 0.0},
+                {"x": target.getDuration(), "y": 0.0}
+            ];
+        }
         graphView.initialize(target);
         window.buttonAction = new ButtonAction(graphView, youtubeView);
     };

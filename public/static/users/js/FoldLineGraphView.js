@@ -38,11 +38,6 @@ function FoldLineGraphView(graphId, curve, request) {
             .rect(0, 0, this.width , this.height);
         this.progressBar = this.layer
             .path();
-
-        this.curve.values = [
-            {"x": 0.0, "y": 0.0, "axis": "v"},
-            {"x": this.duration, "y": 0.0, "axis": "v"}
-        ];
         this.youtubeView = youtubeView;
         setInterval(function() {
             this.current = this.youtubeView.getCurrentTime();
