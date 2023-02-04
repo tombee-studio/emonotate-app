@@ -106,7 +106,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={`/app/curves/${curve.id}`}
+                        href={`/free-hand/${curve.id}`}
                         size="large">
                         <VisibilityIcon />
                       </IconButton>
