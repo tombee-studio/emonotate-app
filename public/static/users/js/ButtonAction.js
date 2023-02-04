@@ -116,16 +116,63 @@ var ButtonAction = function(graphView, youtubeView) {
                 body: ""
             });
         };
+        const getBlobFrom = function (base64) {
+            var bin = atob(base64.replace(/^.*,/, ''));
+            var buffer = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) {
+                buffer[i] = bin.charCodeAt(i);
+            }
+            // Blobを作成
+            try{
+                var blob = new Blob([buffer.buffer], {
+                    type: 'image/png'
+                });
+            }catch (e){
+                return false;
+            }
+            return blob;
+        }
+        const createImage = function() {
+            return new Promise(resolve => {
+                const input = document.querySelector(".anychart-ui-support");
+
+                const svgData = new XMLSerializer().serializeToString(input);
+                const svgDataBase64 = btoa(unescape(encodeURIComponent(svgData)));
+                const svgDataUrl = `data:image/svg+xml;charset=utf-8;base64,${svgDataBase64}`;
+
+                const image = new Image();
+
+                image.addEventListener('load', () => {
+                    const width = 640;
+                    const height = 320;
+                    const canvas = document.createElement('canvas');
+
+                    canvas.setAttribute('width', width);
+                    canvas.setAttribute('height', height);
+
+                    const context = canvas.getContext('2d');
+                    context.drawImage(image, 0, 0, width, height);
+
+                    const dataUrl = canvas.toDataURL('image/png');
+                    resolve(getBlobFrom(dataUrl));
+                });
+
+                image.src = svgDataUrl;
+            });
+        }.bind(this);
+
         const callGcpStorageAPI = function(token) {
-            return fetch(`https://storage.googleapis.com/upload/storage/v1/b/emonotate-356a9.appspot.com/o?uploadType=media&name=${curve.id}.txt`, {
-                method: 'post',
-                mode: 'cors',
-                headers: {
-                    "Content-Type": "application/text",
-                    'Authorization': `Bearer ${token}`,
-                    'Access-Control-Allow-Origin': '*'
-                },
-                body: "Hello, World!"
+            return createImage().then(blob => {
+                return fetch(`https://storage.googleapis.com/upload/storage/v1/b/emonotate-356a9.appspot.com/o?uploadType=media&name=${curve.id}.png`, {
+                    method: 'post',
+                    mode: 'cors',
+                    headers: {
+                        "Content-Type": "image/png",
+                        'Authorization': `Bearer ${token}`,
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: blob
+                });
             });
         }.bind(this);
 
@@ -138,6 +185,8 @@ var ButtonAction = function(graphView, youtubeView) {
         });
         promise.then(token => callGcpStorageAPI(token))
         .then(res => res.text())
-        .then(data => console.log(JSON.parse(data)));
+        .then(data => {
+            console.log(JSON.parse(data));
+        });
     }.bind(this);
 }
