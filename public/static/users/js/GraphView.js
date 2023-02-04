@@ -40,10 +40,6 @@ function GraphView(graphId, curve, request) {
         this.progressBar = this.layer
             .path();
 
-        this.curve.values = [
-            {"x": 0.0, "y": 0.0},
-            {"x": this.duration, "y": 0.0}
-        ];
         this.youtubeView = youtubeView;
         setInterval(function() {
             this.current = this.youtubeView.getCurrentTime();
@@ -190,9 +186,6 @@ function GraphView(graphId, curve, request) {
             this.curve.values.push(...subValues);
         }
         this.curve.values.sort(this.comparisonFunction);
-        const array = [...this.curve.values];
-        let map = new Map(array.map(o => [o.x, o]));
-        console.log(Array.from(map, function(item) { return item[1]; }));
         this.subValues = [];
     }.bind(this);
 
