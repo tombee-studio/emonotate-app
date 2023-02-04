@@ -1,18 +1,3 @@
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i];
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
 var ButtonAction = function(graphView, youtubeView) {
     this.graphView = graphView;
     this.youtubeView = youtubeView;
@@ -40,7 +25,6 @@ var ButtonAction = function(graphView, youtubeView) {
         }.bind(this);
         const createCurveData = function(content) {
             curve.content = content.id;
-            console.log(curve);
             return fetch(`/api/curves/?format=json`, {
                 method: 'post',
                 mode: 'cors',
@@ -80,5 +64,80 @@ var ButtonAction = function(graphView, youtubeView) {
         promise.catch(err => {
             console.log(err);
         });
-    }    
-};
+    }.bind(this);
+
+    this.updateCurve = function() {
+        let gcpAccessToken = getCookie("GCP_ACCESS_TOKEN");
+        console.log(gcpAccessToken);
+
+        let _curve = {...curve};
+        _curve.content = _curve.content.id;
+        _curve.value_type = _curve.value_type.id;
+        _curve.user = _curve.user.id;
+        const updateCurveData = function() {
+            return fetch(`/api/curves/${_curve.id}/?format=json`, {
+                method: 'put',
+                mode: 'cors',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': getCookie('csrftoken'),
+                  'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify(_curve)
+            });
+        }.bind(this);
+
+        let promise = updateCurveData();
+        promise.then(res => {
+            if(res.status == 200) {
+                return res.json();
+            } else {
+                throw res;
+            }
+        }).then(data => {
+            window.location.href = `/free-hand/${data.id}`;
+        });
+        promise.catch(res => res.text())
+        .then(err => {
+            console.log(err);
+        });
+    };
+
+    this.uploadImage = function() {
+        const getGcpToken = function() {
+            return fetch(`/api/gcp_access_token/`, {
+                method: 'post',
+                mode: 'cors',
+                headers: {
+                  'Content-Type': 'application/text',
+                  'X-CSRFToken': getCookie('csrftoken'),
+                  'Access-Control-Allow-Origin': '*'
+                },
+                body: ""
+            });
+        };
+        const callGcpStorageAPI = function(token) {
+            return fetch(`https://storage.googleapis.com/upload/storage/v1/b/emonotate-356a9.appspot.com/o?uploadType=media&name=${curve.id}.txt`, {
+                method: 'post',
+                mode: 'cors',
+                headers: {
+                    "Content-Type": "application/text",
+                    'Authorization': `Bearer ${token}`,
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: "Hello, World!"
+            });
+        }.bind(this);
+
+        let promise = getGcpToken().then(res => {
+            if(res.status == 200) {
+                return res.text();
+            } else {
+                throw res;
+            }
+        });
+        promise.then(token => callGcpStorageAPI(token))
+        .then(res => res.text())
+        .then(data => console.log(JSON.parse(data)));
+    }.bind(this);
+}
