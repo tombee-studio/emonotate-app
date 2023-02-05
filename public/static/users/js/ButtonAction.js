@@ -189,4 +189,8 @@ var ButtonAction = function(graphView, youtubeView) {
             console.log(JSON.parse(data));
         });
     }.bind(this);
+
+    this.jumpToDashboard = function() {
+        window.location.href = "/";
+    }.bind(this);
 }
