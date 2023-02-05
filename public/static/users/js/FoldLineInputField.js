@@ -4,8 +4,8 @@ window.onload = function() {
         var { target } = event;
         if(option == "new") {
             graphView.curve.values = [
-                {"x": 0.0, "y": 0.0},
-                {"x": target.getDuration(), "y": 0.0}
+                {"x": 0.0, "y": 0.0, "axis": "v"},
+                {"x": target.getDuration(), "y": 0.0, "axis": "v"}
             ];
         }
         graphView.initialize(target);

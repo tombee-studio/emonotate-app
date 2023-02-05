@@ -79,7 +79,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={`/app/curves/${curve.id}`}
+                        href={curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
                         size="large">
                         <EditIcon />
                       </IconButton>
@@ -106,7 +106,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={`/free-hand/${curve.id}`}
+                        href={curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
                         size="large">
                         <VisibilityIcon />
                       </IconButton>
