@@ -95,7 +95,11 @@ var ButtonAction = function(graphView, youtubeView) {
                 throw res;
             }
         }).then(data => {
-            window.location.href = `/free-hand/${data.id}`;
+            if(data.kind == 1) {
+                window.location.href = `/free-hand/${data.id}`;
+            } else if(data.kind == 2) {
+                window.location.href = `/fold-line/${data.id}`;
+            }
         });
         promise.catch(res => res.text())
         .then(err => {
