@@ -67,9 +67,6 @@ var ButtonAction = function(graphView, youtubeView) {
     }.bind(this);
 
     this.updateCurve = function() {
-        let gcpAccessToken = getCookie("GCP_ACCESS_TOKEN");
-        console.log(gcpAccessToken);
-
         let _curve = {...curve};
         _curve.content = _curve.content.id;
         _curve.value_type = _curve.value_type.id;
@@ -167,12 +164,12 @@ var ButtonAction = function(graphView, youtubeView) {
 
         const callGcpStorageAPI = function(token) {
             return createImage().then(blob => {
-                return fetch(`https://storage.googleapis.com/upload/storage/v1/b/emonotate-356a9.appspot.com/o?uploadType=media&name=${curve.id}.png`, {
+                return fetch(`https://storage.googleapis.com/upload/storage/v1/b/${token.bucket_name}/o?uploadType=media&name=${curve.id}.png`, {
                     method: 'post',
                     mode: 'cors',
                     headers: {
                         "Content-Type": "image/png",
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `Bearer ${token.access_token}`,
                         'Access-Control-Allow-Origin': '*'
                     },
                     body: blob
@@ -182,16 +179,14 @@ var ButtonAction = function(graphView, youtubeView) {
 
         let promise = getGcpToken().then(res => {
             if(res.status == 200) {
-                return res.text();
+                return res.json();
             } else {
                 throw res;
             }
         });
         promise.then(token => callGcpStorageAPI(token))
-        .then(res => res.text())
-        .then(data => {
-            console.log(JSON.parse(data));
-        });
+            .then(res => res.text())
+            .then(data => {});
     }.bind(this);
 
     this.jumpToDashboard = function() {
