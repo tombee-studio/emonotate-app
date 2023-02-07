@@ -21,6 +21,7 @@ import { mainListItems } from '../menu/listitems';
 import AuthenticateComponent from '../components/common/AuthenticateComponent';
 import RequestListAPI from '../helper/RequestListAPI';
 import _ from 'lodash';
+import { colors } from '@mui/material';
 
 function Copyright() {
   return (
@@ -247,7 +248,7 @@ export default function MainLayout(props) {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         { component(keyword) }
-        <Box pt={4}>
+        <Box m={2} pt={4} bgcolor={colors.black}>
           <Copyright />
         </Box>
       </main>
