@@ -136,7 +136,6 @@ var ButtonAction = function(graphView, youtubeView) {
             });
         let curveData = await data.json();
         await this.uploadImage(curveData);
-        console.log(curveData);
         if(request.has_google_form) {
             const { google_form } = request;
             const googleFormURL = `${google_form.url}?${google_form.curve_id_entry_field}=${data.id}&${google_form.username_entry_field}=${data.user.username}`;
