@@ -149,7 +149,6 @@ var ButtonAction = function(graphView, youtubeView) {
     this.updateCurve = async function() {
         let _curve = {...curve};
         _curve.content = _curve.content.id;
-        _curve.value_type = _curve.value_type.id;
         _curve.user = _curve.user.id;
         const updateCurveData = function() {
             return fetch(`/api/curves/${_curve.id}/?format=json`, {
