@@ -1,4 +1,5 @@
 window.onload = function() {
+    var valueTypeList = new ValueTypeList("search", "value_types");
     var graphView = new GraphView(graphViewId, curve, request);
     var onPlayerReady = function(event) {
         var { target } = event;
@@ -20,4 +21,5 @@ window.onload = function() {
         onPlayerReady,
         onStateChange);
     youtubeView.initialize();
+    valueTypeList.initialize();
 };
