@@ -134,15 +134,18 @@ var ButtonAction = function(graphView, youtubeView) {
             }).then(content => {
                 return createCurveData(content);
             });
-        let cueveData = await data.json();
-        await this.uploadImage(cueveData);
+        let curveData = await data.json();
+        await this.uploadImage(curveData);
+        console.log(curveData);
         if(request.has_google_form) {
             const { google_form } = request;
             const googleFormURL = `${google_form.url}?${google_form.curve_id_entry_field}=${data.id}&${google_form.username_entry_field}=${data.user.username}`;
             window.open(googleFormURL);
-            window.location.href = "/app/request_list/";
-        } else {
-            window.location.href = "/app/request_list/";
+        }
+        if(curveData.kind == 1) {
+            window.location.href = `/free-hand/${curveData.id}`;
+        } else if(curveData.kind == 2) {
+            window.location.href = `/fold-line/${curveData.id}`;
         }
     }.bind(this);
 
