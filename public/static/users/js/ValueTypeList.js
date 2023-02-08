@@ -4,7 +4,9 @@ function ValueTypeList(inputNodeID, datalistID) {
         this.inputNode = document.getElementById(inputNodeID);
         this.listNode = document.getElementById(datalistID);
         if(curve.value_type != undefined) {
+            let value_type = curve.value_type;
             this.inputNode.value = curve.value_type.title;
+            curve.value_type = value_type.id;
         }
         this.inputNode.addEventListener("input", function(ev) {
             while (this.listNode.firstChild) {
