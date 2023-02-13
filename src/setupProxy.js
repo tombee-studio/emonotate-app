@@ -2,7 +2,7 @@ const {createProxyMiddleware} = require("http-proxy-middleware");
 const cors = require("cors");
 
 module.exports = app => {
-    const staging = process.env.REACT_APP_STAGING;
+    const staging = process.env.REACT_APP_STAGING || "prod";
     if(staging == "local") {
         app.use("/api/**", createProxyMiddleware({
             target: "http://127.0.0.1:8000/",
