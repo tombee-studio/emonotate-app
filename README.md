@@ -1,11 +1,11 @@
 # Frontend of Emonotate: Draw and Collect Emotional Arc
 
-<img align="right" src="./docs/screenshots/home1.png" data-canonical-src="./docs/screenshots/home1.png" width="350px"/>
-<img align="right" src="./docs/screenshots/home2.png" data-canonical-src="./docs/screenshots/home2.png" width="350px"/>
-
 Emonotate brings to draw and collect emotional arcs. 
 This is a frontend project for Emonotate.
 You need to clone [backend project for Emonotate](https://github.com/tomoya-kwansei/emonotate-backend) if you use.
+
+<img src="./docs/screenshots/home1.png" data-canonical-src="./docs/screenshots/home1.png" width="350px"/>
+<img src="./docs/screenshots/home2.png" data-canonical-src="./docs/screenshots/home2.png" width="350px"/>
 
 # Current Features
 
