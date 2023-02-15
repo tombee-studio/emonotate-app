@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# Frontend of Emonotate: Draw and Collect Emotional Arc
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Emonotate brings to draw and collect emotional arcs. 
+This is a frontend project for Emonotate.
+You need to clone [backend project for Emonotate](https://github.com/tomoya-kwansei/emonotate-backend) if you use.
 
-## Available Scripts
+<img src="./docs/screenshots/home1.png" data-canonical-src="./docs/screenshots/home1.png" width="350px"/>
+<img src="./docs/screenshots/home2.png" data-canonical-src="./docs/screenshots/home2.png" width="350px"/>
 
-In the project directory, you can run:
+# Current Features
 
-### `npm start`
+- [x] Account Management
+- [x] 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Development Overview
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Overall Architecture 
+This is a project for Emonotate: support to draw and collect emotional arcs with React.js.
 
-### `npm test`
+## Setup
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Make sure to have the following pre-requisites installed:
+1. node 16.x
+2. npm 9.4.0
+3. Android 8.0+ Phone or Emulation setup
 
-### `npm run build`
+Fork and clone this repository and import into Android Studio
+```bash
+git clone https://github.com/tomoya-kwansei/emonotate-app/
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+You need to set enviroment variables below:
+* REACT_APP_API_URL: Backend URL for Emonotate
+* REACT_APP_APP_URL: Frontend URL for Emonotate
+* REACT_APP_STAGING: Stage for development `local`, `alpha`, `prod`
+* REACT_APP_YOUTUBE_API_KEY: Google Data API Key
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Use one of the Android Studio builds to install and run the app in your device or a simulator.
 
-### `npm run eject`
+## Starting Developlment Server
+> **Warning**
+>
+> You need to clone [Backend for Emonotate](https://github.com/tomoya-kwansei/emonotate-app) before you use.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Building
+Build the app:
+```bash
+npm run build
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Testing
+> **Warning**
+>
+> Not Implemented
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## How to Deploy
+You can use Heroku
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Contributing
 
-## Learn More
+[Issues](https://github.com/tomoya-kwansei/emonotate-backend/issues) and [pull requests](https://github.com/tomoya-kwansei/emonotate-backend/pulls) are very welcome.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# MIT License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Copyright (c) 2023 Vitor Pamplona
 
-### Code Splitting
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
