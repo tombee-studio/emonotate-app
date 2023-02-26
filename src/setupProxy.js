@@ -3,59 +3,35 @@ const cors = require("cors");
 
 module.exports = app => {
     const staging = process.env.REACT_APP_STAGING || "prod";
+    var targetUrl = "";
     if(staging == "local") {
-        app.use("/api/**", createProxyMiddleware({
-            target: "http://127.0.0.1:8000/",
-            changeOrigin: true
-        }));
-        app.use("/history/**", createProxyMiddleware({
-            target: "http://127.0.0.1:8000/",
-            changeOrigin: true
-        }));
-        app.use("/free-hand/**", createProxyMiddleware({
-            target: "http://127.0.0.1:8000/",
-            changeOrigin: true
-        }));
-        app.use("/fold-line/**", createProxyMiddleware({
-            target: "http://127.0.0.1:8000/",
-            changeOrigin: true
-        }));
+        targetUrl = "http://127.0.0.1:8000/";
     } else if(staging == "alpha") {
-        app.use("/api/**", createProxyMiddleware({
-            target: "https://enigmatic-thicket-08912.herokuapp.com/",
-            changeOrigin: true
-        }));
-        app.use("/history/**", createProxyMiddleware({
-            target: "https://enigmatic-thicket-08912.herokuapp.com/",
-            changeOrigin: true
-        }));
-        app.use("/free-hand/**", createProxyMiddleware({
-            target: "https://enigmatic-thicket-08912.herokuapp.com/",
-            changeOrigin: true
-        }));
-        app.use("/fold-line/**", createProxyMiddleware({
-            target: "https://enigmatic-thicket-08912.herokuapp.com/",
-            changeOrigin: true
-        }));
+        targetUrl = "https://enigmatic-thicket-08912.herokuapp.com/";
     } else if(staging == "prod") {
-        app.use("/api/**", createProxyMiddleware({
-            target: "https://www.emonotate.com/",
-            changeOrigin: true
-        }));
-        app.use("/history/**", createProxyMiddleware({
-            target: "https://www.emonotate.com/",
-            changeOrigin: true
-        }));
-        app.use("/free-hand/**", createProxyMiddleware({
-            target: "https://www.emonotate.com/",
-            changeOrigin: true
-        }));
-        app.use("/fold-line/**", createProxyMiddleware({
-            target: "https://www.emonotate.com/",
-            changeOrigin: true
-        }));
+        if("K_SERVICE" in process.env) {
+            targetUrl = "https://emonotate-service-backend-b7ramgi3ga-an.a.run.app/";
+        } else {
+            targetUrl = "https://www.emonotate.com/";
+        }
     } else {
         throw `環境変数 STAGING: ${process.env.STAGING}に設定されています`;
     }
+    app.use("/api/**", createProxyMiddleware({
+        target: targetUrl,
+        changeOrigin: true
+    }));
+    app.use("/history/**", createProxyMiddleware({
+        target: targetUrl,
+        changeOrigin: true
+    }));
+    app.use("/free-hand/**", createProxyMiddleware({
+        target: targetUrl,
+        changeOrigin: true
+    }));
+    app.use("/fold-line/**", createProxyMiddleware({
+        target: targetUrl,
+        changeOrigin: true
+    }));
     app.use(cors());
 };
