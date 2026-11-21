@@ -1,0 +1,40 @@
+name: Test
+
+# Runs on PRs to develop/master and is reused by the deploy workflows,
+# so a failing test blocks both merging (with branch protection) and deploying.
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: React test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        env:
+          CI: "true"
+        run: npm test -- --watchAll=false
+
+      - name: Build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: "false"
+        run: npm run build
