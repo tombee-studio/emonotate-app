@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import AddContent from '../components/content-list-page/AddContent';
 import SearchResultList from '../components/common/SearchResultList';
 import { withStyles } from '@mui/styles';
 
@@ -17,7 +18,8 @@ const Dashboard = (props) => {
   const { classes, keyword } = props;
   return (
     <Box m={2}>
-      <SearchResultList keyword={keyword} />
+      <AddContent />
+      {window.django.YOUTUBE_API_KEY && <SearchResultList keyword={keyword} />}
     </Box>
   );
 }

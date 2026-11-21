@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     Typography, 
     Box, 
@@ -19,12 +19,19 @@ import { Assignment } from "@mui/icons-material";
 const PassportComponent = props => {
     const [requestList, setRequestList] = useState([]);
     const [selectedRequestList, setSelectedRequestList] = useState([]);
-    const query = selectedRequestList.length > 0 
-        ? `?passport=${selectedRequestList.map(item => item.id).join(",")}`
-        : "";
-    const url = `${
-        process.env.REACT_APP_APP_URL
-    }api/login/${query}`;
+    const [url, setUrl] = useState('');
+    useEffect(() => {
+        let active = true;
+        setUrl('');
+        if (selectedRequestList.length) {
+            const ids = selectedRequestList.map(item => item.id).join(',');
+            fetch('/api/passport/?ids=' + ids).then(res => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            }).then(data => { if (active) setUrl(data.url); }).catch(() => {});
+        }
+        return () => { active = false; };
+    }, [selectedRequestList]);
     const deleteAction = request => {
         const index = selectedRequestList.findIndex(item => 
             item.room_name == request.room_name);

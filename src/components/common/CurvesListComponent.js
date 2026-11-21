@@ -79,7 +79,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
+                        href={curve.version === "arc-1" || !curve.content.is_youtube ? `/app/curves/${curve.id}/` : curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
                         size="large">
                         <EditIcon />
                       </IconButton>
@@ -92,7 +92,7 @@ const CurvesListComponent = props => {
                             'format': 'json'
                           })
                           .then(res => {
-                              if(res.status == 200) {
+                              if(res.ok) {
                                 window.location.href = '/app/history/';
                               }
                           });
@@ -106,7 +106,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
+                        href={curve.version === "arc-1" || !curve.content.is_youtube ? `/app/curves/${curve.id}/` : curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
                         size="large">
                         <VisibilityIcon />
                       </IconButton>

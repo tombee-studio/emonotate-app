@@ -50,12 +50,45 @@ npm run build
 ```
 
 ## Testing
-> **Warning**
->
-> Not Implemented
+Run `make test` (`CI=true npm test -- --watchAll=false`).
 
 ## How to Deploy
-You can use Heroku
+Pushing to `develop` deploys to dev and pushing to `master` deploys to production on AWS, through GitHub Actions.
+
+## Development Workflow
+
+Same rules as the parent repository [tombee-studio/emonotate](https://github.com/tombee-studio/emonotate).
+
+1. Run `make setup` once after cloning to enable `.githooks` (`commit-msg`, `pre-push`).
+2. Branch from `develop`: `<kind>/#<task_id>_<short_description>` (`feature` / `bugfix` / `hotfix` / `enhancement`).
+3. Commit messages (checked by `commit-msg`, ASCII only):
+
+   ```
+   <Ftr|Fix|Eta>: <Summary starting with uppercase> #<task_id>
+
+   - Detail line (50 chars max)
+
+   Task: <task_id>
+   ```
+
+4. Open a PR to `develop` linked to an issue (`Closes #<issue>` or the Development sidebar).
+   `Test` and `Linked issue` must pass.
+
+`pre-push` needs `TOOL_API_URL`, `TOOL_API_KEY` and `TOOL_USER_ID` in the environment (for example via `direnv`).
+
+## GitHub Actions
+
+| Workflow | Trigger | Behavior |
+|---|---|---|
+| `test` | PR to `develop`/`master`, called by deploys | React tests and production build |
+| `require-linked-issue` | PR to `develop`/`master` | Fails unless the PR or its branch is linked to an issue |
+| `deploy-dev` / `deploy-prd` | push to `develop` / `master` | test → build → S3 → CloudFront invalidation → page and Cognito redirect check |
+| `update-task-status-on-merge` | push to `develop` | Marks each commit's `Task:` as merged in the task tool |
+
+Secrets: `AWS_CI_ROLE_ARN_DEV`, `AWS_CI_ROLE_ARN_PRD` (`ci_role_arn` from the parent's Terraform), `TOOL_API_KEY`, `TOOL_TASK_API_URL`, `TASK_STATUS_MERGE_ID`.
+Mark `React test and build` and `Linked issue` as required status checks for `develop` and `master`.
+
+After a deploy, update this submodule's commit in the parent repository so its integration tests cover it.
 
 # Contributing
 

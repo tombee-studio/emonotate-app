@@ -225,9 +225,7 @@ export default function MainLayout(props) {
             />
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <AuthenticateComponent />
-          </div>
+          <AuthenticateComponent />
         </Toolbar>
       </AppBar>
       <Drawer
