@@ -38,7 +38,7 @@ class CurveVideoComponent extends Component {
             }];
         }
         if(!curveClone.room_name) {
-            curveClone.room_name = `${curve.content.title}-${1}`;
+            curveClone.room_name = `content-${curve.content.id}`;
         }
         this.getCurrent = () => player.currentTime;
         this.setCurrent = (value) => player.currentTime = value;
@@ -57,7 +57,7 @@ class CurveVideoComponent extends Component {
 
     createVideoComponent(curve, child) {
         return  <VideoComponent 
-            url={curve.content.url} 
+            url={curve.content.url} mime={curve.content.data_type}
             onReady={this.onReady} 
             details={child}/>;
     };

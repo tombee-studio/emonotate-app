@@ -6,7 +6,7 @@ class InputField extends Component {
         super(props)
         this.createLineChart = this.createLineChart.bind(this);
         this.node = createRef();
-        const { duration, data, getCurrent, setCurrent, changeValuesInCurve } = props;
+        const { duration, data, getCurrent, setCurrent } = props;
         this.data = data;
         this.duration = duration;
         this.getCurrent = getCurrent;
@@ -15,11 +15,14 @@ class InputField extends Component {
             'r': 10,
             'color': "#000"
         };
-        this.changeValuesInCurve = changeValuesInCurve;
     }
 
     componentDidMount() {
         this.createLineChart(this.node.current);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
     }
 
     createLineChart(node) {
@@ -104,7 +107,7 @@ class InputField extends Component {
             .attr("stroke-width",4)
             .attr("stroke","#0e9aa7");
 
-        setInterval(() => {
+        this.timer = setInterval(() => {
             this.current = this.getCurrent();
             this.headLine
                 .attr("x1", this.xScale(this.current))
@@ -128,7 +131,7 @@ class InputField extends Component {
         //     return 0;
         // });
 
-        this.changeValuesInCurve(this.data);
+        this.props.changeValuesInCurve(this.data);
 
         // const sectionsDataLength = this.sectionsData.length;
         // const colorScale = d3.scaleOrdinal(d3.schemeSet3);
@@ -231,7 +234,7 @@ class InputField extends Component {
             })
             .on('end', d => {
                 this.selected = undefined;
-                this.changeValuesInCurve(this.data, this.sectionsData);
+                this.props.changeValuesInCurve(this.data);
             });
     }
 
@@ -249,7 +252,7 @@ class InputField extends Component {
     }
 
     render() {
-        return <svg width="100%" ref={this.node} />
+        return <svg width="100%" viewBox="0 0 760 156" ref={this.node} />
     }
 }
 

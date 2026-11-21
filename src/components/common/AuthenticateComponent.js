@@ -15,8 +15,8 @@ const AuthenticateComponent = props => {
     size="large"
     onClick={_ => {
       const api = new AuthenticateAPI();
-      api.logout().then(_ => {
-        window.location = '/';
+      api.logout().then(result => {
+        window.location.assign(result.url);
       });
     }}>
     <Logout />

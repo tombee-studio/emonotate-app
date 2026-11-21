@@ -1,35 +1,20 @@
-import React, { useState } from "react";
-import { 
-    Box,
-    Grid,
-} from "@mui/material";
+import React, { useRef, useState } from 'react';
+import { Alert, Box } from '@mui/material';
 import YouTube from 'react-youtube';
 
-const YouTubeVideoComponent = props => {
-    const [config, setConfig] = useState({
-        autoplay: false,
-        controls: true,
-        disablekb: true,
-        loop: false,
-    });
-    const { onReady, videoId, details } = props;
-    return <Box>
-        <Grid container>
-            <Grid item xs="auto">
-                <YouTube 
-                    videoId={videoId}
-                    onReady={onReady}
-                    opts={{
-                        width: 426,
-                        height: 240,
-                        playerVars: config
-                    }} />
-            </Grid>
-            <Grid item xs>
-                { details }
-            </Grid>
-        </Grid>
-    </Box>;
-};
-
-export default YouTubeVideoComponent;
+export default function YouTubeVideoComponent({ videoId, details, onReady }) {
+  const ready = useRef(false);
+  const [error, setError] = useState(false);
+  const handleReady = event => {
+    if (!ready.current && event.target.getDuration() > 0) {
+      ready.current = true;
+      onReady(event);
+    }
+  };
+  return <Box>
+    <YouTube videoId={videoId} onReady={handleReady} onStateChange={handleReady}
+      onError={() => setError(true)} opts={{ width: '100%', height: 320, playerVars: { controls: 1 } }} />
+    {error && <Alert severity="error">この動画は埋め込み再生できません。別の動画を選んでください。</Alert>}
+    {details}
+  </Box>;
+}
