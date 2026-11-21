@@ -6,6 +6,7 @@ import {
   Switch } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import { useCookies } from "react-cookie";
+import { LoadingScreen, ErrorScreen, LandingScreen } from "./components/common/StatusScreens";
 
 import loadable from "@loadable/component";
 
@@ -13,10 +14,11 @@ const App = () => {
   const [userData, setUserData] = useState({});
   const [userLoadedFlag, setUserLoadedFlag] = useState(false);
   const [isAuthenticatedFlag, setAuthenticatedFlag] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies();
+  const [error, setError] = useState(false);
+  const [cookies] = useCookies();
   useEffect(() => {
-    fetch('/api/me/').then(res => {
-      if(res.status == 200) {
+    fetch('/api/me/', { cache: 'no-store' }).then(res => {
+      if(res.status === 200) {
         return res.json();
       } else {
         throw res;
@@ -25,12 +27,14 @@ const App = () => {
       setUserData(user);
       setAuthenticatedFlag(true);
       setUserLoadedFlag(true);
-    }).catch(_ => {
+    }).catch(err => {
+      setError(err.status !== 401 && err.status !== 403);
       setUserLoadedFlag(true);
     });
   }, []);
+  if(error) return <ErrorScreen />;
   if(!userLoadedFlag) {
-    return <h1>少々お待ちください</h1>;
+    return <LoadingScreen />;
   } else {
     window.django = {
       user: userData,
@@ -76,10 +80,7 @@ const App = () => {
             entries.push(<Route exact path='/app/signup/' >
               <Redirect to="/app/dashboard/" />
             </Route>);
-            entries.push(<Route exact path='/app/change_email/' component={_ => {
-              const ChangeEmailPage = loadable(() => import('./pages/ChangeEmailPage'));
-              return <ChangeEmailPage />
-            }}>
+            entries.push(<Route exact path='/app/change_email/' render={() => <Redirect to='/app/profile/' />}>
             </Route>);
             if(userData.groups.includes("Researchers")) {
               entries.push(<Route exact path='/app/content/' component={_ => {
@@ -113,25 +114,7 @@ const App = () => {
         </Router>
       );
     } else {
-      return <Router>
-        <Switch>
-          <Route exact path='/'>
-            <Redirect to="/app/login/" />
-          </Route>
-          <Route exact path='/app/login/' component={_ => {
-            const LoginPage = loadable(() => import('./pages/LoginPage'));
-            return <LoginPage />
-          }} />
-          <Route exact path='/app/signup/' component={_ => {
-            const SignupPage = loadable(() => import('./pages/SignupPage'));
-            return <SignupPage />
-          }} />
-          <Route exact path='/app/reset_password/' component={_ => {
-            const PasswordResetPage = loadable(() => import('./pages/PasswordResetPage'));
-            return <PasswordResetPage />
-          }} />
-        </Switch>
-      </Router>;
+      return <LandingScreen />;
     }
   }
 }

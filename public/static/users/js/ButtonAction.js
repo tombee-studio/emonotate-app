@@ -62,7 +62,8 @@ var ButtonAction = function(graphView, youtubeView) {
 
         const callGcpStorageAPI = function(token) {
             return createImage().then(blob => {
-                return fetch(`https://storage.googleapis.com/upload/storage/v1/b/${token.bucket_name}/o?uploadType=media&name=${data.id}.png`, {
+                const fileName = `image_${getCookie("staging")}_${data.id}.png`;
+                return fetch(`https://storage.googleapis.com/upload/storage/v1/b/${token.bucket_name}/o?uploadType=media&name=${fileName}`, {
                     method: 'post',
                     mode: 'cors',
                     headers: {

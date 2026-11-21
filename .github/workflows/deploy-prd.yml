@@ -1,0 +1,25 @@
+name: Deploy frontend to prd
+
+run-name: Deploy frontend ${{ github.sha }} to prd
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+
+# Never run two frontend deploys to the same environment at once; queue them instead.
+concurrency:
+  group: deploy-frontend-prd
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: prd
+    secrets:
+      aws_role_arn: ${{ secrets.AWS_CI_ROLE_ARN_PRD }}

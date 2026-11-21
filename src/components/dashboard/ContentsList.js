@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pagination, Card, Divider, Grid, ImageListItem, Box, ImageList, ImageListItemBar } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
+import { ListSkeleton } from '../common/PageLayout';
 import ContentsListAPI from '../../helper/ContentsListAPI';
 
 const styles = (theme) => ({
@@ -58,7 +59,7 @@ class UsersList extends React.Component {
               shape="rounded"
               onChange={handlePaginate} />
           </Box>
-          <ImageList cols={4} gap={16} style={{bgcolor: "#000"}}>
+          <ImageList gap={16} sx={{ gridTemplateColumns: { xs: 'repeat(1, 1fr) !important', sm: 'repeat(2, 1fr) !important', lg: 'repeat(4, 1fr) !important' } }}>
             {
               contents.models.map(content => (
                 <ImageListItem
@@ -81,11 +82,7 @@ class UsersList extends React.Component {
       );
     } else {
       return (
-        <Card>
-          <Box>
-            LOAD DATA...
-          </Box>
-        </Card>
+        <ListSkeleton />
       );
     }
   };

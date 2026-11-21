@@ -27,7 +27,7 @@ const SearchResultList = props => {
             clearTimeout(timeOutId);
         };
       }, [keyword]);
-    return (<ImageList variant="masonry" cols={4} gap={16} style={{bgcolor: "#000"}}>
+    return (<ImageList variant="masonry" gap={16} sx={{ columnCount: { xs: '1 !important', sm: '2 !important', lg: '4 !important' } }}>
         { items.map(item => <SearchItem item={item} key={item.id.videoId} />) }
     </ImageList>);
 };

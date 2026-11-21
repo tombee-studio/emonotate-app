@@ -83,7 +83,7 @@ export default class CurvesListAPI {
   }
 
   delete(item) {
-    return fetch(`/api/curves/${item}`, {
+    return fetch(`/api/curves/${item}/`, {
       method: 'delete',
       mode: 'cors',
       headers: {

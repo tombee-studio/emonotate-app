@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { PageContainer } from '../components/common/PageLayout';
 import CreateRequestComponent from '../components/request-page/CreateRequestComponent';
 import EditRequestComponent from '../components/request-page/EditRequestComponent';
 
@@ -20,9 +20,9 @@ const RequestPage = props => {
             alert("不明なエラー@RequestPage");
         }
     };
-    return <Box m={2}>
+    return <PageContainer title="リクエスト管理">
         {createRequestComponent(id)}
-    </Box>;
+    </PageContainer>;
 };
 
 export default RequestPage;

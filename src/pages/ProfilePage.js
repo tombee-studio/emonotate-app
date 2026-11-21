@@ -1,15 +1,12 @@
 import React from 'react';
-import { Stack, Box } from '@mui/material';
-import ProfileComponent from '../components/profile-page/ProfileComponent';
+import { Typography } from '@mui/material';
+import { PageContainer, Section } from '../components/common/PageLayout';
 
-import PasswordComponent from '../components/profile-page/PasswordComponent';
-
-const ProfilePage = _ => {
-    const { user } = window.django;
-    return <Stack m={2} spacing={2}>
-        <ProfileComponent user={user} />
-        <PasswordComponent user={user}/>
-    </Stack>;
+export default function ProfilePage() {
+  return <PageContainer title="プロファイル" maxWidth="md">
+    <Section title="アカウント">
+      <Typography color="text.secondary" variant="body2">メールアドレス</Typography>
+      <Typography>{window.django.user.email}</Typography>
+    </Section>
+  </PageContainer>;
 }
-
-export default ProfilePage;

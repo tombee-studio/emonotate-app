@@ -60,7 +60,7 @@ const RelativeUserRequestList = props => {
     const items = [];
     items.push(<Typography
         component="div"
-        variant="h5"
+        variant="h6"
         color="textPrimary">
         {`${user.username}と関連するユーザの設定したリクエスト`}
     </Typography>);

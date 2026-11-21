@@ -55,7 +55,7 @@ const GenerateInvitingTokenComponent = props => {
                             setErrorMessage(json.message);
                         } else {
                             setInvitingToken(json.inviting_token);
-                            setURL(`${process.env.REACT_APP_APP_URL}api/login/?inviting=${json.inviting_token.token}`);
+                            setURL(`${window.location.origin}/api/cognito/login/?inviting=${json.inviting_token.token}`);
                         }
                     });
                 }}>
@@ -69,7 +69,7 @@ const GenerateInvitingTokenComponent = props => {
             .then(json => {
                 if(!json.is_error) {
                     setInvitingToken(json.inviting_token);
-                    setURL(`${process.env.REACT_APP_APP_URL}api/login/?inviting=${json.inviting_token.token}`);
+                    setURL(`${window.location.origin}/api/cognito/login/?inviting=${json.inviting_token.token}`);
                 }
                 setLoadedFlag(true);
             });

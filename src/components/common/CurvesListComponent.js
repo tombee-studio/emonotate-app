@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CurvesListAPI from '../../helper/CurvesListAPI';
 import EmonotateAPI from '../../helper/EmonotateAPI';
+import { EmptyState } from './PageLayout';
 
 const styles = (theme) => ({
     root: {
@@ -45,12 +46,12 @@ const CurvesListComponent = props => {
     <Box className={classes.root}>
       <Box m={2}>
         <Grid container>
-          <Grid item xs={6}>
-            <Typography component="h3">
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" component="h3">
               これまでに描いた感情曲線
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Pagination 
               count={curves.pagination.total_pages}
               variant="outlined" 
@@ -58,6 +59,7 @@ const CurvesListComponent = props => {
               onChange={handlePaginate} />
           </Grid>
         </Grid>
+        {curves.models.length === 0 && <EmptyState message="まだ感情曲線がありません" hint="ホームから素材を選んで描いてみましょう" />}
         <List>
           {
             curves.models.map(curve => {
@@ -79,7 +81,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
+                        href={curve.version === "arc-1" || !curve.content.is_youtube ? `/app/curves/${curve.id}/` : curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
                         size="large">
                         <EditIcon />
                       </IconButton>
@@ -92,7 +94,7 @@ const CurvesListComponent = props => {
                             'format': 'json'
                           })
                           .then(res => {
-                              if(res.status == 200) {
+                              if(res.ok) {
                                 window.location.href = '/app/history/';
                               }
                           });
@@ -106,7 +108,7 @@ const CurvesListComponent = props => {
                         component="a"
                         edge="end"
                         aria-label="delete"
-                        href={curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
+                        href={curve.version === "arc-1" || !curve.content.is_youtube ? `/app/curves/${curve.id}/` : curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
                         size="large">
                         <VisibilityIcon />
                       </IconButton>
@@ -117,7 +119,7 @@ const CurvesListComponent = props => {
             })
           }
         </List>
-        <ButtonGroup>
+        <ButtonGroup sx={{ mt: 2 }}>
           <Button 
             variant="contained"
             onClick={handleOnClickButtonToDownloadAllCurve} >過去に描いた全ての感情曲線をダウンロードする</Button>
