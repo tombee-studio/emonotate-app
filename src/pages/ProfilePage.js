@@ -1,9 +1,12 @@
 import React from 'react';
-import { Stack, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import { PageContainer, Section } from '../components/common/PageLayout';
 
 export default function ProfilePage() {
-  return <Stack m={2} spacing={2}>
-    <Typography variant="h5">アカウント</Typography>
-    <Typography>{window.django.user.email}</Typography>
-  </Stack>;
+  return <PageContainer title="プロファイル" maxWidth="md">
+    <Section title="アカウント">
+      <Typography color="text.secondary" variant="body2">メールアドレス</Typography>
+      <Typography>{window.django.user.email}</Typography>
+    </Section>
+  </PageContainer>;
 }

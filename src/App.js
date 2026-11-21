@@ -6,6 +6,7 @@ import {
   Switch } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import { useCookies } from "react-cookie";
+import { LoadingScreen, ErrorScreen, LandingScreen } from "./components/common/StatusScreens";
 
 import loadable from "@loadable/component";
 
@@ -31,10 +32,9 @@ const App = () => {
       setUserLoadedFlag(true);
     });
   }, []);
-  if(error) return <main><p>サーバーに接続できませんでした。</p>
-    <button onClick={() => window.location.reload()}>再試行</button></main>;
+  if(error) return <ErrorScreen />;
   if(!userLoadedFlag) {
-    return <h1>少々お待ちください</h1>;
+    return <LoadingScreen />;
   } else {
     window.django = {
       user: userData,
@@ -114,11 +114,7 @@ const App = () => {
         </Router>
       );
     } else {
-      return <main style={{ maxWidth: 480, margin: '12vh auto', padding: 24 }}>
-        <h1>Emonotate</h1>
-        <p>YouTube、動画、テキストに感情曲線を描けます。</p>
-        <a href="/api/cognito/login/">ログイン・新規登録</a>
-      </main>;
+      return <LandingScreen />;
     }
   }
 }

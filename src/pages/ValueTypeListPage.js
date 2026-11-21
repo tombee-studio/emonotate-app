@@ -1,6 +1,5 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import { Divider } from '@mui/material';
+import { PageContainer, Section } from '../components/common/PageLayout';
 import ValueTypeListAPI from '../helper/ValueTypeListAPI';
 import ValueTypeHistoryList from '../components/value-type-list/ValueTypeHistoryList';
 import AddValueType from '../components/value-type-list/AddValueType';
@@ -9,7 +8,8 @@ export default function Dashboard(props) {
   const postAPI = new ValueTypeListAPI();
 
   return (
-    <Box m={2}>
+    <PageContainer title="表現語">
+      <Section>
       <AddValueType postAPI={data => {
         postAPI.post(data)
           .then(res => {
@@ -19,10 +19,10 @@ export default function Dashboard(props) {
             window.location.href = '/';
           });
       }} />
-      <Divider />
-      <Box m={1}>
+      </Section>
+      <Section>
         <ValueTypeHistoryList />
-      </Box>
-    </Box>
+      </Section>
+    </PageContainer>
   );
 }

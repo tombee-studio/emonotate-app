@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card } from '@mui/material';
+import { ListSkeleton } from '../common/PageLayout';
 import withStyles from '@mui/styles/withStyles';
 import CurvesListAPI from '../../helper/CurvesListAPI';
 import CurvesListComponent from '../common/CurvesListComponent';
@@ -49,11 +49,7 @@ class UsersList extends React.Component {
         handlePaginate={handlePaginate} />
     } else {
       return (
-        <Card>
-          <Box>
-            LOAD DATA...
-          </Box>
-        </Card>
+        <ListSkeleton />
       );
     }
   };

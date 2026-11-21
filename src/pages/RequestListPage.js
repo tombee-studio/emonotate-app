@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card } from '@mui/material';
+import { PageContainer, Section } from '../components/common/PageLayout';
 import RequestListComponent from '../components/request-page/RequestListComponent';
 import RequireListComponent from '../components/request-page/RequireListComponent';
 import RelativeUserRequestList from '../components/request-page/RelativeUserRequestList';
@@ -18,11 +18,11 @@ const RequestListPage = (props) => {
   };
 
   return (
-    <Box m={2}>
-        <Card m={2}>
+    <PageContainer title="リクエスト">
+        <Section>
           { createReuquestList(user) }
-        </Card>
-    </Box>
+        </Section>
+    </PageContainer>
   );
 }
 

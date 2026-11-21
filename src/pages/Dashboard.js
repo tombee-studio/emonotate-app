@@ -1,7 +1,7 @@
 import React from 'react';
-import Box from '@mui/material/Box';
 import AddContent from '../components/content-list-page/AddContent';
 import SearchResultList from '../components/common/SearchResultList';
+import { PageContainer } from '../components/common/PageLayout';
 import { withStyles } from '@mui/styles';
 
 const styles = (theme) => ({
@@ -17,10 +17,10 @@ const styles = (theme) => ({
 const Dashboard = (props) => {
   const { classes, keyword } = props;
   return (
-    <Box m={2}>
+    <PageContainer title="ホーム" subtitle="素材を選んで感情曲線を描きましょう">
       <AddContent />
       {window.django.YOUTUBE_API_KEY && <SearchResultList keyword={keyword} />}
-    </Box>
+    </PageContainer>
   );
 }
 
