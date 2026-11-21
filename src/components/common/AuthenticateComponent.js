@@ -1,15 +1,16 @@
 import React from 'react';
 
 import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 import { Login, Logout } from '@mui/icons-material';
 
 import AuthenticateAPI from '../../helper/AuthenticateAPI';
 
 const AuthenticateComponent = props => {
-  return <IconButton
+  return <Tooltip title="ログアウト"><IconButton
     edge="end"
-    aria-label="account of current user"
+    aria-label="logout"
     aria-haspopup="true"
     color="inherit"
     size="large"
@@ -20,7 +21,7 @@ const AuthenticateComponent = props => {
       });
     }}>
     <Logout />
-  </IconButton>;
+  </IconButton></Tooltip>;
 };
 
 export default AuthenticateComponent;

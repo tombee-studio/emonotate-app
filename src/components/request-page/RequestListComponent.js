@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import NoteIcon from '@mui/icons-material/Note';
+import { ListSkeleton, EmptyState } from '../common/PageLayout';
 import RequestListAPI from '../../helper/RequestListAPI';
 
 const RequestListComponent = () => {
@@ -47,23 +48,23 @@ const RequestListComponent = () => {
         });
     }, []);
 
-    return (<Box m={2}>
+    return (<Box>
         <Typography
             component="span"
-            variant="h5"
+            variant="h6"
             color="textPrimary"
         >
             {`${user.username}への依頼`}
         </Typography>
-        <Divider />
         {loading ? 
-            <Box m={2}><CircularProgress /></Box> :
+            <ListSkeleton /> :
             <Stack m={2}>
                 <Pagination 
                     count={result.pagination.total_pages}
                     variant="outlined" 
                     shape="rounded"
                     onChange={handlePaginate} />
+                {result.models.length === 0 && <EmptyState message="依頼はまだありません" />}
                 <List>
                     {
                         result.models.map(request => {

@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
-import clsx from 'clsx';
+import React, { useEffect, useState } from 'react';
 import { alpha } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import CssBaseline from '@mui/material/CssBaseline';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -10,22 +8,23 @@ import Toolbar from '@mui/material/Toolbar';
 import InputBase from '@mui/material/InputBase';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
+import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
+import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
+import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 import { mainListItems } from '../menu/listitems';
+import { useColorMode } from '../colorMode';
+import { tokens } from '../theme';
 
 import AuthenticateComponent from '../components/common/AuthenticateComponent';
 import RequestListAPI from '../helper/RequestListAPI';
-import _ from 'lodash';
-import { colors } from '@mui/material';
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography variant="body2" color="text.secondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://www.emonotate.com/">
         emonotate.com
@@ -36,220 +35,135 @@ function Copyright() {
   );
 }
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  title: {
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
-    },
-  },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(3),
-      width: 'auto',
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '30ch',
-    },
-  },
-  sectionDesktop: {
-    display: 'none',
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
-    },
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-}));
+const Brand = () => (
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 3, height: tokens.topBarHeight }}>
+    <Box
+      sx={{
+        width: 32, height: 32, borderRadius: 2,
+        background: (t) => `linear-gradient(135deg, ${t.palette.primary.main}, ${t.palette.secondary.main})`,
+      }}
+    />
+    <Typography variant="h6" component="span" sx={{ letterSpacing: '-0.02em' }}>
+      emonotate
+    </Typography>
+  </Box>
+);
 
 export default function MainLayout(props) {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [numRequest, setNumRequest] = React.useState(undefined);
-  const [keyword, setKeyword] = React.useState("");
-  const handleDrawerOpen = () => {
-      setOpen(true);
-  };
-  const handleDrawerClose = () => {
-      setOpen(false);
-  };
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [numRequest, setNumRequest] = useState(undefined);
+  const [keyword, setKeyword] = useState('');
+  const { mode, setPreference } = useColorMode();
+  const isDesktop = useMediaQuery((t) => t.breakpoints.up('md'));
   const { component } = props;
 
   useEffect(() => {
-      const api = new RequestListAPI();
-      api.get({
-        'format': 'json',
-        'role': 'participant',
-      })
-      .then(data => {
-          setNumRequest(data.models.length);
-      })
+    const api = new RequestListAPI();
+    api.get({ format: 'json', role: 'participant' })
+      .then(data => setNumRequest(data.models.length));
   }, []);
 
+  const nav = (
+    <Box component="nav" aria-label="main navigation" sx={{ height: '100%', overflowY: 'auto' }}>
+      <Brand />
+      <List disablePadding sx={{ pb: 2 }}>{mainListItems(numRequest)}</List>
+    </Box>
+  );
+
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-            size="large">
-            <MenuIcon />
-          </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            emonotate
-          </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              value={keyword}
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+      {isDesktop ? (
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: tokens.sidebarWidth,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: tokens.sidebarWidth,
+              boxSizing: 'border-box',
+              borderRight: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+            },
+          }}
+          open
+        >
+          {nav}
+        </Drawer>
+      ) : (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          ModalProps={{ keepMounted: true }}
+          sx={{ '& .MuiDrawer-paper': { width: tokens.sidebarWidth, boxSizing: 'border-box' } }}
+        >
+          {nav}
+        </Drawer>
+      )}
+
+      <Box sx={{ flexGrow: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <AppBar
+          position="sticky"
+          color="inherit"
+          elevation={0}
+          sx={{
+            bgcolor: (t) => alpha(t.palette.background.paper, 0.8),
+            backdropFilter: 'blur(12px)',
+            borderBottom: 1,
+            borderColor: 'divider',
+            color: 'text.primary',
+          }}
+        >
+          <Toolbar sx={{ minHeight: tokens.topBarHeight, gap: 1 }}>
+            {!isDesktop && (
+              <IconButton edge="start" aria-label="open navigation" onClick={() => setMobileOpen(true)}>
+                <MenuIcon />
+              </IconButton>
+            )}
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                flexGrow: { xs: 1, md: 0 },
+                width: { md: 360 },
+                borderRadius: 5,
+                bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
+                transition: 'background-color .15s, box-shadow .15s',
+                '&:hover': { bgcolor: (t) => alpha(t.palette.text.primary, 0.09) },
+                '&:focus-within': { boxShadow: (t) => `0 0 0 2px ${t.palette.primary.main}` },
               }}
-              inputProps={{ 'aria-label': 'search' }}
-              onChange={ev => {
-                setKeyword(ev.target.value);
-              }}
-            />
-          </div>
-          <div className={classes.grow} />
-          <AuthenticateComponent />
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose} size="large">
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>{mainListItems(numRequest)}</List>
-      </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        { component(keyword) }
-        <Box m={2} pt={4} bgcolor={colors.black}>
+            >
+              <SearchIcon fontSize="small" sx={{ ml: 1.5, color: 'text.secondary' }} />
+              <InputBase
+                placeholder="検索…"
+                value={keyword}
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={ev => setKeyword(ev.target.value)}
+                sx={{ flexGrow: 1, px: 1, py: 0.5 }}
+              />
+            </Box>
+            <Box sx={{ flexGrow: 1 }} />
+            <Tooltip title={mode === 'dark' ? 'ライトモード' : 'ダークモード'}>
+              <IconButton
+                aria-label="toggle color mode"
+                onClick={() => setPreference(mode === 'dark' ? 'light' : 'dark')}
+              >
+                {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+            </Tooltip>
+            <AuthenticateComponent />
+          </Toolbar>
+        </AppBar>
+
+        <Box component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
+          {component(keyword)}
+        </Box>
+        <Box sx={{ py: 3 }}>
           <Copyright />
         </Box>
-      </main>
-    </div>
+      </Box>
+    </Box>
   );
 }

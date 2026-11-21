@@ -65,7 +65,7 @@ const RequireListComponent = props => {
     return (<Box m={2}>
             <Typography
                 component="div"
-                variant="h5"
+                variant="h6"
                 color="textPrimary">
                 {`${user.username}が設定した実験`}
                 <IconButton

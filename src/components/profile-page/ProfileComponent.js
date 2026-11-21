@@ -91,7 +91,7 @@ const ProfileComponent = props => {
     const items = [];
     items.push(<Typography
         component="div"
-        variant="h5"
+        variant="h6"
         color="textPrimary">
         {`プロファイル`}
     </Typography>);

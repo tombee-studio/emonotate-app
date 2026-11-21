@@ -54,7 +54,7 @@ const PasswordComponent = props => {
     const items = [];
     items.push(<Typography
         component="div"
-        variant="h5"
+        variant="h6"
         color="textPrimary">
         パスワードの変更
     </Typography>);

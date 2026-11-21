@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CurvesListAPI from '../../helper/CurvesListAPI';
 import EmonotateAPI from '../../helper/EmonotateAPI';
+import { EmptyState } from './PageLayout';
 
 const styles = (theme) => ({
     root: {
@@ -45,12 +46,12 @@ const CurvesListComponent = props => {
     <Box className={classes.root}>
       <Box m={2}>
         <Grid container>
-          <Grid item xs={6}>
-            <Typography component="h3">
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" component="h3">
               これまでに描いた感情曲線
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Pagination 
               count={curves.pagination.total_pages}
               variant="outlined" 
@@ -58,6 +59,7 @@ const CurvesListComponent = props => {
               onChange={handlePaginate} />
           </Grid>
         </Grid>
+        {curves.models.length === 0 && <EmptyState message="まだ感情曲線がありません" hint="ホームから素材を選んで描いてみましょう" />}
         <List>
           {
             curves.models.map(curve => {
@@ -117,7 +119,7 @@ const CurvesListComponent = props => {
             })
           }
         </List>
-        <ButtonGroup>
+        <ButtonGroup sx={{ mt: 2 }}>
           <Button 
             variant="contained"
             onClick={handleOnClickButtonToDownloadAllCurve} >過去に描いた全ての感情曲線をダウンロードする</Button>

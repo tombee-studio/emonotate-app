@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card } from '@mui/material';
+import { PageContainer, Section } from '../components/common/PageLayout';
 import RequestListComponent from '../components/request-page/RequestListComponent';
 import RequireListComponent from '../components/request-page/RequireListComponent';
 import RelativeUserRequestList from '../components/request-page/RelativeUserRequestList';
@@ -9,20 +9,18 @@ const RequestListPage = (props) => {
 
   const createReuquestList = user => {
     const list = [];
-    list.push(<RequestListComponent />);
+    list.push(<RequestListComponent key="participant" />);
     if(user.groups.includes("Researchers")) {
-      list.push(<RequireListComponent />);
-      list.push(<RelativeUserRequestList />);
+      list.push(<RequireListComponent key="require" />);
+      list.push(<RelativeUserRequestList key="relative" />);
     }
     return list;
   };
 
   return (
-    <Box m={2}>
-        <Card m={2}>
-          { createReuquestList(user) }
-        </Card>
-    </Box>
+    <PageContainer title="リクエスト">
+        { createReuquestList(user).map(item => <Section key={item.key}>{item}</Section>) }
+    </PageContainer>
   );
 }
 

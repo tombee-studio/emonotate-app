@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Alert, Box, Button, CircularProgress, Stack } from '@mui/material';
+import { Alert, Button, Skeleton, Stack } from '@mui/material';
+import { PageContainer } from '../components/common/PageLayout';
 import CurveVideoComponent from '../components/curve-page/CurveVideoComponent';
 import CurveYouTubeComponent from '../components/curve-page/CurveYouTubeComponent';
 import TextCurve from '../components/curve-page/TextCurve';
@@ -79,10 +80,10 @@ export default function CurvePage({ id }) {
     }
   }
 
-  if (!curve) return <Box m={2}>{error ? <Alert severity="error">{error}</Alert> : <CircularProgress />}</Box>;
+  if (!curve) return <PageContainer maxWidth="lg">{error ? <Alert severity="error">{error}</Alert> : <Skeleton variant="rounded" height={360} />}</PageContainer>;
   const Editor = curve.content.video_id ? CurveYouTubeComponent :
     curve.content.data_type === 'text/plain' ? TextCurve : CurveVideoComponent;
-  return <Stack m={2} spacing={2}>
+  return <PageContainer maxWidth="lg"><Stack spacing={3}>
     {request && <RequestDetailComponent request={request} />}
     <Editor curve={curve} videoId={curve.content.video_id} onChangeCurve={setCurve} />
     <EnqueteAnswerListComponent enquetes={curve.enquete} setAnswers={enquete => setCurve({ ...curve, enquete })} />
@@ -91,5 +92,5 @@ export default function CurvePage({ id }) {
       disabled={saving || !curve.values || curve.values.length < 2 || Boolean(id && curve.locked)}>
       {saving ? '保存中…' : '曲線を保存'}
     </Button>
-  </Stack>;
+  </Stack></PageContainer>;
 }
