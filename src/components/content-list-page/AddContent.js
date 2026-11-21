@@ -70,7 +70,7 @@ export default function AddContent() {
     }
   }
 
-  return <Stack spacing={2} component="form" onSubmit={submit} sx={{ maxWidth: 720, my: 2 }}>
+  return <Stack spacing={2} component="form" onSubmit={submit} sx={{ maxWidth: 720 }}>
     <Typography variant="h5" component="h2">感情曲線を描く</Typography>
     <TextField select label="素材" value={kind} disabled={busy} onChange={e => {
       setKind(e.target.value); setFile(null); setError('');

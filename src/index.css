@@ -27,3 +27,7 @@ code {
     scroll-behavior: auto !important;
   }
 }
+
+/* d3 charts: follow the active color scheme */
+.tick text { fill: currentColor; }
+.tick line, .domain { stroke: currentColor; opacity: 0.5; }

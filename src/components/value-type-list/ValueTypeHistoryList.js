@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Pagination, Avatar, Card, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText } from '@mui/material';
+import { ListSkeleton } from '../common/PageLayout';
 import withStyles from '@mui/styles/withStyles';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -113,11 +114,7 @@ class UsersList extends React.Component {
       );
     } else {
       return (
-        <Card>
-          <Box>
-            LOAD DATA...
-          </Box>
-        </Card>
+        <ListSkeleton />
       );
     }
   };

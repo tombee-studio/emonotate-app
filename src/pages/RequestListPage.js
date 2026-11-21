@@ -9,19 +9,17 @@ const RequestListPage = (props) => {
 
   const createReuquestList = user => {
     const list = [];
-    list.push(<RequestListComponent />);
+    list.push(<RequestListComponent key="participant" />);
     if(user.groups.includes("Researchers")) {
-      list.push(<RequireListComponent />);
-      list.push(<RelativeUserRequestList />);
+      list.push(<RequireListComponent key="require" />);
+      list.push(<RelativeUserRequestList key="relative" />);
     }
     return list;
   };
 
   return (
     <PageContainer title="リクエスト">
-        <Section>
-          { createReuquestList(user) }
-        </Section>
+        { createReuquestList(user).map(item => <Section key={item.key}>{item}</Section>) }
     </PageContainer>
   );
 }
