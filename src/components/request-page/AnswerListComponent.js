@@ -25,7 +25,7 @@ function Answer({ row, onClose }) {
     return () => { active = false; };
   }, [row.id]);
   return <Dialog open fullWidth maxWidth="md" onClose={onClose}>
-    <DialogTitle>{row.user.email || row.user.username}の回答</DialogTitle>
+    <DialogTitle sx={{ overflowWrap: 'anywhere' }}>{row.user.email || row.user.username}の回答</DialogTitle>
     <DialogContent>
       {error && <Alert severity="error">{error}</Alert>}
       {!error && !curve && <Skeleton variant="rounded" height={240} />}
@@ -37,7 +37,7 @@ function Answer({ row, onClose }) {
           <Alert severity="warning">曲線の点がありません。</Alert>}
         {curve.enquete.map(item => <div key={item.id}>
           <Typography variant="subtitle2">{item.title}</Typography>
-          <Typography sx={{ whiteSpace: 'pre-wrap' }}>{item.answer}</Typography>
+          <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.answer}</Typography>
         </div>)}
       </Stack>}
     </DialogContent>
@@ -67,7 +67,7 @@ export default function AnswerListComponent({ requestId }) {
     {result && result.models.length === 0 && <EmptyState message="回答はまだありません" />}
     {result && result.models.length > 0 && <List>
       {result.models.map(row => <ListItem key={row.id} button onClick={() => setSelected(row)}>
-        <ListItemText primary={row.user.email || row.user.username}
+        <ListItemText sx={{ overflowWrap: 'anywhere' }} primary={row.user.email || row.user.username}
           secondary={`${new Date(row.created).toLocaleString('ja-JP')} / ${row.kind === 1 ? 'フリーハンド' : '指定点'}`} />
       </ListItem>)}
     </List>}

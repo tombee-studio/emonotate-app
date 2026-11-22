@@ -8,6 +8,8 @@ import ParticipantAPI from '../../helper/ParticipantAPI';
 
 const PAGE_SIZE = 50;
 const CHUNK = 500;
+// Long names wrap instead of squeezing the other columns.
+const ADDRESS = { minWidth: 160, overflowWrap: 'anywhere' };
 const api = new ParticipantAPI();
 
 function AddDialog({ requestId, onClose, onAdded }) {
@@ -114,14 +116,15 @@ export default function EmailAddressList({ request }) {
           <TableCell padding="checkbox"><Checkbox checked={all} indeterminate={selected.length > 0 && !all}
             inputProps={{ 'aria-label': 'このページをすべて選択' }}
             onChange={() => setSelected(all ? [] : ids)} /></TableCell>
-          <TableCell>メールアドレス</TableCell><TableCell>ユーザ名</TableCell><TableCell>依頼メール</TableCell>
+          <TableCell>メールアドレス</TableCell><TableCell>ユーザ名</TableCell>
+          <TableCell sx={{ whiteSpace: 'nowrap' }}>依頼メール</TableCell>
         </TableRow></TableHead>
         <TableBody>{rows.map(row => <TableRow key={row.id} hover>
           <TableCell padding="checkbox"><Checkbox checked={selected.includes(row.id)}
             inputProps={{ 'aria-label': `${row.email || row.username}を選択` }}
             onChange={() => setSelected(selected.includes(row.id) ?
               selected.filter(id => id !== row.id) : [...selected, row.id])} /></TableCell>
-          <TableCell>{row.email}</TableCell><TableCell>{row.username}</TableCell>
+          <TableCell sx={ADDRESS}>{row.email}</TableCell><TableCell sx={ADDRESS}>{row.username}</TableCell>
           <TableCell>{row.sended_mail ? '送信済み' : row.sended_mail_message || '未送信'}</TableCell>
         </TableRow>)}</TableBody>
       </Table></Box>}
