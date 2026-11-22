@@ -1,122 +1,69 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  BrowserRouter as Router, 
-  Route, 
-  Redirect, 
-  Switch } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
+import { Cookies } from 'react-cookie';
+import AppRoutes from './AppRoutes';
 import MainLayout from './layouts/MainLayout';
-import { useCookies } from "react-cookie";
 import { LoadingScreen, ErrorScreen, LandingScreen } from "./components/common/StatusScreens";
 
-import loadable from "@loadable/component";
+const fetchMe = () => fetch('/api/me/', { cache: 'no-store' }).then(res => {
+  if(res.status === 200) {
+    return res.json();
+  } else {
+    throw res;
+  }
+});
+
+const isSignedOut = err => err.status === 401 || err.status === 403;
+
+// Checks the session in the background on each move between pages.
+const SessionCheck = ({ onNavigate }) => {
+  const { key } = useLocation();
+  const initial = useRef(true);
+  useEffect(() => {
+    if(initial.current) {
+      initial.current = false;
+    } else {
+      onNavigate();
+    }
+  }, [key]);
+  return null;
+};
 
 const App = () => {
   const [userData, setUserData] = useState({});
   const [userLoadedFlag, setUserLoadedFlag] = useState(false);
   const [isAuthenticatedFlag, setAuthenticatedFlag] = useState(false);
   const [error, setError] = useState(false);
-  const [cookies] = useCookies();
   useEffect(() => {
-    fetch('/api/me/', { cache: 'no-store' }).then(res => {
-      if(res.status === 200) {
-        return res.json();
-      } else {
-        throw res;
-      }
-    }).then(user => {
+    fetchMe().then(user => {
       setUserData(user);
       setAuthenticatedFlag(true);
       setUserLoadedFlag(true);
     }).catch(err => {
-      setError(err.status !== 401 && err.status !== 403);
+      setError(!isSignedOut(err));
       setUserLoadedFlag(true);
     });
   }, []);
+  const refreshUser = () => {
+    fetchMe().then(setUserData).catch(err => {
+      if(isSignedOut(err)) setAuthenticatedFlag(false);
+    });
+  };
   if(error) return <ErrorScreen />;
-  if(!userLoadedFlag) {
-    return <LoadingScreen />;
-  } else {
-    window.django = {
-      user: userData,
-      csrf: cookies.csrftoken,
-      YOUTUBE_API_KEY: process.env.REACT_APP_YOUTUBE_API_KEY
-    };
-    if(isAuthenticatedFlag) {
-      return (
-        <Router>
-          <MainLayout component={keyword => {
-            const { user } = window.django;
-            const entries = [];
-            entries.push(<Route exact path="/">
-              { <Redirect to="/app/dashboard/" /> }
-            </Route>);
-            entries.push(<Route exact path='/app/dashboard/' component={_ => {
-              const Dashboard = loadable(() => import('./pages/Dashboard'));
-              return <Dashboard keyword={keyword} />
-            }} />);
-            entries.push(<Route exact path='/app/history/' component={_ => {
-              const HistoryPage = loadable(() => import('./pages/HistoryPage'));
-              return <HistoryPage />
-            }} />);
-            entries.push(<Route exact path='/app/request_list/' component={_ => {
-              const RequestListPage = loadable(() => import('./pages/RequestListPage'));
-              return <RequestListPage />;
-            }} />);
-            entries.push(<Route exact path='/app/curves/' component={ props => {
-              const CurvePage = loadable(() => import('./pages/CurvePage'));
-              return <CurvePage />;
-            }} />);
-            entries.push(<Route path='/app/curves/:id(\d+)' component={ props => {
-              const CurvePage = loadable(() => import('./pages/CurvePage'));
-              return <CurvePage id={props.match.params.id} />;
-            }} />);
-            entries.push(<Route exact path='/app/profile/' component={_ => {
-              const ProfilePage = loadable(() => import('./pages/ProfilePage'));
-              return <ProfilePage />
-            }} />);
-            entries.push(<Route exact path='/app/login/' >
-              <Redirect to="/app/dashboard/" />
-            </Route>);
-            entries.push(<Route exact path='/app/signup/' >
-              <Redirect to="/app/dashboard/" />
-            </Route>);
-            entries.push(<Route exact path='/app/change_email/' render={() => <Redirect to='/app/profile/' />}>
-            </Route>);
-            if(userData.groups.includes("Researchers")) {
-              entries.push(<Route exact path='/app/content/' component={_ => {
-                const ContentListPage = loadable(() => import('./pages/ContentListPage'));
-                return <ContentListPage />
-              }} />);
-              entries.push(<Route exact path='/app/word/' component={_ => {
-                const ValueTypeListPage = loadable(() => import('./pages/ValueTypeListPage'));
-                return <ValueTypeListPage />;
-              }} />);
-              entries.push(<Route exact path='/app/requests/' component={ _ => {
-                const RequestPage = loadable(() => import('./pages/RequestPage'));
-                return <RequestPage keyword={keyword} />;
-              }} />);
-              entries.push(<Route exact path='/app/requests/:id(\d+)' component={props => {
-                const RequestPage = loadable(() => import('./pages/RequestPage'));
-                return <RequestPage id={props.match.params.id} />;
-              }} />);
-              entries.push(<Route exact path='/app/inviting/' component={_ => {
-                const InvitingPage = loadable(() => import('./pages/InvitingPage'));
-                return <InvitingPage />;
-              }} />);
-            }
-            if(user.is_staff) {
-            }
-            entries.push(<Route>
-              { <Redirect to="/app/dashboard/" /> }
-            </Route>);
-            return (<Switch>{entries}</Switch>);
-          }} />
-        </Router>
-      );
-    } else {
-      return <LandingScreen />;
-    }
-  }
+  if(!userLoadedFlag) return <LoadingScreen />;
+  if(!isAuthenticatedFlag) return <LandingScreen />;
+  window.django = {
+    user: userData,
+    // Read when used: the cookie can change while the document stays open.
+    get csrf() { return new Cookies().get('csrftoken'); },
+    YOUTUBE_API_KEY: process.env.REACT_APP_YOUTUBE_API_KEY
+  };
+  return (
+    <Router>
+      <SessionCheck onNavigate={refreshUser} />
+      <MainLayout component={keyword => <AppRoutes keyword={keyword} />} />
+    </Router>
+  );
 }
 
 export default App;

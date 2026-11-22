@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Drawer from '@mui/material/Drawer';
@@ -56,17 +57,28 @@ export default function MainLayout(props) {
   const { mode, setPreference } = useColorMode();
   const isDesktop = useMediaQuery((t) => t.breakpoints.up('md'));
   const { component } = props;
+  const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
+    setMobileOpen(false);
+    // Back and forward keep the scroll position restored by the browser.
+    if (history.action !== 'POP') window.scrollTo(0, 0);
+  }, [location.key]);
+
+  useEffect(() => {
+    let active = true;
     const api = new RequestListAPI();
     api.get({ format: 'json', role: 'participant' })
-      .then(data => setNumRequest(data.models.length));
-  }, []);
+      .then(data => { if (active) setNumRequest(data.models.length); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [location.key]);
 
   const nav = (
     <Box component="nav" aria-label="main navigation" sx={{ height: '100%', overflowY: 'auto' }}>
       <Brand />
-      <List disablePadding sx={{ pb: 2 }}>{mainListItems(numRequest)}</List>
+      <List disablePadding sx={{ pb: 2 }}>{mainListItems(numRequest, location.pathname)}</List>
     </Box>
   );
 

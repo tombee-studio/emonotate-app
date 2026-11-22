@@ -2,9 +2,11 @@ import { CircularProgress, Button, ButtonGroup, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import EmonotateAPI from "../../helper/EmonotateAPI";
 import RequestListAPI from "../../helper/RequestListAPI";
+import { useAppNavigate } from "../../navigation";
 import ObserverComponent from "../request-page/ObserverComponent";
 
 const EditRequestComponent = props => {
+    const navigate = useAppNavigate();
     const { id } = props;
     const [isLoadedRequest, setFlagLoadedRequest] = useState(false);
     const [request, setRequest] = useState({});
@@ -65,7 +67,7 @@ const EditRequestComponent = props => {
         })
         .then(res => {
             if(res.status == 201) {
-                window.location.href = '/app/request_list/';
+                navigate('/app/request_list/');
             }
         });
     };
