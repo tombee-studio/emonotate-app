@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, matchPath } from 'react-router-dom';
 import { Badge, ListSubheader } from '@mui/material';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -11,10 +12,10 @@ import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 
-const NavItem = ({ href, icon, label, active }) => (
+const NavItem = ({ to, icon, label, active }) => (
   <ListItemButton
-    component="a"
-    href={href}
+    component={Link}
+    to={to}
     selected={active}
     aria-current={active ? 'page' : undefined}
     sx={{
@@ -45,10 +46,9 @@ const Section = ({ children }) => (
 );
 
 // Menu entries are filtered by role exactly as before (Researchers / is_staff).
-export const mainListItems = (numRequest) => {
+export const mainListItems = (numRequest, pathname) => {
   const { user } = window.django;
-  const path = window.location.pathname;
-  const isActive = (prefix) => path.startsWith(prefix);
+  const isActive = (path) => Boolean(matchPath(pathname, { path }));
 
   const profileIcon = user.notifications.profile.length > 0
     ? <Badge variant="dot" color="primary"><PersonIcon /></Badge>
@@ -57,11 +57,11 @@ export const mainListItems = (numRequest) => {
   return (
     <>
       <Section>一般</Section>
-      <NavItem href="/app/dashboard/" icon={<HomeIcon />} label="ホーム" active={isActive('/app/dashboard/')} />
-      <NavItem href="/app/profile/" icon={profileIcon} label="プロファイル" active={isActive('/app/profile/')} />
-      <NavItem href="/app/history/" icon={<HistoryIcon />} label="履歴" active={isActive('/app/history/')} />
+      <NavItem to="/app/dashboard/" icon={<HomeIcon />} label="ホーム" active={isActive('/app/dashboard/')} />
+      <NavItem to="/app/profile/" icon={profileIcon} label="プロファイル" active={isActive('/app/profile/')} />
+      <NavItem to="/app/history/" icon={<HistoryIcon />} label="履歴" active={isActive('/app/history/')} />
       <NavItem
-        href="/app/request_list/"
+        to="/app/request_list/"
         icon={<Badge badgeContent={numRequest} color="primary"><MailIcon /></Badge>}
         label="リクエスト"
         active={isActive('/app/request_list/')}
@@ -69,9 +69,9 @@ export const mainListItems = (numRequest) => {
       {user.groups.includes('Researchers') && (
         <>
           <Section>研究者</Section>
-          <NavItem href="/app/content/" icon={<MovieIcon />} label="コンテンツ" active={isActive('/app/content/')} />
-          <NavItem href="/app/word/" icon={<TextFormatIcon />} label="表現語" active={isActive('/app/word/')} />
-          <NavItem href="/app/inviting/" icon={<LoyaltyIcon />} label="招待" active={isActive('/app/inviting/')} />
+          <NavItem to="/app/content/" icon={<MovieIcon />} label="コンテンツ" active={isActive('/app/content/')} />
+          <NavItem to="/app/word/" icon={<TextFormatIcon />} label="表現語" active={isActive('/app/word/')} />
+          <NavItem to="/app/inviting/" icon={<LoyaltyIcon />} label="招待" active={isActive('/app/inviting/')} />
         </>
       )}
       {user.is_staff && <Section>開発者</Section>}

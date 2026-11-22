@@ -2,6 +2,7 @@ import React from 'react';
 import { Pagination, Card, Divider, Grid, ImageListItem, Box, ImageList, ImageListItemBar } from '@mui/material';
 import { ListSkeleton } from '../common/PageLayout';
 import withStyles from '@mui/styles/withStyles';
+import { linkProps } from '../../navigation';
 import ContentsListAPI from '../../helper/ContentsListAPI';
 
 const styles = (theme) => ({
@@ -64,8 +65,7 @@ class UsersList extends React.Component {
               contents.models.map(content => (
                 <ImageListItem
                   key={content.id} 
-                  component="a" 
-                  href={'/app/new/' + content.id}>
+                  {...linkProps('/app/new/' + content.id)}>
                   <img
                     srcSet={`https://picsum.photos/640/480/?random`}
                     alt={content.title}

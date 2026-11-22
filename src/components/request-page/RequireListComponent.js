@@ -25,6 +25,7 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ContentCopy from '@mui/icons-material/ContentCopy';
+import { linkProps, useAppNavigate } from '../../navigation';
 
 const ListItemWithWiderSecondaryAction = withStyles({
     secondaryAction: {
@@ -36,6 +37,7 @@ const RequireListComponent = props => {
     const [result, setResult] = useState({});
     const [loading, setLoading] = useState(true);
     const { user } = window.django;
+    const navigate = useAppNavigate();
     const handlePaginate = (e, page) => {
         setLoading(true);
         const api = new RequestListAPI();
@@ -69,10 +71,9 @@ const RequireListComponent = props => {
                 color="textPrimary">
                 {`${user.username}が設定した実験`}
                 <IconButton
-                    component="a"
                     edge="end"
                     aria-label="delete"
-                    href={`/app/requests/`}
+                    {...linkProps('/app/requests/')}
                     size="large">
                     <AddIcon />
                 </IconButton>
@@ -116,7 +117,7 @@ const RequireListComponent = props => {
                                         })
                                         .then(res => {
                                             if(res.status == 201 || res.status == 204) {
-                                                window.location.href = '/app/request_list/';
+                                                navigate('/app/request_list/');
                                             }
                                         });
                                     }}
@@ -134,7 +135,7 @@ const RequireListComponent = props => {
                                         })
                                         .then(res => {
                                             if(res.status == 200 || res.status == 204) {
-                                                window.location.href = '/app/request_list/';
+                                                navigate('/app/request_list/');
                                             }
                                         });
                                     }}
@@ -144,8 +145,7 @@ const RequireListComponent = props => {
                                 return (
                                     <ListItemWithWiderSecondaryAction
                                         button
-                                        component="a"
-                                        href={`/app/requests/${request.id}`}
+                                        {...linkProps(`/app/requests/${request.id}`)}
                                         key={request.room_name}>
                                         <ListItemAvatar>
                                             <Avatar>

@@ -1,10 +1,12 @@
 import React from 'react';
 import { PageContainer, Section } from '../components/common/PageLayout';
+import { useAppNavigate } from '../navigation';
 import ValueTypeListAPI from '../helper/ValueTypeListAPI';
 import ValueTypeHistoryList from '../components/value-type-list/ValueTypeHistoryList';
 import AddValueType from '../components/value-type-list/AddValueType';
 
 export default function Dashboard(props) {
+  const navigate = useAppNavigate();
   const postAPI = new ValueTypeListAPI();
 
   return (
@@ -16,7 +18,7 @@ export default function Dashboard(props) {
             return res.json();
           })
           .then(d => {
-            window.location.href = '/';
+            navigate('/app/dashboard/');
           });
       }} />
       </Section>
