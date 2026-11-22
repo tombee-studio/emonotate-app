@@ -4,6 +4,7 @@ import EmonotateAPI from "../../helper/EmonotateAPI";
 import RequestListAPI from "../../helper/RequestListAPI";
 import { useAppNavigate } from "../../navigation";
 import ObserverComponent from "../request-page/ObserverComponent";
+import AnswerListComponent from "./AnswerListComponent";
 
 const EditRequestComponent = props => {
     const navigate = useAppNavigate();
@@ -108,6 +109,7 @@ const EditRequestComponent = props => {
                 <Stack m={2} spacing={2} direction={"row"}>
                     { buttons }
                 </Stack>
+                {user.id == request.owner.id && <AnswerListComponent requestId={request.id} />}
             </>
         } else {
             return <CircularProgress />
