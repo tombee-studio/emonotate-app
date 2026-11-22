@@ -132,13 +132,13 @@ test('keeps the dashboard form while typing in the search box', async () => {
   expect(root.querySelector('main form')).toBe(form);
 });
 
-test('opens app curves in place and leaves server pages to the browser', async () => {
+test('opens curves of every version in place', async () => {
   curves = [
     { id: 1, version: 'arc-1', kind: 2, locked: true, content: { title: 'a', is_youtube: true }, value_type: {} },
     { id: 2, version: '0.1.1', kind: 1, locked: true, content: { title: 'b', is_youtube: true }, value_type: {} },
   ];
   await open('/app/history/');
-  expect(root.querySelector('main a[href="/free-hand/2"]')).not.toBeNull();
+  expect(root.querySelector('main a[href="/app/curves/2/"]')).not.toBeNull();
   await click('main a[href="/app/curves/1/"]');
   expect(window.location.pathname).toBe('/app/curves/1/');
 });

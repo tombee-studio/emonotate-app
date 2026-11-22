@@ -4,7 +4,8 @@ import {
   Skeleton, Stack, Typography,
 } from '@mui/material';
 import { EmptyState, ListSkeleton, Section } from '../common/PageLayout';
-import CurveChart from '../curve-page/CurveChart';
+import CurveEditor from '../curve-page/CurveEditor';
+import { axes } from '../../helper/curve';
 
 const PAGE_SIZE = 20;
 
@@ -31,7 +32,8 @@ function Answer({ row, onClose }) {
       {curve && <Stack spacing={2}>
         <Typography color="text.secondary">{curve.content.title} / {curve.value_type.title}</Typography>
         {Array.isArray(curve.values) && curve.values.length > 1 ?
-          <CurveChart values={curve.values} unit={curve.content.data_type === 'text/plain' ? '%' : '秒'} /> :
+          <CurveEditor readOnly values={curve.values} kind={1}
+            area={{ ...axes(curve), duration: curve.values[curve.values.length - 1].x || 1 }} /> :
           <Alert severity="warning">曲線の点がありません。</Alert>}
         {curve.enquete.map(item => <div key={item.id}>
           <Typography variant="subtitle2">{item.title}</Typography>
