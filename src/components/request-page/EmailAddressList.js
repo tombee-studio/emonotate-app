@@ -1,182 +1,135 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import {
+  Alert, Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Pagination,
+  Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField,
+} from '@mui/material';
+import { EmptyState, ListSkeleton, Section } from '../common/PageLayout';
+import ParticipantAPI from '../../helper/ParticipantAPI';
 
-import { Box, Button, Chip, IconButton } from "@mui/material";
-import { 
-    DataGrid,
-    GridToolbarContainer
-} from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckIcon from '@mui/icons-material/Check';
-import FaceIcon from '@mui/icons-material/Face';
-import UploadIcon from '@mui/icons-material/Upload';
+const PAGE_SIZE = 50;
+const CHUNK = 500;
+const api = new ParticipantAPI();
 
-import "./styles.css";
-import ParticipantAPI from "../../helper/ParticipantAPI";
+function AddDialog({ requestId, onClose, onAdded }) {
+  const [text, setText] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const emails = Array.from(new Set(text.split(/[\s,;]+/).filter(Boolean)));
 
-const COLUMNS = [
-    { 
-        field: 'id', 
-        headerName: 'ID', 
-        width: 90
-    },
-    {
-        field: 'username',
-        headerName: 'ユーザ名',
-        width: 150,
-        editable: false,
-    },
-    {
-        field: 'email',
-        headerName: 'メールアドレス',
-        width: 300,
-        editable: true,
-    },
-    {
-        field: 'sended_mail',
-        headerName: 'メール送信済み',
-        width: 150,
-        editable: false,
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: params => {
-            if(params.row.sended_mail) 
-                return <CheckIcon />;
-            return "";
-        }
-    },
-    {
-        field: 'sended_mail_message',
-        headerName: '送信状態',
-        width: 150,
-        editable: false,
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: params => {
-            if(params.row.sended_mail) 
-                return "OK";
-            return params.row.sended_mail_message;
-        }
+  async function add() {
+    setBusy(true);
+    setError('');
+    let added = 0;
+    try {
+      for (let i = 0; i < emails.length; i += CHUNK) {
+        added += (await api.add(requestId, emails.slice(i, i + CHUNK))).added;
+      }
+      onAdded(added);
+    } catch (err) {
+      const invalid = err.invalid || [];
+      const more = invalid.length > 5 ? ` ほか${invalid.length - 5}件` : '';
+      const done = added ? `（${added}人は追加済みです）` : '';
+      setError([err.message + done, invalid.slice(0, 5).join('、') + more].filter(Boolean).join(' '));
+      setBusy(false);
     }
-];
+  }
+  return <Dialog open fullWidth maxWidth="sm" onClose={busy ? undefined : onClose}>
+    <DialogTitle>参加者を追加</DialogTitle>
+    <DialogContent>
+      <DialogContentText>メールアドレスを改行・空白・カンマで区切って入力してください。</DialogContentText>
+      <TextField autoFocus fullWidth multiline minRows={6} maxRows={14} margin="normal" label="メールアドレス"
+        value={text} disabled={busy} onChange={event => setText(event.target.value)} />
+      {error && <Alert severity="error" sx={{ overflowWrap: 'anywhere' }}>{error}</Alert>}
+    </DialogContent>
+    <DialogActions>
+      <Button disabled={busy} onClick={onClose}>キャンセル</Button>
+      <Button variant="contained" disabled={busy || !emails.length} onClick={add}>
+        {busy ? '追加中…' : `${emails.length}件を追加`}
+      </Button>
+    </DialogActions>
+  </Dialog>;
+}
 
-const EmailAddressList = props => {
-    const { request } = props;
-    const [numParticipants, setNumParticipants] = useState(0);
-    const [participants, setParticipants] = useState([]);
-    const [selectedRows, setSelectedRows] = useState([]);
-    useEffect(() => {
-        const api = new ParticipantAPI();
-        api.list(request.id)
-            .then(data => {
-                if(data.is_error) {
-                    setNumParticipants(data.number);
-                } else {
-                    const { participants } = data;
-                    setParticipants(participants);
-                    setNumParticipants(participants.length);
-                }
-            });
-    }, []);
-    const addParticipant = () => {
-        const id = (participants.length == 0)? 1 : Math.max(...participants.map(v => v.id)) + 1;
-        const newParticipant = { 
-            id: id, 
-            username: "", 
-            email: ""
-        };
-        setParticipants([...participants, newParticipant]);
-    };
-    const replayAction = () => {
-        const api = new ParticipantAPI();
-        api.create(request.id, { 
-            "emails": participants.map(participant => participant.email) 
-        })
-        .then(data => {
-            if(data.is_error) {
-                setNumParticipants(data.number);
-            } else {
-                const { participants } = data;
-                setParticipants(participants);
-                setNumParticipants(participants.length);
-            }
-        });
-    };
-    const CustomToolBar = () => (
-        <GridToolbarContainer>
-            <Chip icon={<FaceIcon />} label={`参加者数: ${numParticipants}`}/>
-            <Button color="primary" 
-                startIcon={<AddIcon />} 
-                onClick={addParticipant}>
-                    メールアドレスを入力
-            </Button>
-            <Button color="primary" 
-                disabled={selectedRows.length == 0}
-                startIcon={<DeleteIcon />} 
-                onClick={handleOnDelete}>
-                    選択された参加者を削除
-            </Button>
-            <Button color="primary" 
-                startIcon={<UploadIcon />} 
-                onClick={replayAction}>
-                    参加者リストを同期
-            </Button>
-        </GridToolbarContainer>
-    );
-    const checkDuplicateEmail = (array, email) => 
-        array.map(participant => participant.email).includes(email);
+// The participants of a saved request, for its owner.
+export default function EmailAddressList({ request }) {
+  const [query, setQuery] = useState({ page: 1, search: '' });
+  const [search, setSearch] = useState('');
+  const [result, setResult] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [adding, setAdding] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-    const handleOnCellEditCommit = (params, event) => {
-        const _participants = [...participants];
-        const index = _participants.findIndex(participant => participant.id == params.id);
-        if(!checkDuplicateEmail(_participants, params.value)) {
-            _participants[index][params.field] = params.value;
-        } else {
-            _participants[index][params.field] = "";
-        }
-        setParticipants(_participants);
-    };
-    const handleOnDelete = (v) => {
-        const _participants = [...participants.filter(participant => 
-            selectedRows.includes(participant.id))];
-        const api = new ParticipantAPI();
-        api.delete(request.id, _participants.map(participant => participant.email))
-            .then(json => setParticipants(json.participants));
-    };
-    const handleOnPaste = (ev) => {
-        const pattern = /^.+@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
-        const data = ev.clipboardData.getData("text");
-        const table = [...participants];
-        for(const line of data.split(/[\n\r]+/)) {
-            if(!pattern.test(line)) continue;
-            const email = line;
-            if(checkDuplicateEmail(table, email)) continue;
-            const id = (table.length == 0)? 1 : Math.max(...table.map(v => v.id)) + 1;
-            const newParticipant = { 
-                id: id, 
-                username: "", 
-                email: email
-            };
-            table.push(newParticipant);
-        }
-    };
-    return (<Box style={{ width: '100%' }} onPaste={handleOnPaste} >
-        <DataGrid
-            columns={COLUMNS}
-            rows={participants}
-            components={{
-                Toolbar: CustomToolBar
-            }}
-            onCellEditCommit={handleOnCellEditCommit}
-            checkboxSelection
-            disableSelectionOnClick
-            onSelectionModelChange={
-                user => setSelectedRows([...user])
-            }
-            density='compact' 
-            autoHeight
-        />
-    </Box>);
-};
+  useEffect(() => {
+    if (search === query.search) return undefined;
+    const timer = setTimeout(() => setQuery({ page: 1, search }), 300);
+    return () => clearTimeout(timer);
+  }, [search, query.search]);
 
-export default EmailAddressList;
+  useEffect(() => {
+    let active = true;
+    setSelected([]);
+    setError('');
+    api.list(request.id, { ...query, pageSize: PAGE_SIZE })
+      .then(data => { if (active) setResult(data); })
+      .catch(err => { if (active) setError(err.message); });
+    return () => { active = false; };
+  }, [request.id, query]);
+
+  async function remove() {
+    setBusy(true);
+    setMessage('');
+    try {
+      await api.remove(request.id, selected);
+      setMessage(`${selected.length}人を参加者から外しました。`);
+      // The last page may be gone, so start over.
+      setQuery({ ...query, page: 1 });
+    } catch (err) {
+      setError(err.message);
+    }
+    setBusy(false);
+  }
+
+  const rows = result ? result.models : [];
+  const ids = rows.map(row => row.id);
+  const all = ids.length > 0 && selected.length === ids.length;
+  return <Section title={result ? `参加者（${result.pagination.total_entries}人）` : '参加者'}>
+    <Stack spacing={2}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+        <TextField size="small" label="メールアドレス・ユーザ名で検索" value={search} sx={{ flexGrow: 1 }}
+          onChange={event => setSearch(event.target.value)} />
+        <Button variant="contained" onClick={() => { setMessage(''); setAdding(true); }}>追加</Button>
+        <Button color="error" variant="outlined" disabled={busy || !selected.length} onClick={remove}>
+          {selected.length ? `${selected.length}人を外す` : '選んで外す'}
+        </Button>
+      </Stack>
+      {error && <Alert severity="error">{error}</Alert>}
+      {message && <Alert severity="success">{message}</Alert>}
+      {!error && !result && <ListSkeleton />}
+      {result && rows.length === 0 && <EmptyState
+        message={query.search ? '一致する参加者はいません' : '参加者はまだいません'} />}
+      {rows.length > 0 && <Box sx={{ overflowX: 'auto' }}><Table size="small">
+        <TableHead><TableRow>
+          <TableCell padding="checkbox"><Checkbox checked={all} indeterminate={selected.length > 0 && !all}
+            inputProps={{ 'aria-label': 'このページをすべて選択' }}
+            onChange={() => setSelected(all ? [] : ids)} /></TableCell>
+          <TableCell>メールアドレス</TableCell><TableCell>ユーザ名</TableCell><TableCell>依頼メール</TableCell>
+        </TableRow></TableHead>
+        <TableBody>{rows.map(row => <TableRow key={row.id} hover>
+          <TableCell padding="checkbox"><Checkbox checked={selected.includes(row.id)}
+            inputProps={{ 'aria-label': `${row.email || row.username}を選択` }}
+            onChange={() => setSelected(selected.includes(row.id) ?
+              selected.filter(id => id !== row.id) : [...selected, row.id])} /></TableCell>
+          <TableCell>{row.email}</TableCell><TableCell>{row.username}</TableCell>
+          <TableCell>{row.sended_mail ? '送信済み' : row.sended_mail_message || '未送信'}</TableCell>
+        </TableRow>)}</TableBody>
+      </Table></Box>}
+      {result && result.pagination.total_pages > 1 && <Pagination count={result.pagination.total_pages}
+        page={query.page} variant="outlined" shape="rounded"
+        onChange={(_, page) => setQuery({ ...query, page })} />}
+    </Stack>
+    {adding && <AddDialog requestId={request.id} onClose={() => { setAdding(false); setQuery({ ...query }); }}
+      onAdded={count => { setAdding(false); setMessage(`${count}人を追加しました。`); setQuery({ ...query, page: 1 }); }} />}
+  </Section>;
+}

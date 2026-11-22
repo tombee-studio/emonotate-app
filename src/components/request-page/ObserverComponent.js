@@ -231,7 +231,9 @@ const ObserverComponent = (props) => {
     domList.push(createFreeHandButton());
     domList.push(createDivider());
     domList.push(createGoogleForm());
-    domList.push(createEmailAddressList());
+    if(request.id != undefined) {
+        domList.push(createEmailAddressList());
+    }
 
     return (
         <Stack fullWidth spacing={2} m={2}>
