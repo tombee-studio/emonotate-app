@@ -53,7 +53,9 @@ npm run build
 Run `make test` (`CI=true npm test -- --watchAll=false`).
 
 ## How to Deploy
-Pushing to `develop` deploys to dev and pushing to `master` deploys to production on AWS, through GitHub Actions.
+Pushing to `develop` deploys to dev and pushing to `main` deploys to production on AWS, through GitHub Actions.
+
+The production branch is `main`, initialized from the former `master`. Before the first production merge, apply the parent repository's production Terraform change granting this branch the deploy role. Merge a release PR from `develop` to `main`. After deployment and production verification succeed, Actions publishes `release-pr-<PR number>` at the merged commit. If verification fails, rerun the failed jobs after resolving the cause.
 
 ## Development Workflow
 
@@ -80,13 +82,13 @@ Same rules as the parent repository [tombee-studio/emonotate](https://github.com
 
 | Workflow | Trigger | Behavior |
 |---|---|---|
-| `test` | PR to `develop`/`master`, called by deploys | React tests and production build |
-| `require-linked-issue` | PR to `develop`/`master` | Fails unless the PR or its branch is linked to an issue |
-| `deploy-dev` / `deploy-prd` | push to `develop` / `master` | test → build → S3 → CloudFront invalidation → page and Cognito redirect check |
+| `test` | PR to `develop`/`main`, called by deploys | React tests and production build |
+| `require-linked-issue` | PR to `develop`/`main` | Fails unless the PR or its branch is linked to an issue |
+| `deploy-dev` / `deploy-prd` | push to `develop` / `main` | test → build → S3 → CloudFront invalidation → page and Cognito redirect check |
 | `update-task-status-on-merge` | push to `develop` | Marks each commit's `Task:` as merged in the task tool |
 
 Secrets: `AWS_CI_ROLE_ARN_DEV`, `AWS_CI_ROLE_ARN_PRD` (`ci_role_arn` from the parent's Terraform), `TOOL_API_KEY`, `TOOL_TASK_API_URL`, `TASK_STATUS_MERGE_ID`.
-Mark `React test and build` and `Linked issue` as required status checks for `develop` and `master`.
+Mark `React test and build` and `Linked issue` as required status checks for `develop` and `main`.
 
 After a deploy, update this submodule's commit in the parent repository so its integration tests cover it.
 
