@@ -25,9 +25,7 @@ const styles = (theme) => ({
 const CurvesListComponent = props => {
   const { curves, handlePaginate, classes } = props;
   const navigate = useAppNavigate();
-  const curvePath = curve => curve.version === "arc-1" || !curve.content.is_youtube ?
-    `/app/curves/${curve.id}/` :
-    curve.kind == 1 ? `/free-hand/${curve.id}` : `/fold-line/${curve.id}`;
+  const curvePath = curve => `/app/curves/${curve.id}/`;
   const handleOnClickButtonToDownloadAllCurve = (ev) => {
     const api = new EmonotateAPI();
     api.get("download_curve_data", {})

@@ -6,6 +6,7 @@ import {
     ImageListItem, ImageListItemBar
 } from '@mui/material';
 import { LineAxis, Moving } from '@mui/icons-material';
+import { linkProps } from '../../navigation';
 
 const SearchItem = props => {
     const { item } = props;
@@ -25,13 +26,13 @@ const SearchItem = props => {
                 actionIcon={
                     <ButtonGroup>
                         <IconButton 
-                            component="a"
-                            href={`/fold-line/?video_id=${item.id.videoId}`}>
+                            aria-label="指定点で描く"
+                            {...linkProps(`/app/curves/?videoId=${item.id.videoId}&kind=2`)}>
                             <LineAxis />
                         </IconButton>
                         <IconButton 
-                            component="a" 
-                            href={`/free-hand/?video_id=${item.id.videoId}`}>
+                            aria-label="フリーハンドで描く"
+                            {...linkProps(`/app/curves/?videoId=${item.id.videoId}&kind=1`)}>
                             <Moving />
                         </IconButton>
                     </ButtonGroup>

@@ -17,6 +17,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NoteIcon from '@mui/icons-material/Note';
 import { ListSkeleton, EmptyState } from '../common/PageLayout';
 import RequestListAPI from '../../helper/RequestListAPI';
+import { linkProps } from '../../navigation';
 
 const RequestListComponent = () => {
     const [result, setResult] = useState({});
@@ -71,11 +72,7 @@ const RequestListComponent = () => {
                             return (
                                 <ListItem
                                     button
-                                    component="a"
-                                    href={ request.is_required_free_hand ?
-                                        `/free-hand/?request=${request.id}`:
-                                        `/fold-line/?request=${request.id}`
-                                    }
+                                    {...linkProps(`/app/curves/?request=${request.id}`)}
                                     key={request.room_name}
                                     alignItems="flex-start">
                                     <ListItemAvatar>

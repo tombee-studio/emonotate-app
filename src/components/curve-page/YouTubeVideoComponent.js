@@ -12,8 +12,11 @@ export default function YouTubeVideoComponent({ videoId, details, onReady }) {
     }
   };
   return <Box>
-    <YouTube videoId={videoId} onReady={handleReady} onStateChange={handleReady}
-      onError={() => setError(true)} opts={{ width: '100%', height: 320, playerVars: { controls: 1 } }} />
+    <Box sx={{ maxWidth: 'min(720px, 80vh)', '& > div': { position: 'relative', pt: '56.25%' },
+      '& iframe': { position: 'absolute', inset: 0, width: '100%', height: '100%' } }}>
+      <YouTube videoId={videoId} onReady={handleReady} onStateChange={handleReady}
+        onError={() => setError(true)} opts={{ width: '100%', height: '100%', playerVars: { controls: 1, playsinline: 1 } }} />
+    </Box>
     {error && <Alert severity="error">この動画は埋め込み再生できません。別の動画を選んでください。</Alert>}
     {details}
   </Box>;
