@@ -221,7 +221,7 @@ const ObserverComponent = (props) => {
     domList.push(<AcceptanceComponent request={request} onChange={onChange} />);
     domList.push(createDivider());
     domList.push(createGoogleForm());
-    if(request.id != undefined) {
+    if(request.id != undefined && request.owner.id == django.user.id) {
         domList.push(createEmailAddressList());
     }
 

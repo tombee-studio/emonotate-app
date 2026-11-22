@@ -22,14 +22,14 @@ const COLUMNS = [
     {
         field: 'username',
         headerName: 'ユーザ名',
-        width: 150,
-        editable: false,
+        minWidth: 150,
+        flex: 1,
     },
     {
         field: 'email',
         headerName: 'メールアドレス',
-        width: 300,
-        editable: true,
+        minWidth: 300,
+        flex: 1,
     }
 ];
 
