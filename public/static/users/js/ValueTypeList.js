@@ -3,10 +3,12 @@ function ValueTypeList(inputNodeID, datalistID) {
         this.id = datalistID;
         this.inputNode = document.getElementById(inputNodeID);
         this.listNode = document.getElementById(datalistID);
-        if(curve.value_type != undefined) {
-            let value_type = curve.value_type;
+        // A saved curve has the whole value type, a new one only its id.
+        if(curve.value_type && typeof curve.value_type === "object") {
             this.inputNode.value = curve.value_type.title;
-            curve.value_type = value_type.id;
+            curve.value_type = curve.value_type.id;
+        } else if(request.value_type) {
+            this.inputNode.value = request.value_type.title;
         }
         this.inputNode.addEventListener("input", function(ev) {
             while (this.listNode.firstChild) {

@@ -11,7 +11,11 @@ import RequestDetailComponent from '../components/curve-page/RequestDetailCompon
 
 async function json(url, options) {
   const response = await fetch(url, options);
-  if (!response.ok) throw new Error(response.status === 401 ? 'ログインしてください。' : 'データを読み書きできませんでした。');
+  if (!response.ok) {
+    if (response.status === 401) throw new Error('ログインしてください。');
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.detail || 'データを読み書きできませんでした。');
+  }
   return response.json();
 }
 
@@ -83,6 +87,7 @@ export default function CurvePage({ id }) {
   }
 
   if (!curve) return <PageContainer maxWidth="lg">{error ? <Alert severity="error">{error}</Alert> : <Skeleton variant="rounded" height={360} />}</PageContainer>;
+  const closed = request && request.closed_reason;
   const Editor = curve.content.video_id ? CurveYouTubeComponent :
     curve.content.data_type === 'text/plain' ? TextCurve : CurveVideoComponent;
   return <PageContainer maxWidth="lg"><Stack spacing={3}>
@@ -90,8 +95,9 @@ export default function CurvePage({ id }) {
     <Editor curve={curve} videoId={curve.content.video_id} onChangeCurve={setCurve} />
     <EnqueteAnswerListComponent enquetes={curve.enquete} setAnswers={enquete => setCurve({ ...curve, enquete })} />
     {error && <Alert severity="error">{error}</Alert>}
+    {closed && <Alert severity="warning">{closed}</Alert>}
     <Button variant="contained" onClick={save}
-      disabled={saving || !curve.values || curve.values.length < 2 || Boolean(id && curve.locked)}>
+      disabled={saving || Boolean(closed) || !curve.values || curve.values.length < 2 || Boolean(id && curve.locked)}>
       {saving ? '保存中…' : '曲線を保存'}
     </Button>
   </Stack></PageContainer>;

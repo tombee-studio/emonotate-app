@@ -1,15 +1,18 @@
-import { CircularProgress, Button, ButtonGroup, Stack } from "@mui/material";
+import { Alert, CircularProgress, Button, ButtonGroup, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import EmonotateAPI from "../../helper/EmonotateAPI";
 import RequestListAPI from "../../helper/RequestListAPI";
 import { useAppNavigate } from "../../navigation";
+import { acceptance } from "./AcceptanceComponent";
 import ObserverComponent from "../request-page/ObserverComponent";
+import AnswerListComponent from "./AnswerListComponent";
 
 const EditRequestComponent = props => {
     const navigate = useAppNavigate();
     const { id } = props;
     const [isLoadedRequest, setFlagLoadedRequest] = useState(false);
     const [request, setRequest] = useState({});
+    const [error, setError] = useState('');
     const { user } = window.django;
     useEffect(() => {
         const api = new RequestListAPI();
@@ -32,11 +35,14 @@ const EditRequestComponent = props => {
         }
         req.values = request.values;
         req.is_required_free_hand = request.is_required_free_hand;
+        Object.assign(req, acceptance(request));
 
         api.update(id, req, { "format": "json" })
         .then(data => {
             setRequest(data);
-        });
+            setError('');
+        })
+        .catch(() => setError('更新できませんでした。入力内容を確認してください。'));
     };
     const download = ev => {
         const api = new EmonotateAPI();
@@ -105,9 +111,11 @@ const EditRequestComponent = props => {
                     request={request}
                     onChange={ req => setRequest(req)}
                 />
+                {error && <Alert severity="error">{error}</Alert>}
                 <Stack m={2} spacing={2} direction={"row"}>
                     { buttons }
                 </Stack>
+                {user.id == request.owner.id && <AnswerListComponent requestId={request.id} />}
             </>
         } else {
             return <CircularProgress />
