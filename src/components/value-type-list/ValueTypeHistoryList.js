@@ -6,6 +6,7 @@ import TextFormatIcon from '@mui/icons-material/TextFormat';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ValueTypeListAPI from '../../helper/ValueTypeListAPI';
+import { linkProps, useAppNavigate } from '../../navigation';
 
 const styles = (theme) => ({
   root: {
@@ -38,7 +39,7 @@ class UsersList extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, navigate } = this.props;
     const { valuetypes } = this.state;
     const handlePaginate = (e, page) => {
       this.api.history(
@@ -80,8 +81,7 @@ class UsersList extends React.Component {
                   />
                   <ListItemSecondaryAction>
                     <IconButton
-                      component="a"
-                      href={`/app/valuetypes/${item.id}`}
+                      {...linkProps(`/app/valuetypes/${item.id}`)}
                       edge="end"
                       aria-label="enter"
                       size="large">
@@ -97,7 +97,7 @@ class UsersList extends React.Component {
                         })
                         .then(res => {
                             if(res.status == 200) {
-                              window.location.href = '/app/word/';
+                              navigate('/app/word/');
                             }
                         });
                       }}
@@ -120,4 +120,8 @@ class UsersList extends React.Component {
   };
 }
 
-export default withStyles(styles)(UsersList);
+const StyledUsersList = withStyles(styles)(UsersList);
+
+export default function ValueTypeHistoryList() {
+  return <StyledUsersList navigate={useAppNavigate()} />;
+}

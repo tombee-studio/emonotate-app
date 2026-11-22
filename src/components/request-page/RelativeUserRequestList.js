@@ -22,6 +22,7 @@ import {
     ContentCopy,
     MeetingRoom
 } from "@mui/icons-material";
+import { linkProps, useAppNavigate } from '../../navigation';
 
 const ListItemWithWiderSecondaryAction = withStyles({
     secondaryAction: {
@@ -31,6 +32,7 @@ const ListItemWithWiderSecondaryAction = withStyles({
 
 const RelativeUserRequestList = props => {
     const { user } = window.django;
+    const navigate = useAppNavigate();
     const [isLoading, setLoadingFlag] = useState(true);
     const [result, setResult] = useState({});
     const handlePaginate = (e, page) => {
@@ -89,7 +91,7 @@ const RelativeUserRequestList = props => {
                                 })
                                 .then(res => {
                                     if(res.status == 201 || res.status == 204) {
-                                        window.location.href = '/app/request_list/';
+                                        navigate('/app/request_list/');
                                     }
                                 });
                             }}
@@ -99,8 +101,7 @@ const RelativeUserRequestList = props => {
                         return (
                             <ListItemWithWiderSecondaryAction
                                 button
-                                component="a"
-                                href={`/app/requests/${request.id}`}
+                                {...linkProps(`/app/requests/${request.id}`)}
                                 key={request.room_name}>
                                 <ListItemAvatar>
                                     <Avatar>

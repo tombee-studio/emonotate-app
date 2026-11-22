@@ -1,9 +1,11 @@
 import { ButtonGroup, Button } from "@mui/material";
 import React, { useState } from "react";
 import RequestListAPI from "../../helper/RequestListAPI";
+import { useAppNavigate } from "../../navigation";
 import ObserverComponent from "./ObserverComponent";
 
 const CreateRequestComponent = props => {
+    const navigate = useAppNavigate();
     const [request, setRequest] = useState({});
     const create = ev => {
         const api = new RequestListAPI();
@@ -18,7 +20,7 @@ const CreateRequestComponent = props => {
 
         api.create(req, { "format": "json" })
         .then(data => {
-            window.location.href = `/app/requests/${data.id}`;
+            navigate(`/app/requests/${data.id}`);
         });
     };
     const createContent = () => {

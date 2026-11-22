@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CurvesListAPI from '../../helper/CurvesListAPI';
 import EmonotateAPI from '../../helper/EmonotateAPI';
+import { linkProps, useAppNavigate } from '../../navigation';
 import { EmptyState } from './PageLayout';
 
 const styles = (theme) => ({
@@ -23,6 +24,10 @@ const styles = (theme) => ({
 
 const CurvesListComponent = props => {
   const { curves, handlePaginate, classes } = props;
+  const navigate = useAppNavigate();
+  const curvePath = curve => curve.version === "arc-1" || !curve.content.is_youtube ?
+    `/app/curves/${curve.id}/` :
+    curve.kind == 1 ? `/free-hand/${curve.id}` : `/fold-line/${curve.id}`;
   const handleOnClickButtonToDownloadAllCurve = (ev) => {
     const api = new EmonotateAPI();
     api.get("download_curve_data", {})
@@ -78,10 +83,9 @@ const CurvesListComponent = props => {
                   { !curve.locked ?
                     <ListItemSecondaryAction>
                       <IconButton
-                        component="a"
                         edge="end"
                         aria-label="delete"
-                        href={curve.version === "arc-1" || !curve.content.is_youtube ? `/app/curves/${curve.id}/` : curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
+                        {...linkProps(curvePath(curve))}
                         size="large">
                         <EditIcon />
                       </IconButton>
@@ -95,7 +99,7 @@ const CurvesListComponent = props => {
                           })
                           .then(res => {
                               if(res.ok) {
-                                window.location.href = '/app/history/';
+                                navigate('/app/history/');
                               }
                           });
                         }}
@@ -105,10 +109,9 @@ const CurvesListComponent = props => {
                     </ListItemSecondaryAction> :
                     <ListItemSecondaryAction>
                       <IconButton
-                        component="a"
                         edge="end"
                         aria-label="delete"
-                        href={curve.version === "arc-1" || !curve.content.is_youtube ? `/app/curves/${curve.id}/` : curve.kind == 1? `/free-hand/${curve.id}`: `/fold-line/${curve.id}`}
+                        {...linkProps(curvePath(curve))}
                         size="large">
                         <VisibilityIcon />
                       </IconButton>

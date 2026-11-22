@@ -16,8 +16,10 @@ import {
 } from "@mui/material";
 import { Close, ExpandMore } from "@mui/icons-material";
 import GoogleFormAPI from "../../helper/GoogleFormAPI";
+import { useAppNavigate } from "../../navigation";
 
 const GoogleFormComponent = props => {
+    const navigate = useAppNavigate();
     const { request } = props;
     const { google_form } = request;
     const [title, setTitle] = useState(
@@ -46,7 +48,7 @@ const GoogleFormComponent = props => {
         promise.then(data => {
             const promiseSetGoogleForm = api.setGoogleForm(request.id, data.id);
             promiseSetGoogleForm.then(data => {
-                window.location.href = `/app/requests/${request.id}`;
+                navigate(`/app/requests/${request.id}`);
             });
         });
         promise.catch(res => res.text()
@@ -70,7 +72,7 @@ const GoogleFormComponent = props => {
             googleForm, 
             { format: "json" });
         promise.then(_ => {
-            window.location.href = `/app/requests/${request.id}`;
+            navigate(`/app/requests/${request.id}`);
         });
         promise.catch(res => res.text()
             .then(message => {

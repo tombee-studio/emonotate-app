@@ -16,8 +16,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import SectionAPI from "../../helper/SectionAPI";
+import { useAppNavigate } from "../../navigation";
 
 const SectionComponent = props => {
+    const navigate = useAppNavigate();
     const { user } = window.django;
     const { 
         is_included_section, 
@@ -42,7 +44,7 @@ const SectionComponent = props => {
         promise.then(data => {
             const promiseSetSection = api.set_section(request.id, data.id);
             promiseSetSection.then(_ => {
-                window.location.href = `/app/requests/${request.id}`;
+                navigate(`/app/requests/${request.id}`);
             });
         });
         promise.catch(res => res.text()
@@ -62,7 +64,7 @@ const SectionComponent = props => {
         _section.title = title;
         const promise = api.update(_section.id, _section, { "format": "json" });
         promise.then(_ => {
-            window.location.href = `/app/requests/${request.id}`;
+            navigate(`/app/requests/${request.id}`);
         });
         promise.catch(res => res.json()
             .then(data => {

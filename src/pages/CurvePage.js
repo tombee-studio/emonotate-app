@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Alert, Button, Skeleton, Stack } from '@mui/material';
+import { useAppNavigate } from '../navigation';
 import { PageContainer } from '../components/common/PageLayout';
 import CurveVideoComponent from '../components/curve-page/CurveVideoComponent';
 import CurveYouTubeComponent from '../components/curve-page/CurveYouTubeComponent';
@@ -16,6 +17,7 @@ async function json(url, options) {
 
 export default function CurvePage({ id }) {
   const { search } = useLocation();
+  const navigate = useAppNavigate();
   const [curve, setCurve] = useState(null);
   const [request, setRequest] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -73,7 +75,7 @@ export default function CurvePage({ id }) {
         url.searchParams.set(form.curve_id_entry_field, saved.id);
         window.open(url.toString(), '_blank', 'noopener');
       }
-      window.location.assign('/app/history/');
+      navigate('/app/history/');
     } catch (err) {
       setError(err.message);
       setSaving(false);

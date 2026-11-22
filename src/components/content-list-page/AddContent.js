@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { useAppNavigate } from '../../navigation';
 
 export function youtubeId(value) {
   try {
@@ -31,6 +32,7 @@ async function post(path, data) {
 }
 
 export default function AddContent() {
+  const navigate = useAppNavigate();
   const [kind, setKind] = useState('youtube');
   const [title, setTitle] = useState('');
   const [url, setURL] = useState('');
@@ -63,7 +65,7 @@ export default function AddContent() {
         data.key = key;
       }
       const content = await post('/api/sources/', data);
-      window.location.assign('/app/curves/?content=' + content.id);
+      navigate('/app/curves/?content=' + content.id);
     } catch (err) {
       setError(err.message);
       setBusy(false);
