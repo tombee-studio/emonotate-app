@@ -20,6 +20,7 @@ import ValueTypeComponent from "../common/ValueTypeComponent";
 import EmailAddressList from "./EmailAddressList";
 import SectionComponent from "./SectionComponent";
 import GoogleFormComponent from "./GoogleFormComponent";
+import AcceptanceComponent from "./AcceptanceComponent";
 
 const createNewCurveComponent = (curve, setCurveData) => {
     if(curve.content.video_id) {
@@ -229,6 +230,7 @@ const ObserverComponent = (props) => {
         }
     }
     domList.push(createFreeHandButton());
+    domList.push(<AcceptanceComponent request={request} onChange={onChange} />);
     domList.push(createDivider());
     domList.push(createGoogleForm());
     if(request.id != undefined) {
