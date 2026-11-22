@@ -41,7 +41,7 @@ const RequestItemComponent = props => {
                         color="textSecondary"
                     >
                         { 
-                            ` from ${request.owner.email}`
+                            ` from ${request.owner.username}`
                         }
                     </Typography>
                 </React.Fragment>}
