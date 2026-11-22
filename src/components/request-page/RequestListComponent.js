@@ -105,6 +105,10 @@ const RequestListComponent = () => {
                                             {` — ${request.description.length > 30?
                                                     request.description.substr(0, 30) + "...":
                                                     request.description}`}
+                                            {request.closed_reason && <Typography component="span"
+                                                variant="body2" color="error" sx={{ display: 'block' }}>
+                                                {request.closed_reason}
+                                            </Typography>}
                                         </React.Fragment>
                                     }
                                     />
