@@ -10,9 +10,8 @@ import {
     Divider,
     Stack
 } from "@mui/material";
-import "video.js/dist/video-js.css";
-import CurveYouTubeComponent from "../../components/curve-page/CurveYouTubeComponent";
-import CurveVideoComponent from "../../components/curve-page/CurveVideoComponent";
+import CurveInput from "../curve-page/CurveInput";
+import { VERSION } from "../../helper/curve";
 import ContentsListAPI from "../../helper/ContentsListAPI";
 import ValueTypeListAPI from "../../helper/ValueTypeListAPI";
 import CurvesListAPI from "../../helper/CurvesListAPI";
@@ -22,22 +21,11 @@ import SectionComponent from "./SectionComponent";
 import GoogleFormComponent from "./GoogleFormComponent";
 import AcceptanceComponent from "./AcceptanceComponent";
 
-const createNewCurveComponent = (curve, setCurveData) => {
-    if(curve.content.video_id) {
-        return <Box m={2}>
-            <CurveYouTubeComponent 
-                curve={curve} 
-                videoId={curve.content.video_id}
-                onChangeCurve={(curve, sections) => setCurveData(curve, sections)} />
-        </Box>;
-    } else {
-        return <Box m={2}>
-            <CurveVideoComponent 
-                curve={curve} 
-                onChangeCurve={(curve, sections) => setCurveData(curve, sections)} />
-        </Box>;
-    }
-};
+const createNewCurveComponent = (curve, isFreeHand, setCurveData) => <Box m={2} key="curve">
+    <CurveInput key={`${curve.content.id}-${curve.value_type.id}`}
+        curve={{ ...curve, kind: isFreeHand ? 1 : 2 }}
+        onChange={setCurveData} />
+</Box>;
 
 const ObserverComponent = (props) => {
     const { django } = window;
@@ -51,7 +39,7 @@ const ObserverComponent = (props) => {
 
     const [curve, setCurve] = useState({
         "values": request.values,
-        "version": "0.1.1",
+        "version": VERSION,
         "room_name": "",
         "locked": false,
         "user": django.user.id,
@@ -219,7 +207,7 @@ const ObserverComponent = (props) => {
     domList.push(createLoadContentButton());
     if(curve.content && curve.value_type) {
         domList.push(createNewCurveComponent(
-            curve, _curve => {
+            curve, isRequiredFreeHand, _curve => {
                 const req = {...request};
                 req.values = _curve.values;
                 onChange(req);

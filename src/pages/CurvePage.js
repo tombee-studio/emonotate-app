@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Alert, Button, Skeleton, Stack } from '@mui/material';
+import { Alert, Button, Skeleton, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useAppNavigate } from '../navigation';
 import { PageContainer } from '../components/common/PageLayout';
-import CurveVideoComponent from '../components/curve-page/CurveVideoComponent';
-import CurveYouTubeComponent from '../components/curve-page/CurveYouTubeComponent';
-import TextCurve from '../components/curve-page/TextCurve';
+import CurveInput from '../components/curve-page/CurveInput';
 import EnqueteAnswerListComponent from '../components/curve-page/EnqueteAnswerListComponent';
 import RequestDetailComponent from '../components/curve-page/RequestDetailComponent';
+import { VERSION, sectionBorders } from '../helper/curve';
 
 async function json(url, options) {
   const response = await fetch(url, options);
@@ -51,7 +50,8 @@ export default function CurvePage({ id }) {
         content = await json('/api/contents/' + encodeURIComponent(sourceId) + '/?format=json');
       }
       return {
-        content, user: window.django.user.id, version: 'arc-1', kind: 2,
+        content, user: window.django.user.id, version: VERSION,
+        kind: (req ? req.is_required_free_hand : params.get('kind') === '1') ? 1 : 2,
         value_type: req ? req.value_type : window.django.user.default_value_type,
         values: req ? req.values : [], locked: Boolean(req), room_name: req ? req.room_name : 'content-' + content.id,
         enquete: req ? req.enquetes.map(item => ({ ...item, answer: '' })) : [],
@@ -88,16 +88,23 @@ export default function CurvePage({ id }) {
 
   if (!curve) return <PageContainer maxWidth="lg">{error ? <Alert severity="error">{error}</Alert> : <Skeleton variant="rounded" height={360} />}</PageContainer>;
   const closed = request && request.closed_reason;
-  const Editor = curve.content.video_id ? CurveYouTubeComponent :
-    curve.content.data_type === 'text/plain' ? TextCurve : CurveVideoComponent;
+  const readOnly = Boolean(id && curve.locked);
+  // A request decides how its curves are drawn, and a saved curve keeps its kind.
+  const canSwitch = !id && !request;
   return <PageContainer maxWidth="lg"><Stack spacing={3}>
     {request && <RequestDetailComponent request={request} />}
-    <Editor curve={curve} videoId={curve.content.video_id} onChangeCurve={setCurve} />
+    {canSwitch && <ToggleButtonGroup exclusive size="small" value={curve.kind} aria-label="入力方式"
+      onChange={(_, kind) => { if (kind) setCurve({ ...curve, kind, values: [] }); }}>
+      <ToggleButton value={2}>指定点</ToggleButton>
+      <ToggleButton value={1}>フリーハンド</ToggleButton>
+    </ToggleButtonGroup>}
+    <CurveInput key={curve.kind} curve={curve} readOnly={readOnly} onChange={setCurve}
+      borders={sectionBorders(request && request.section)} />
     <EnqueteAnswerListComponent enquetes={curve.enquete} setAnswers={enquete => setCurve({ ...curve, enquete })} />
     {error && <Alert severity="error">{error}</Alert>}
     {closed && <Alert severity="warning">{closed}</Alert>}
     <Button variant="contained" onClick={save}
-      disabled={saving || Boolean(closed) || !curve.values || curve.values.length < 2 || Boolean(id && curve.locked)}>
+      disabled={saving || Boolean(closed) || !curve.values || curve.values.length < 2 || readOnly}>
       {saving ? '保存中…' : '曲線を保存'}
     </Button>
   </Stack></PageContainer>;

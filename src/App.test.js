@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import App from './App';
-import TextCurve from './components/curve-page/TextCurve';
 import { youtubeId } from './components/content-list-page/AddContent';
 
 let root;
@@ -21,21 +20,4 @@ test('accepts YouTube watch, short and share links', () => {
   expect(youtubeId('https://youtu.be/' + id + '?t=10')).toBe(id);
   expect(youtubeId('https://m.youtube.com/shorts/' + id)).toBe(id);
   expect(youtubeId('https://example.org/watch?v=' + id)).toBeNull();
-});
-
-test('adds an emotion point while reading text', async () => {
-  global.fetch = jest.fn().mockResolvedValue({ ok: true, text: async () => '物語の本文' });
-  let latest;
-  function Editor() {
-    const [curve, setCurve] = React.useState({ content: { title: '短編', url: '/api/sources/1/file/' }, values: [] });
-    latest = curve;
-    return <TextCurve curve={curve} onChangeCurve={setCurve} />;
-  }
-  await act(async () => { ReactDOM.render(<Editor />, root); });
-  expect(root.textContent).toContain('物語の本文');
-  expect(latest.values.map(point => point.x)).toEqual([0, 100]);
-  act(() => {
-    root.querySelector('svg rect').dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: 390, clientY: 49 }));
-  });
-  expect(latest.values.map(point => [point.x, point.y])).toEqual([[0, 0], [50, 0.5], [100, 0]]);
 });

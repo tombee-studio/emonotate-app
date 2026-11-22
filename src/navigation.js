@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 // Props for link-like MUI components. Only /app/ is routed by React; other
-// paths (/free-hand/, /fold-line/, /api/) are server pages and need a real load.
+// paths (/api/) are server pages and need a real load.
 export const linkProps = path => path.startsWith('/app/') ?
   { component: Link, to: path } : { component: 'a', href: path };
 
